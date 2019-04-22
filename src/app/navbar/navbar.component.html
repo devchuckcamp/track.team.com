@@ -1,0 +1,66 @@
+<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
+  <a class="nav-link" [routerLink]="['/admin']">Logo</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topmenu-nav" aria-controls="topmenu-nav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse justify-content-md-center" id="topmenu-nav">
+  <!-- <div class="collapse navbar-collapse" id="topmenu-nav"> -->
+    <ul class="navbar-nav  ml-auto">
+      <!-- Dropdown -->
+      <li class="nav-item dropdown" 
+      [ngClass]="{'active':activeURL === '/admin/fund' || activeURL === '/admin/fund/current' || activeURL === '/admin/fund/incoming' || activeURL === '/admin/fund/pending'}"
+      >
+        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+          Projects
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/current' || activeURL === '/admin/fund' }" [routerLink]="['/admin/fund/current']">Hifi</a>
+          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">Mass Depot</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown" 
+      [ngClass]="{'active':activeURL === '/admin/fund' || activeURL === '/admin/fund/current' || activeURL === '/admin/fund/incoming' || activeURL === '/admin/fund/pending'}"
+      >
+        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+          My Task
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/current' || activeURL === '/admin/fund' }" [routerLink]="['/admin/fund/current']">Assigned to me</a>
+          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">Open</a>
+          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">In Progress</a>
+          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">Completed</a>
+          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/pending' }" [routerLink]="['/admin/fund/pending']">All</a>
+        </div>
+      </li>
+      <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/investor' }">
+        <a class="nav-link" [routerLink]="['/admin/investor']">User</a>
+      </li>
+      <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/member' || this.activeURL.split('admin/member').length - 1 }">
+        <a class="nav-link" [routerLink]="['/admin/member']">User Role</a>
+      </li>
+      <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/rollin' || this.activeURL.split('admin/rollin').length - 1}">
+        <a class="nav-link" [routerLink]="['/admin/rollin']">Activity Logs</a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+      <!-- Dropdown -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle pad-x-40 pad-x-sm-0" href="#" id="navbardrop" data-toggle="dropdown"
+        [ngClass]="{'active':activeURL === '/admin/profile' || activeURL === '/admin/setting' || this.activeURL.split('admin/profile').length - 1 || this.activeURL.split('admin/setting').length - 1}"
+        >
+          Account
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/profile' || this.activeURL.split('admin/profile').length - 1}" [routerLink]="['/admin/profile']"><i class="pad-x-5 fa fa-user-circle-o"></i>Profile</a>
+          <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/setting' || this.activeURL.split('admin/setting').length - 1}" [routerLink]="['/admin/setting']"><i class="pad-x-5 fa fa-wrench"></i>Settings</a>
+          <a href="#" class="dropdown-item" (click)="logout()"><i class="pad-x-5 fa fa-sign-out"></i>Logout</a>
+        </div>
+      </li>
+    </ul>
+
+  </div>
+
+
+</nav>

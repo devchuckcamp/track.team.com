@@ -1,0 +1,10 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "~chuckstrap/css/chuckstrap.min.css";
+@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+
+/* .dropdown-item.active,
+li.active{ 
+    color:#fafafa!important;
+    background-color: darkblue!important;
+} */

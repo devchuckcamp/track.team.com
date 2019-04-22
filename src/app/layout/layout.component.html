@@ -1,0 +1,38 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<app-navbar></app-navbar>
+<div class="col-md-12">
+    <div class="row" *ngIf="activeURL == '/admin'">
+        <div class="col-md-3 pad-20 text-center">
+            <div class="col">
+                <div class="row">
+                    <label>Recent Activity</label>
+                    <div class="panel">
+                        <ul>
+                            <li>
+                                <a href="#">
+                                    Chuckie added $500 for next rollin
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 pad-20 text-center">
+            <canvas id="chart-content" #chart></canvas>
+        </div>
+
+        <div class="col-md-3 pad-20 text-center">
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Investor of the month</label>
+                </div>
+                <div class="col-md-6">
+                    <label>Event of the month</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <router-outlet></router-outlet>
+</div>
