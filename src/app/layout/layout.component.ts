@@ -30,7 +30,6 @@ export class LayoutComponent implements OnInit {
           let indexActUrl = indexActUrlParam == -1 ? currentURL : currentURL.slice(0, indexActUrlParam );
           //Assign to our private activeUrl
           this.activeURL = indexActUrl;
-          console.log(this.activeURL);
         }
       });
 

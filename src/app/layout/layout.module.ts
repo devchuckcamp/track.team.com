@@ -7,7 +7,8 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { NavbarModule } from '../navbar/navbar.module';
 import { LayoutComponent } from './layout.component';
 import { UserService } from '../service/user.service';
-
+import { ProjectService } from '../service/project.service';
+import { TicketService } from '../service/ticket.service';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,9 @@ import { UserService } from '../service/user.service';
   exports:[
   ],
   providers: [
-    UserService
+    UserService,
+    ProjectService,
+    TicketService
   ],
   bootstrap: [LayoutComponent]
 })

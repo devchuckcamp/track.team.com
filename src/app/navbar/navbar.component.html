@@ -9,15 +9,21 @@
     <ul class="navbar-nav  ml-auto">
       <!-- Dropdown -->
       <li class="nav-item dropdown" 
-      [ngClass]="{'active':activeURL === '/admin/fund' || activeURL === '/admin/fund/current' || activeURL === '/admin/fund/incoming' || activeURL === '/admin/fund/pending'}"
+      [ngClass]="{'active':activeURL === '/admin/projects' || parentUrl === 'projects' || activeURL === '/admin/projects/all' || activeURL === '/admin/projects/pending' || activeURL === '/admin/fund/pending'}"
       >
         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
           Projects
         </a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/current' || activeURL === '/admin/fund' }" [routerLink]="['/admin/fund/current']">Hifi</a>
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">Mass Depot</a>
+        <div *ngIf="projects" class="dropdown-menu">
+          
+          <a  *ngFor="let proj of projects"  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/'+proj.slug }" [routerLink]="['/admin/projects', proj.slug]">{{proj.name}}</a>
+          <!-- <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/incoming' }" [routerLink]="['/admin/fund/{{proj.name}}']">Mass Depot</a> -->
         </div>
+        <div *ngIf="!projects" class="dropdown-menu">
+          
+            <a  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/new' || activeURL === '/admin/projects' }" [routerLink]="['/admin/projects/new']">Add Project</a>
+            <!-- <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/incoming' }" [routerLink]="['/admin/fund/{{proj.name}}']">Mass Depot</a> -->
+          </div>
       </li>
       <li class="nav-item dropdown" 
       [ngClass]="{'active':activeURL === '/admin/fund' || activeURL === '/admin/fund/current' || activeURL === '/admin/fund/incoming' || activeURL === '/admin/fund/pending'}"

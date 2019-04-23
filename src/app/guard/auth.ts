@@ -10,7 +10,7 @@ export class AuthGuard implements CanActivate {
         // console.log(state.url);
         let domain = localStorage.getItem('domain');
 
-        if (!localStorage.getItem('currentUser') !== null) {
+        if (localStorage.getItem('currentUser') !== null) {
             return true;
         }
 

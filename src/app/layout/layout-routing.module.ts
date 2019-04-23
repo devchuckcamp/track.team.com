@@ -13,12 +13,16 @@ const routes:   Routes = [
     {
         path: 'admin/fund',
         redirectTo:'/admin/fund/current',
-        pathMatch:'full'
+        pathMatch:'full',
     },
     {
         path: 'admin', component:LayoutComponent,
         canActivate:[AuthGuard],
         children:[
+            { path: 'projects', loadChildren:'../project/project.module#ProjectModule'},
+            { path: 'projects/:project_name', loadChildren:'../project/project-detail.module#ProjectDetailModule'},
+            { path: 'projects/:project_name/tickets', loadChildren:'../ticket/ticket.module#TicketModule'},
+            { path: 'projects/:name/tasks', loadChildren:'../project/project-detail.module#ProjectDetailModule'},
             { path: 'fund/current', loadChildren:'../fund/fund.module#FundModule'},
             { path: 'fund/incoming', loadChildren:'../fund/fund-incoming.module#FundIncomingModule'},
             { path: 'fund/pending', loadChildren:'../fund/fund-pending.module#FundPendingModule'},
