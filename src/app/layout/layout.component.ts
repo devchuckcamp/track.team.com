@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd  } from '@angular/router';
 import Chart from 'chart.js';
-
+import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
@@ -14,11 +14,17 @@ export class LayoutComponent implements OnInit {
   public chartData: any;
   private viewInfoRoute : string;
   activeURL: string;
-
+  admin_sub_1: string;
+  admin_sub_2: string;
+  admin_project_sub: string;
+  breadcrumb:any;
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     ) {
+      this.admin_sub_1 = "";
+      this.admin_sub_2 = "";
+      this.admin_project_sub = "";
       this.router.events.subscribe(path =>{
 
         if(path instanceof NavigationEnd ){
@@ -30,6 +36,17 @@ export class LayoutComponent implements OnInit {
           let indexActUrl = indexActUrlParam == -1 ? currentURL : currentURL.slice(0, indexActUrlParam );
           //Assign to our private activeUrl
           this.activeURL = indexActUrl;
+
+          let slug_list = this.activeURL.split('/');
+          this.breadcrumb = slug_list;
+          let isSubRoute = (this.activeURL.match(/\//g) || []).length;
+          
+          if(slug_list.includes("projects") || slug_list[2] == 'projects'){
+            this.admin_sub_1 = "projects";
+            this.admin_sub_2 =  slug_list[3];
+            this.admin_project_sub =  slug_list[slug_list.length-1];
+            console.log(slug_list, 'slug_list');
+          }
         }
       });
 

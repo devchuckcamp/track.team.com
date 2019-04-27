@@ -43,6 +43,8 @@ export class NavbarComponent implements OnInit {
           this.parentUrl = "user-role";
         } else if(slug_list.includes("log")){
           this.parentUrl = "log";
+        } else {
+          this.parentUrl = "";
         }
       }
     });
@@ -50,7 +52,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.projectService.getAll().subscribe(res=>{
-      
+
       if(res){
         this.projects = res.data;
       }

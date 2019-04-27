@@ -1,0 +1,37 @@
+<div class="col-md-2 left-nav-bar pad-0">
+    <div class="col-md-12 pad-0">
+        <div *ngIf="project" class="parent-left-menu">
+            <ul class="parent-left-menu-ul pad-0">
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active':admin_project_sub !== 'tickets' && admin_project_sub !== 'tasks' && admin_project_sub !== 'members' && admin_project_sub !== 'settings'}"
+                >
+                    <a href="#" [routerLink]="['/admin/projects',project.slug]"><i
+                            class="fa fa-home mar-r-5"></i>Dashboard</a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': admin_project_sub == 'tickets'}"
+                >
+                    <a href="#" [routerLink]="['/admin/projects',project.slug,'tickets']"><i
+                            class="fa fa-ticket mar-r-5"></i>Ticket</a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': admin_project_sub == 'tasks'}"
+                >
+                    <a href="#" [routerLink]="['/admin/projects',project.slug,'tasks']"><i
+                            class="fa fa-tasks mar-r-5"></i>Task</a></li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': admin_project_sub == 'members'}"
+                >
+                    <a href="#" [routerLink]="['/admin/projects',project.slug,'members']"><i
+                            class="fa fa-users mar-r-5"></i>Member</a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': admin_project_sub == 'settings'}"
+                >
+                    <a href="#" [routerLink]="['/admin/projects',project.slug,'settings']"><i
+                            class="fa fa-gears mar-r-5"></i>Setting</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

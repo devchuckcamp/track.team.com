@@ -20,8 +20,10 @@ const routes:   Routes = [
         canActivate:[AuthGuard],
         children:[
             { path: 'projects', loadChildren:'../project/project.module#ProjectModule'},
+            { path: 'projects/new', loadChildren:'../project/project.module#ProjectModule'},
             { path: 'projects/:project_name', loadChildren:'../project/project-detail.module#ProjectDetailModule'},
             { path: 'projects/:project_name/tickets', loadChildren:'../ticket/ticket.module#TicketModule'},
+            { path: 'projects/:project_name/tickets/:ticket_id', loadChildren:'../ticket/ticket.module#TicketModule'},
             { path: 'projects/:name/tasks', loadChildren:'../project/project-detail.module#ProjectDetailModule'},
             { path: 'fund/current', loadChildren:'../fund/fund.module#FundModule'},
             { path: 'fund/incoming', loadChildren:'../fund/fund-incoming.module#FundIncomingModule'},

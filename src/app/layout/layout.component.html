@@ -1,6 +1,8 @@
 <!--The content below is only a placeholder and can be replaced.-->
+<div class="navbar-container">
 <app-navbar></app-navbar>
-<div class="col-md-12">
+</div>
+<div class="col-md-12 pad-0">
     <div class="row" *ngIf="activeURL == '/admin'">
         <div class="col-md-3 pad-20 text-center">
             <div class="col">
@@ -34,5 +36,14 @@
             </div>
         </div>
     </div>
-    <router-outlet></router-outlet>
+    <div class="col-md-12 mar-0 h-100">
+        <app-left-menu *ngIf="admin_sub_2"  [project_name]="admin_sub_2" [admin_project_sub]="admin_project_sub"></app-left-menu>
+        <div class="col-md-10 offset-md-2">
+            <!-- Breadcrumbs -->
+            <app-breadcrumb [slug_list]="breadcrumb"></app-breadcrumb>
+            <!-- Main Content -->
+            <router-outlet></router-outlet>
+        </div>
+    </div>
 </div>
+<div id="footer"><p>Footer</p></div>

@@ -17,7 +17,7 @@
         <div *ngIf="projects" class="dropdown-menu">
           
           <a  *ngFor="let proj of projects"  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/'+proj.slug }" [routerLink]="['/admin/projects', proj.slug]">{{proj.name}}</a>
-          <!-- <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/incoming' }" [routerLink]="['/admin/fund/{{proj.name}}']">Mass Depot</a> -->
+          <a  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/new' || activeURL === '/admin/projects' }" [routerLink]="['/admin/projects/new']">Add Project</a>
         </div>
         <div *ngIf="!projects" class="dropdown-menu">
           

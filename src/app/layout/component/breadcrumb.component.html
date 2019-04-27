@@ -1,0 +1,11 @@
+<ul id="breadcrumb" class="mar-t-20">
+    <!-- <li><a href="#"><span class="fa fa-home"> </span></a></li>
+    <li><a href="#"><span class="fa fa-beaker"> </span> Projects</a></li>
+    <li><a href="#"><span class="fa fa-double-angle-right"></span> Breadcrumb</a></li>
+    <li><a href="#"><span class="fa fa-rocket"> </span> Getting started</a></li>
+    <li><a href="#"><span class="fa fa-arrow-down"> </span> Download</a></li> -->
+
+    <li *ngFor="let br of breadcrumbs"><a href="#">
+        <span class="fa fa-home"> {{br}}</span></a>
+    </li>
+</ul>

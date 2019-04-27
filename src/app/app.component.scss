@@ -1,0 +1,39 @@
+.left-nav-abs{
+    background: green;
+    height: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: 0;
+}
+.left-nav-bar{
+    background: #070b30;
+    height: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    margin-bottom: -45%;
+    padding-bottom: 0%;
+    z-index: 98;
+}
+
+
+.parent-left-menu-item{
+    list-style: none;
+    padding: 5px;
+    background: #3af3f3;
+    border: 1px solid gray;
+    a{
+        display: block!important;
+        width: 100%;
+        text-decoration: none;
+        color:#343a40;
+        font-weight: bolder;
+        font-size: 1.4em;
+    }
+}
+.parent-left-menu-item:hover,
+.parent-left-menu-item.active{
+    background: #1fb3b3;
+}
