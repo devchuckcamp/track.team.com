@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd  } from '@angular/router';
 import Chart from 'chart.js';
 import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
+import { AuthService } from '../service/auth.service';
+import { User } from '../model/user';
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
@@ -12,6 +14,7 @@ export class LayoutComponent implements OnInit {
   @ViewChild("chart")
   public refChart: ElementRef;
   public chartData: any;
+  public authUser:User;
   private viewInfoRoute : string;
   activeURL: string;
   admin_sub_1: string;
@@ -19,6 +22,7 @@ export class LayoutComponent implements OnInit {
   admin_project_sub: string;
   breadcrumb:any;
   constructor(
+    private authService: AuthService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     ) {
@@ -26,7 +30,7 @@ export class LayoutComponent implements OnInit {
       this.admin_sub_2 = "";
       this.admin_project_sub = "";
       this.router.events.subscribe(path =>{
-
+        
         if(path instanceof NavigationEnd ){
           //Get Url
           let currentURL = path.url;
@@ -45,7 +49,7 @@ export class LayoutComponent implements OnInit {
             this.admin_sub_1 = "projects";
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];
-            console.log(slug_list, 'slug_list');
+            console.log(this.activeURL, 'activeURL');
           }
         }
       });

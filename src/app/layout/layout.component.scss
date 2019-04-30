@@ -27,7 +27,7 @@ nav.navbar.navbar-expand-lg.sticky-top{
 
 // Left Sidebar Menu
 .left-nav-bar{
-    background: #070b30;
+    background: #2d323e!important;
     height: auto;
     position: absolute;
     bottom: 0;
@@ -41,7 +41,7 @@ nav.navbar.navbar-expand-lg.sticky-top{
 .parent-left-menu-item{
     list-style: none;
     padding: 5px;
-    background: #3af3f3;
+    // background: #3af3f3;
     border: 1px solid gray;
     a{
         display: block!important;
@@ -54,5 +54,5 @@ nav.navbar.navbar-expand-lg.sticky-top{
 }
 .parent-left-menu-item:hover,
 .parent-left-menu-item.active{
-    background: #1fb3b3;
+    background: #039be5;
 }

@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient,HttpClientModule, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { User } from '../model/user';
 import { UserService } from '../service/user.service';
+import { ProjectService } from '../service/project.service';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
 
 const ELEMENT_DATA: User[] = [];
@@ -13,9 +14,9 @@ const ELEMENT_DATA: User[] = [];
   styleUrls: ['./member.component.scss']
 })
 export class MemberComponent implements OnInit {
-
+  project_name: string;
   users : User[];
-  displayedColumns: string[] = ['username', 'name', 'email', 'action'];
+  displayedColumns: string[] = ['username', 'first_name', 'last_name', 'email', 'action'];
   // MatPaginator Inputs
   length = 5;
   pageSize = 5;
@@ -29,20 +30,19 @@ export class MemberComponent implements OnInit {
     private http: HttpClient,
     private route: ActivatedRoute,
     private userService:UserService,
+    private projectService:ProjectService,
   ) { }
 
   ngOnInit() {
-    this.getUser();
-    this.dataSource.paginator = this.paginator;
-  }
 
-  getUser(){
-    this.userService.getAll().subscribe(res => {
-      this.users = res;
-      // this.dataSource = this.users;
-      this.dataSource = new MatTableDataSource(res);
-      console.log(this.users,'users');
+    // this.getUser();
+    this.route.params.subscribe(params => {
+      if (params['project_name'] !== undefined) {
+          this.project_name = params['project_name'];
+          this.getMember();
+      }
     });
+    this.dataSource.paginator = this.paginator;
   }
 
   setPageSizeOptions(setPageSizeOptionsInput: string) {
@@ -74,5 +74,14 @@ export class MemberComponent implements OnInit {
     //      console.log("Error:"+err.status);
     //    }
     //    );
+  }
+
+  getMember(){
+    this.projectService.getAllMember(this.project_name).subscribe( res => {
+      console.log(res.data);
+      this.dataSource = new MatTableDataSource(res.data);
+      this.users = res.data;
+      this.length = res.total;
+    });
   }
 }

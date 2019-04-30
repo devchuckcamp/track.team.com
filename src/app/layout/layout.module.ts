@@ -9,9 +9,12 @@ import { NavbarModule } from '../navbar/navbar.module';
 import { LayoutComponent } from './layout.component';
 import { LeftMenuComponent } from '../layout/menu/left-menu.component';
 import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
+
+import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
 import { ProjectService } from '../service/project.service';
 import { TicketService } from '../service/ticket.service';
+import { ThreadService } from '../service/thread.service';
 
 @NgModule({
   declarations: [
@@ -31,9 +34,11 @@ import { TicketService } from '../service/ticket.service';
   exports:[
   ],
   providers: [
+    AuthService,
     UserService,
     ProjectService,
-    TicketService
+    TicketService,
+    ThreadService,
   ],
   bootstrap: [LayoutComponent]
 })

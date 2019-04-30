@@ -8,7 +8,7 @@ import { Ticket } from '../model/ticket';
 import { GlobalRoutesService } from '../config/config';
 
 @Injectable({ providedIn: 'root' })
-export class TicketService {
+export class MemberService {
     apiEndpoint:string;
     private Bearer:any;
 

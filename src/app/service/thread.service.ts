@@ -4,11 +4,11 @@ import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpReques
 import { Observable, throwError, Subject } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators'
 import { map, take } from 'rxjs/operators';
-import { Ticket } from '../model/ticket';
+import { Thread } from '../model/thread';
 import { GlobalRoutesService } from '../config/config';
 
 @Injectable({ providedIn: 'root' })
-export class TicketService {
+export class ThreadService {
     apiEndpoint:string;
     private Bearer:any;
 
@@ -28,18 +28,15 @@ export class TicketService {
     getProjectTicketAll(project_name: string){
         return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name, this.jt()).pipe(map( (res:any) => res));
     }
-    getProjectTicket(project_name: string = '',ticket_id:number){
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets/'+ticket_id+'?project='+project_name, this.jt()).pipe(map( (res:any) => res));
-    }
     getTicket(id: number) {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets/'+id, this.jt()).pipe(map( (res:any) => res));
     }
 
-    register(ticket: Ticket) {
-        return this.http.post(this.config.apiEndPoint()+'/api/v1/tickets/register', ticket);
+    send(thread: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/thread/', thread, this.jt());
     }
 
-    update(ticket: Ticket) {
+    update(ticket: Thread) {
         return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets/ticket.id', ticket);
     }
 

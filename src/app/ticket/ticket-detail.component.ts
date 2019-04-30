@@ -8,11 +8,11 @@ import { Thread } from '../model/thread';
 import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 
 @Component({
-  selector: 'app-ticket',
-  templateUrl: './ticket.component.html',
+  selector: 'app-ticket-detail',
+  templateUrl: './ticket-detail.component.html',
   styleUrls: ['./ticket.component.scss']
 })
-export class TicketComponent implements OnInit {
+export class TicketDetailComponent implements OnInit {
     tickets: Ticket[] = [];
     ticket: any;
     thread:any;
@@ -30,22 +30,23 @@ export class TicketComponent implements OnInit {
         private router: Router,
         private route: ActivatedRoute,
     ) {
-        this.loggedin_user = "Admin";
+        this.loggedin_user = "";
         this.replayView = false;
         this.loading = false;
+        this.user = this.authService.getAuthUser();
+        this.loggedin_user = this.user.username;
     }
 
     ngOnInit() {
         this.replayText = "";
         this.route.params.subscribe(params => {
-            if (params['project_name'] !== undefined) {
+            if (params['ticket_id'] !== undefined) {
                 this.project_name = params['project_name'];
-                this.loading = true;
-                this.ticketService.getProjectTicketAll(params['project_name']).subscribe( res => {
-                  this.loading = false;
-                    this.tickets = res.data;
-                    this.user = this.authService.getAuthUser();
-                    console.log(this.user, ' user');
+                this.loading = false;
+                this.ticketService.getProjectTicket(params['project_name'],params['ticket_id']).subscribe( res => {
+                    this.ticket = res;
+                    console.log(res, 'ticket');
+                    console.log(this.user.username, 'logged');
                 });
             } else {
 
@@ -60,7 +61,6 @@ export class TicketComponent implements OnInit {
 
     onReplayKey(text:string){
         this.replayText = text;
-        console.log(this.replayText,'this.replayText');
         return false;
     }
 
@@ -134,11 +134,6 @@ export class TicketComponent implements OnInit {
    
     public fileLeave(event){
       console.log(event);
-    }
-
-    public addNewTicket(){
-        console.log("New Ticket Form");
-        return false;
     }
 
 }

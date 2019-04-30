@@ -5,6 +5,8 @@ import { TicketRoutingModule } from './ticket-routing.module';
 import { UserService } from '../service/user.service';
 import { ClientGlobalRoutesService } from '../config/client';
 import { GlobalRoutesService } from '../config/config';
+import { FileDropModule } from 'ngx-file-drop';
+
 // Material
 import {
   MatAutocompleteModule,
@@ -86,6 +88,7 @@ import {
     MatTreeModule,
     CommonModule,
     TicketRoutingModule,
+    FileDropModule,
   ],
   providers:[
     UserService,

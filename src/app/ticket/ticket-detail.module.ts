@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MemberComponent } from './member.component';
-import { MemberRoutingModule } from './member-routing.module';
+import { TicketDetailComponent } from './ticket-detail.component';
+import { TicketDetailRoutingModule } from './ticket-detail-routing.module';
 import { UserService } from '../service/user.service';
-import { ProjectService } from '../service/project.service';
 import { ClientGlobalRoutesService } from '../config/client';
 import { GlobalRoutesService } from '../config/config';
+import { FileDropModule } from 'ngx-file-drop';
+
 // Material
 import {
   MatAutocompleteModule,
@@ -47,7 +48,7 @@ import {
 
 @NgModule({
   declarations: [
-    MemberComponent,
+    TicketDetailComponent,
   ],
   imports: [
     MatAutocompleteModule,
@@ -86,14 +87,14 @@ import {
     MatTooltipModule,
     MatTreeModule,
     CommonModule,
-    MemberRoutingModule,
+    TicketDetailRoutingModule,
+    FileDropModule,
   ],
   providers:[
     UserService,
     GlobalRoutesService,
     ClientGlobalRoutesService,
-    ProjectService,
   ]
 
 })
-export class MemberModule{ }
+export class TicketDetailModule{ }

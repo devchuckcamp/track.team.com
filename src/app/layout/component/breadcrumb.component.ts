@@ -13,6 +13,8 @@ import { Project } from '../../model/project';
 export class BreadcrumbComponent implements OnInit {
     @Input('slug_list') breadcrumbs:any;
     @Input('admin_project_sub') admin_project_sub:string;
+    @Input('project_name') project_name:string;
+
     active_menu:string;
     project:Project;
     activeURL: string;
@@ -27,7 +29,6 @@ export class BreadcrumbComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        console.log(this.breadcrumbs,'slug_list breadcrumbs');
         this.router.events.subscribe(path =>{
 
             if(path instanceof NavigationEnd ){
@@ -44,5 +45,13 @@ export class BreadcrumbComponent implements OnInit {
                 this.breadcrumbs = slug_list;
             }
         });
+    }
+
+    getRouterLink(index:number){
+        if(index == 1 || index == 0)  return '/admin';
+        if(index == 2) return '/admin/'+this.breadcrumbs[index];
+        if(index == 3) return '/admin/projects/'+this.project_name;
+        if(index == 4) return '/admin/projects/'+this.project_name+'/'+this.breadcrumbs[index];
+        if(index == 5) return '/admin/projects/'+this.project_name+'/'+this.breadcrumbs[4]+'/'+this.breadcrumbs[index];
     }
 }

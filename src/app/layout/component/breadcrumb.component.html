@@ -4,8 +4,12 @@
     <li><a href="#"><span class="fa fa-double-angle-right"></span> Breadcrumb</a></li>
     <li><a href="#"><span class="fa fa-rocket"> </span> Getting started</a></li>
     <li><a href="#"><span class="fa fa-arrow-down"> </span> Download</a></li> -->
-
-    <li *ngFor="let br of breadcrumbs"><a href="#">
-        <span class="fa fa-home"> {{br}}</span></a>
+    <li *ngFor="let br of breadcrumbs;let i = index">
+        <a *ngIf="i > 0 || br == 'admin' " href="#"
+                [routerLink]="[getRouterLink(i)]"
+        ><span 
+            class="fa "
+            [ngClass]="[i == 1 && br == 'admin' ? 'fa-home' : '']"
+            >{{ br !== 'admin' ? br : ''}}</span></a>
     </li>
 </ul>

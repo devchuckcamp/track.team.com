@@ -20,7 +20,7 @@ export class AuthService {
         ) {
             this.apiEndpoint = this.config.apiEndPoint();
             if(localStorage.getItem("currentUser")){
-                this.Bearer = localStorage.getItem("currentUser");
+                this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
             }
         }
 
@@ -46,7 +46,12 @@ export class AuthService {
     getAll(): Observable<User[]> {
         return this.http.get<User[]>(this.config.apiEndPoint()+'/users');
     }
-
+    getAuthenticatedUser(){
+        return this.http.get<User[]>(this.config.apiEndPoint()+'/api/user',this.jt());
+    }
+    getAuthUser(){
+        return JSON.parse(localStorage.getItem("authUser"));
+    }
     getById(id: number) {
         return this.http.get<User>(this.config.apiEndPoint()+'/users/'+id, this.jt());
     }
