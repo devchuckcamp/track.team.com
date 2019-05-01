@@ -1,11 +1,12 @@
 <div class="col-lg-12 content-header text-center">
     <h2 class="header-title" *ngIf="project_name">{{project_name | uppercase}} Ticket</h2>
 </div>
-<div class="col-lg-12 content-option text-right mar-10 pad-10">
-       <a href="#" (click)="addNewTicket()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a> 
+<div  class="col-lg-12 content-option text-right mar-10 pad-10">
+    <a href="#" *ngIf="!ticketFormShow" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a>
+    <a href="#" *ngIf="ticketFormShow" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
 </div>
-<div class="col-lg-12 content-main">
-    <div *ngIf="!ticket" class="table-responsive table-striped">
+<div  class="col-lg-12 content-main">
+    <div *ngIf="!ticketFormShow" class="table-responsive table-striped">
         <table class="table">
             <thead>
                 <tr>
@@ -48,7 +49,7 @@
                             [routerLink]="['/admin/projects', project_name, 'tickets', ticket.id]" 
                             class="btn btn-success mar-r-5"><i
                                 class="fa fa-eye"></i></a>
-                        <a href="#" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                        <a href="#" (click)="deleteTicket(ticket.id)" class="btn btn-danger"><i class="fa fa-trash"></i></a>
                     </td>
                 </tr>
             </tbody>
@@ -60,84 +61,77 @@
             
         </table>
     </div>
-    <div *ngIf="ticket" class="col-lg-12">
-        <div class="thread-container col-lg-12">
-            <h2>{{ticket.title}}</h2>
-            <form>
-                <!-- <div class="form-group">
-                    <label for="exampleInputEmail1">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                    </div>
-                    <div class="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                    </div> -->
-                <div class="form-group">
-                    <label for="exampleFormControlTextarea1">Description</label>
-                    <textarea disabled class="form-control" id="exampleFormControlTextarea1"
-                        rows="3">{{ticket.description}}</textarea>
-                </div>
-                <!-- <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                    </div> -->
-                <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
-            </form>
-        </div>
-        <div class="thread-container col-lg-12">
-            <div *ngIf="ticket.thread" class="thread-list-container row mar-0 text-center">
+   
+    <form  *ngIf="ticketFormShow"  
+        [@enterAnimation] mat-form 
+        [formGroup]="ticketForm" id="ticketForm" 
+        (submit)="addNewTicket()"
+        novalidate>
+        <!-- <div class="inline-block pull-left half-width text-left">
+                <img class=""   *ngIf="(uploadedImage || defaultImage != null) && !loadingImage" ngShow="!loadingImage" [src]="defaultImage ? defaultImage : uploadedImage" width="100" height="100">
+                <img class="rounded-circle" *ngIf="loadingImage" src="../../assets/icon/loading.gif"  width="50" height="50" alt="loading logo">
                 <div>
-                    <label for="no-list" class="label text-info">Ticket has {{ticket.thread.length}} discussions</label>
+                    <label for="file">Update</label>
+                    <button mat-button color="accent" 
+                            mat-mini-fab (click)="imgFileInput.click();">
+                        <mat-icon>attachment</mat-icon>
+                    </button> 
+                    <input hidden type='file'#imgFileInput (change)="readUrl($event)">
                 </div>
-                <div *ngFor="let thread of ticket.thread" class="thread-message mar-y-10 full-w pad-0">
-                    <div class="card thread-message-content">
-                        <div class="card-body row">
-                            <div [ngClass]="{'comment-own order-md-2': thread.message_by.name == loggedin_user}"
-                                class="col card-header thread-message-head q-width border-rad-10 pad-20"> <label
-                                    for="">{{thread.message_by.name == loggedin_user ? 'You' : thread.message_by.name }}</label>
-                                : <label class="message-create">{{thread.created_at}}</label></div>
-                            <div [ngClass]="{'text-right': thread.message_by.name == loggedin_user, 'text-left': thread.message_by.name != loggedin_user}"
-                                class="col-lg-9 card-body thread-message-wrapper">{{thread.message}}</div>
-                        </div>
-                    </div>
-                </div>
-               
+        </div> -->
+
+        <!-- <div class="inline-block pull-left half-width">
+            
+        </div> -->
+        <!-- Title -->
+        <div class="half-width row">
+            <div class="form-group half-width">
+                <mat-form-field class="full-w">
+                    <input matInput formControlName="title" placeholder="Title" [(ngModel)]="ticketToAdd.title" required>
+                </mat-form-field>
             </div>
-            <div *ngIf="loading" class="col-lg-12 loading text-center">
-                <img *ngIf="loading" src="../../assets/icon/loading.gif">
+            <!-- Description -->
+            <div class="form-group full-w">
+                <mat-form-field class="full-w">
+                    <textarea matInput formControlName="description" matTextareaAutosize matAutosizeMinRows=5  matAutosizeMaxRows=6 placeholder="Description" [(ngModel)]="ticketToAdd.description" required></textarea>
+                </mat-form-field>
             </div>
-            <div *ngIf="!ticket.thread" class="thread-list-container row mar-0 text-center">
-                <label for="no-list" class="label text-danger">This ticket has not started a discussion yet.</label>
+             <!-- Assignee -->
+             <div class="form-group full-w">
+                 <p *ngIf="!members.length " class="text-danger">This project has no member yet. Consider adding one first.</p>
+                <mat-form-field>
+                    <mat-label>Assign to </mat-label>
+                    <select matNativeControl  formControlName="assigned_to" [(ngModel)]="ticketToAdd.assigned_to" name="assigned_to">
+                      <option value="" selected>None</option>
+                      <option *ngFor="let member of members" [value]="member.user.id">
+                        {{member.user_info.first_name }} {{ member.user_info.last_name }} ({{member.user.username}})
+                      </option>
+                    </select>
+                </mat-form-field>
             </div>
-           
-            <div *ngIf="ticket.thread" class="thread-list-reply-container row mar-0 text-center">
-                    <textarea 
-                        *ngIf="replayView && !loading" class="form-control" id="commentReplayBox" rows="5"
-                        #replyText (keyup)="onReplayKey(replyText.value)" (blur)="onReplayKey(replyText.value)"
-                    ></textarea>
-                    <div *ngIf="replayView && !loading" class="center">
-                            <file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)" 
-                            (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
-                                <span>optional content (don't set dropZoneLabel then)</span>
-                            </file-drop>
-                            <div class="upload-table">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="upload-name-style">
-                                        <tr *ngFor="let item of files; let i=index">
-                                            <td><strong>{{ item.relativePath }}</strong></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                <button type="submit" (click)="submitReplyBox()" class="btn btn-info mar-0-auto pad-x-30 font-25 mar-t-20">Reply</button>
+             <!-- Action -->
+             <div class="form-group full-w">
+                <mat-action-row>
+                    <button mat-button color="primary" [disabled]="(!ticketForm.valid && !ticketForm.touched ) || submitting" (click)="addNewTicket()" >Update</button>
+                </mat-action-row>
             </div>
+            <!-- <mat-form-field class="">
+                <input matInput [matDatepicker]="picker" (blur)="setAge()" (input)="setAge()" formControlName="birth_date" placeholder="Birth Date" [matDatepicker]="picker" (focus)="picker.open()" [(ngModel)]="ticketToAdd.title" required [readonly]="!canEditData">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #picker (closed)="setAge()"></mat-datepicker>
+                <mat-hint align="end">
+                    <mat-icon class="mat-icon">schedule</mat-icon>
+                    <span aria-live="polite">Age: {{ age ? age : 0}} </span>
+                </mat-hint>
+            </mat-form-field> -->
+
+            <!-- <mat-form-field class="">
+                <input matInput [(ngModel)]="ticketToAdd.title" formControlName="zip" #postalCode maxLength="4" placeholder="Postal Code" pattern="[0-9]{4}" required [readonly]="!canEditData">
+                <mat-hint align="end">
+                    <mat-icon>mode_edit</mat-icon>
+                    <span aria-live="polite">{{postalCode.value.length}} / 4</span>
+                </mat-hint>
+            </mat-form-field> -->
         </div>
-    </div>
+    </form>
 </div>

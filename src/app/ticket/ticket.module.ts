@@ -6,7 +6,8 @@ import { UserService } from '../service/user.service';
 import { ClientGlobalRoutesService } from '../config/client';
 import { GlobalRoutesService } from '../config/config';
 import { FileDropModule } from 'ngx-file-drop';
-
+import { FormsModule,ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators, EmailValidator,
+  FormGroupDirective, NgForm, } from '@angular/forms';
 // Material
 import {
   MatAutocompleteModule,
@@ -89,6 +90,12 @@ import {
     CommonModule,
     TicketRoutingModule,
     FileDropModule,
+    FormsModule,
+    ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
+  ],
+  exports:[
+    FormsModule,
+    CommonModule,
   ],
   providers:[
     UserService,

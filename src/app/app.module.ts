@@ -5,15 +5,6 @@ import {NgbModule, NgbAlertModule} from '@ng-bootstrap/ng-bootstrap';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule }    from '@angular/forms';
-// import {
-//   MatButtonModule,
-//   MatCheckboxModule,
-//   MatIconModule,
-//   MatMenuModule
-
-// } from '@angular/material';
-// import {MatSidenavModule} from '@angular/material/sidenav';
-// import {MatToolbarModule} from '@angular/material/toolbar';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LayoutModule } from './layout/layout.module';
@@ -32,7 +23,6 @@ import { ClientGlobalRoutesService } from './config/client';
     RegisterComponent,
   ],
   imports: [
-    CommonModule,
     BrowserAnimationsModule,
     HttpClientModule,
     NgbModule.forRoot(),

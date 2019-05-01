@@ -6,6 +6,8 @@ import { UserService } from '../service/user.service';
 import { ProjectService } from '../service/project.service';
 import { ClientGlobalRoutesService } from '../config/client';
 import { GlobalRoutesService } from '../config/config';
+import { FormsModule,ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators, EmailValidator,
+  FormGroupDirective, NgForm, } from '@angular/forms';
 // Material
 import {
   MatAutocompleteModule,
@@ -87,6 +89,9 @@ import {
     MatTreeModule,
     CommonModule,
     MemberRoutingModule,
+    ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
+    FormsModule,
+
   ],
   providers:[
     UserService,

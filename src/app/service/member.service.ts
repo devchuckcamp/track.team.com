@@ -35,6 +35,10 @@ export class MemberService {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets/'+id, this.jt()).pipe(map( (res:any) => res));
     }
 
+    searchMember(term:string){
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/users/?search=1&term='+term, this.jt()).pipe(map( (res:any) => res));
+    }
+
     register(ticket: Ticket) {
         return this.http.post(this.config.apiEndPoint()+'/api/v1/tickets/register', ticket);
     }

@@ -35,8 +35,8 @@ export class TicketService {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets/'+id, this.jt()).pipe(map( (res:any) => res));
     }
 
-    register(ticket: Ticket) {
-        return this.http.post(this.config.apiEndPoint()+'/api/v1/tickets/register', ticket);
+    save(ticket: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/tickets', ticket, this.jt());
     }
 
     update(ticket: Ticket) {
@@ -44,7 +44,7 @@ export class TicketService {
     }
 
     delete(id: number) {
-        return this.http.delete(this.config.apiEndPoint()+'/tickets/id');
+        return this.http.delete(this.config.apiEndPoint()+'/api/v1/tickets/'+id, this.jt());
     }
 
     private jt() {

@@ -25,7 +25,6 @@ import { ThreadService } from '../service/thread.service';
   ],
   imports: [
     CommonModule,
-    BrowserAnimationsModule,
     NgbModule.forRoot(),
     NgbAlertModule,
     NavbarModule,

@@ -13,6 +13,9 @@ li.active{
 .clickable{
     cursor: pointer!important;
 }
+.cdk-overlay-container {
+  z-index: 9999;
+}
 /* Global */
 .clickable:hover{
   opacity: 0.7;
