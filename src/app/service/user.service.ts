@@ -18,7 +18,7 @@ export class UserService {
         ) {
             this.apiEndpoint = this.config.apiEndPoint();
             if(localStorage.getItem("currentUser")){
-                this.Bearer = localStorage.getItem("currentUser");
+                this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
             }
         }
 
@@ -42,8 +42,12 @@ export class UserService {
         return this.http.get<User>(this.config.apiEndPoint()+'/users/'+id, this.jt());
     }
 
-    register(user: User) {
-        return this.http.post(this.config.apiEndPoint()+'/users/register', user);
+    save(user: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/users', user, this.jt());
+    }
+
+    saveinfo(user_details: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/users/details', user_details, this.jt());
     }
 
     update(user: User) {

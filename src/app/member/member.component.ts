@@ -5,10 +5,16 @@ import { User } from '../model/user';
 import { UserService } from '../service/user.service';
 import { ProjectService } from '../service/project.service';
 import { MemberService } from '../service/member.service';
-import {MatPaginator, MatTableDataSource} from '@angular/material';
+import {MatPaginator, MatSnackBar, MatTableDataSource} from '@angular/material';
 import { FormGroup, FormBuilder, FormControl, Validators, EmailValidator } from '@angular/forms';
 import { trigger, style, animate, transition } from '@angular/animations';
-
+import { MustMatch } from '../component/validator/must-match.validator';
+interface createdAccount {
+  id: number,
+  name: string,
+  username: string,
+  role_id: number
+}
 const ELEMENT_DATA: User[] = [];
 
 @Component({
@@ -34,6 +40,7 @@ export class MemberComponent implements OnInit {
   project_name: string;
   project_id: number;
   users : User[];
+  memberSearchResult:any;
   displayedColumns: string[] = ['username', 'first_name', 'last_name', 'email', 'action'];
   // MatPaginator Inputs
   length = 5;
@@ -55,6 +62,8 @@ export class MemberComponent implements OnInit {
     private userService:UserService,
     private projectService:ProjectService,
     private memberService:MemberService,
+    private formBuilder: FormBuilder,
+    private snackBar: MatSnackBar,
   ) { }
 
   ngOnInit() {
@@ -67,10 +76,16 @@ export class MemberComponent implements OnInit {
     this.memberToAdd.status_id = null;
     this.length = 0;
 
-    this.memberForm = new FormGroup({
-      'title': new FormControl('', [Validators.required,]),
-      'description': new FormControl('', [Validators.required,]),
-      'assigned_to': new FormControl('', [Validators.required,]),
+    this.memberForm = this.formBuilder.group({
+      'username': new FormControl('', [Validators.required]),
+      'email': new FormControl('', [Validators.required,Validators.email]),
+      'password': new FormControl('', [Validators.required]),
+      'confirmPassword': new FormControl('', [Validators.required]),
+      'role_id': new FormControl('', [Validators.required]),
+      'first_name': new FormControl('', [Validators.required]),
+      'last_name': new FormControl('', [Validators.required]),
+    }, {
+        validator: MustMatch('password', 'confirmPassword')
     });
     
     this.route.params.subscribe(params => {
@@ -84,6 +99,10 @@ export class MemberComponent implements OnInit {
     });
     this.dataSource.paginator = this.paginator;
   }
+
+  // convenience getter for easy access to form fields
+  get f() { return this.memberForm.controls; }
+
 
   setPageSizeOptions(setPageSizeOptionsInput: string) {
     console.log(setPageSizeOptionsInput);
@@ -128,8 +147,7 @@ export class MemberComponent implements OnInit {
   toggleMemberForm(){
     if(! this.memberFormShow ) this.memberFormShow = true;
     else  this.memberFormShow = false;
-    console.log("New Ticket Form");
-    
+
     return false;
   }
 
@@ -144,8 +162,91 @@ export class MemberComponent implements OnInit {
     console.log(term,'term');
     this.memberService.searchMember(term).subscribe(res=>{
       console.log(res, 'member search result');
+      if(res.length){
+        this.memberSearchResult = res;
+      } else {
+        this.memberSearchResult = [];
+      }
     });
     return false;
+  }
+
+  addMemberToProject(member:any){
+
+    let memberObj = {
+      user_id:member.user.id,
+      project_id: this.project_id,
+    };
+    this.memberService.save(memberObj).subscribe( res => {
+      console.log(res);
+    });
+    return false;
+  }
+
+  addNewAccountToProject(){
+    if(this.memberForm.valid){
+      let username = this.memberForm.value.username;
+      let name = username;
+      let email = this.memberForm.value.email;
+      let password = this.memberForm.value.password;
+      let role_id = this.memberForm.value.role_id;
+      let account = {
+          username:username,
+          email:email,
+          name:name,
+          password:password,
+          role_id: role_id
+        };
+      // Save Account information
+      this.userService.save(account).subscribe( (res) => {
+        let save_account:any = res;
+        if(save_account.id){
+          let account_info = {
+            first_name:this.memberForm.value.first_name,
+            last_name:this.memberForm.value.last_name,
+            user_id:save_account.id,
+          };
+          // Save additional information
+          this.userService.saveinfo(account_info).subscribe( (res) => {
+            if(res){
+              let memberObj = {
+                user_id:save_account.id,
+                project_id: this.project_id,
+              };
+              // Save Membership information
+              this.memberService.save(memberObj).subscribe( res => {
+                this.getMember();
+                this.memberForm.reset();
+                this.toggleMemberForm();
+              });
+            }
+          });
+
+          this.snackBar.open('New Member has been added', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "success-snack"
+              }
+          );
+
+        } else {
+          this.snackBar.open('An error occured during  account creation.', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "fail-snack"
+              }
+          );
+        }
+      });
+      
+
+    } else {
+
+    }
   }
 
 }

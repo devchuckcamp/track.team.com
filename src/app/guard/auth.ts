@@ -9,15 +9,16 @@ export class AuthGuard implements CanActivate {
         private authService:AuthService,
         
         ) {
-        this.authService.getAuthenticatedUser().subscribe( res => {
-            localStorage.setItem('authUser',JSON.stringify(res));
-        });
+        
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
         let domain = localStorage.getItem('domain');
 
         if (localStorage.getItem('currentUser') !== null) {
+            this.authService.getAuthenticatedUser().subscribe( res => {
+                localStorage.setItem('authUser',JSON.stringify(res));
+            });
             return true;
         }
 

@@ -39,8 +39,8 @@ export class MemberService {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/users/?search=1&term='+term, this.jt()).pipe(map( (res:any) => res));
     }
 
-    register(ticket: Ticket) {
-        return this.http.post(this.config.apiEndPoint()+'/api/v1/tickets/register', ticket);
+    save(member: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/projects/members', member, this.jt());
     }
 
     update(ticket: Ticket) {

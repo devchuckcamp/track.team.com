@@ -57,6 +57,10 @@ export class LoginComponent implements OnInit {
                 data => {
 
                     localStorage.setItem('currentUser',JSON.stringify(data));
+                    this.authenticationService.getAuthenticatedUser().subscribe( res => {
+                        localStorage.setItem('authUser',JSON.stringify(res));
+                        localStorage.setItem('csrf_token',JSON.stringify({'token':'lkcc371220183d'}));
+                    });
                     if(data.access_token)
                         this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);
 

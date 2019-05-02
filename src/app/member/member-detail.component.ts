@@ -12,7 +12,7 @@ import { UserService } from '../service/user.service';
 
 
 export class MemberDetailComponent implements OnInit {
-  user:User;
+  user:any;
   users : User[];
   constructor(
     private router: Router,

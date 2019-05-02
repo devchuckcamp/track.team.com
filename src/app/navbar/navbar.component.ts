@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart, NavigationEnd, NavigationError, NavigationCancel, RoutesRecognized } from '@angular/router';
 import { ProjectService } from '../service/project.service';
-
+import { AuthService } from '../service/auth.service';
 
 import { Project } from '../model/project';
 
@@ -18,6 +18,7 @@ export class NavbarComponent implements OnInit {
     private router: Router,
     private activedRoute: ActivatedRoute,
     private projectService: ProjectService,
+    private authService:AuthService,
   ) {
     this.router.events.subscribe(path =>{
 
@@ -52,7 +53,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.projectService.getAll().subscribe(res=>{
-
+      console.log(res.data,'navbar');
       if(res){
         this.projects = res.data;
       }
@@ -62,6 +63,7 @@ export class NavbarComponent implements OnInit {
 
   logout(){
     localStorage.clear();
+    this.authService.Bearer = '';
     this.router.navigate(['/login'] );
     return false;
   }

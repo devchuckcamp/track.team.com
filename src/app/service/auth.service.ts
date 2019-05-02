@@ -12,7 +12,7 @@ import { ClientGlobalRoutesService } from '../config/client';
 export class AuthService {
     apiEndpoint:string;
     Bearer:any;
-
+    CSRF_TOKEN:any;
     constructor(
         private config: GlobalRoutesService,
         private client:ClientGlobalRoutesService,
@@ -21,6 +21,11 @@ export class AuthService {
             this.apiEndpoint = this.config.apiEndPoint();
             if(localStorage.getItem("currentUser")){
                 this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
+            }
+            if(localStorage.getItem("csrf_token")){
+                this.CSRF_TOKEN = JSON.parse(localStorage.getItem("csrf_token")).token;
+            } else {
+                localStorage.setItem('csrf_token',JSON.stringify({'token':'lkcc371220183d'}));
             }
         }
 
@@ -47,6 +52,9 @@ export class AuthService {
         return this.http.get<User[]>(this.config.apiEndPoint()+'/users');
     }
     getAuthenticatedUser(){
+        if(localStorage.getItem("currentUser")){
+            this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
+        }
         return this.http.get<User[]>(this.config.apiEndPoint()+'/api/user',this.jt());
     }
     getAuthUser(){
