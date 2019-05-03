@@ -1,9 +1,9 @@
 <div class="col-lg-12 content-header text-center">
     <h2 class="header-title" *ngIf="project_name">{{project_name | uppercase}} Ticket</h2>
 </div>
-<div  class="col-lg-12 content-option text-right mar-10 pad-10">
-    <a href="#" *ngIf="!ticketFormShow" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a>
-    <a href="#" *ngIf="ticketFormShow" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
+<div  *ngIf="auth" class="col-lg-12 content-option text-right mar-10 pad-10">
+    <a href="#" *ngIf="auth.role_id < 4 && !ticketFormShow" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a>
+    <a href="#" *ngIf="auth.role_id < 4 && ticketFormShow" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
 </div>
 <div  class="col-lg-12 content-main">
     <div *ngIf="!ticketFormShow" class="table-responsive table-striped">

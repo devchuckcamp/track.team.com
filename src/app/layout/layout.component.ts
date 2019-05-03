@@ -30,7 +30,7 @@ export class LayoutComponent implements OnInit {
       this.admin_sub_2 = "";
       this.admin_project_sub = "";
       this.router.events.subscribe(path =>{
-        
+
         if(path instanceof NavigationEnd ){
           //Get Url
           let currentURL = path.url;
@@ -44,12 +44,10 @@ export class LayoutComponent implements OnInit {
           let slug_list = this.activeURL.split('/');
           this.breadcrumb = slug_list;
           let isSubRoute = (this.activeURL.match(/\//g) || []).length;
-          
           if(slug_list.includes("projects") || slug_list[2] == 'projects'){
             this.admin_sub_1 = "projects";
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];
-            console.log(this.activeURL, 'activeURL');
           }
         }
       });

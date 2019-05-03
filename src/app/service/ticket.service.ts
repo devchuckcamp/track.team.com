@@ -39,8 +39,16 @@ export class TicketService {
         return this.http.post(this.config.apiEndPoint()+'/api/v1/tickets', ticket, this.jt());
     }
 
-    update(ticket: Ticket) {
-        return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets/ticket.id', ticket);
+    update(ticket: any, type:string = 'all'):any {
+        let data = JSON.stringify({
+            status_id:ticket.status_id
+        });
+        if(type == 'status'){
+            data = JSON.stringify({
+                status_id:ticket.status_id
+            });
+        }
+        return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets/'+ticket.id, data, this.jt());
     }
 
     delete(id: number) {

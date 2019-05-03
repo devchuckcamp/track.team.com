@@ -1,6 +1,7 @@
 <div *ngIf="ticket" class="col-lg-12">
     <div class="thread-container col-lg-12">
-        <h2>{{ticket.title}}</h2>
+        <h2>{{ticket.title}}     <span *ngIf="ticket.assigned_to.id == auth.id" class="badge font-white font-12 bg-success">Assigned to you</span></h2> 
+         
         <form>
             <!-- <div class="form-group">
                 <label for="exampleInputEmail1">Email address</label>
@@ -11,6 +12,16 @@
                 <label for="exampleInputPassword1">Password</label>
                 <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
                 </div> -->
+            <div class="form-group"  *ngIf="ticket.assigned_to.id == auth.id || ticket.created_by.id == auth.username">
+                <label class="mar-r-10" for="ticket-status">Status  </label>
+                <select #ticketStatus (change)="updateTicketStatus(ticketStatus.value)">
+                    <option value="1" [selected]="ticket.status_id == 1">Open</option>
+                    <option value="2" [selected]="ticket.status_id == 2">In progress</option>
+                    <option value="3" [selected]="ticket.status_id == 3">For Testing</option>
+                    <option value="4" [selected]="ticket.status_id == 4">On QA</option>
+                    <option value="5" [selected]="ticket.status_id == 5">Complete</option>
+                </select>
+            </div>
             <div class="form-group">
                 <label for="exampleFormControlTextarea1">Description</label>
                 <textarea disabled class="form-control" id="exampleFormControlTextarea1"
@@ -23,58 +34,54 @@
             <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
         </form>
     </div>
+    <div *ngIf="!thread loading" class="col-lg-12 loading text-center">
+        <img *ngIf="loading" src="../../assets/icon/loading.gif">
+    </div>
     <div class="thread-container col-lg-12">
-        <div *ngIf="ticket.thread" class="thread-list-container row mar-0 text-center">
+        <div *ngIf="thread" class="thread-list-container row mar-0 text-center">
             <div>
                 <label for="no-list" class="label text-info">Ticket has {{ticket.thread.length}} discussions</label>
             </div>
             <div *ngFor="let thread of ticket.thread" class="thread-message mar-y-10 full-w pad-0">
                 <div class="card thread-message-content">
                     <div class="card-body row">
-                        <div [ngClass]="{'comment-own order-md-2': thread.message_by.username == loggedin_user}"
+                        <div [ngClass]="{'comment-own order-md-2': thread.user_id == auth.id}"
                             class="col card-header thread-message-head q-width border-rad-10 pad-20"> <label
-                                for="">{{thread.message_by.username == loggedin_user ? 'You' : thread.message_by.name }}</label>
+                                for="">{{thread.user_id == auth.id ? 'You' : thread.message_by.name }}</label>
                             : <label class="message-create">{{thread.created_at}}</label></div>
-                        <div [ngClass]="{'text-right': thread.message_by.username == loggedin_user, 'text-left': thread.message_by.username != loggedin_user}"
+                        <div [ngClass]="{'text-right': thread.user_id == auth.id, 'text-left': thread.message_by.username != loggedin_user}"
                             class="col-lg-9 card-body thread-message-wrapper">{{thread.message}}</div>
                     </div>
                 </div>
             </div>
-           
-        </div>
-        <div *ngIf="loading" class="col-lg-12 loading text-center">
-            <img *ngIf="loading" src="../../assets/icon/loading.gif">
         </div>
         <div *ngIf="!ticket.thread" class="thread-list-container row mar-0 text-center">
             <label for="no-list" class="label text-danger">This ticket has not started a discussion yet.</label>
         </div>
-       
+
         <div *ngIf="ticket.thread" class="thread-list-reply-container row mar-0 text-center">
-                <textarea 
-                    *ngIf="replayView && !loading" class="form-control" id="commentReplayBox" rows="5"
-                    #replyText (keyup)="onReplayKey(replyText.value)" (blur)="onReplayKey(replyText.value)"
-                ></textarea>
-                <div *ngIf="replayView && !loading" class="center">
-                        <file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)" 
-                        (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
-                            <span>optional content (don't set dropZoneLabel then)</span>
-                        </file-drop>
-                        <div class="upload-table">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="upload-name-style">
-                                    <tr *ngFor="let item of files; let i=index">
-                                        <td><strong>{{ item.relativePath }}</strong></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-            <button type="submit" (click)="submitReplyBox()" class="btn btn-info mar-0-auto pad-x-30 font-25 mar-t-20">Reply</button>
+            <div *ngIf="replayView && !loading" class="center full-w pad-y-10">
+                <file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)" (onFileOver)="fileOver($event)"
+                    (onFileLeave)="fileLeave($event)">
+                    <span>File</span>
+                </file-drop>
+                <div class="upload-table hidden">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody class="upload-name-style">
+                            <tr *ngFor="let item of files; let i=index">
+                                <td><strong>{{ item.relativePath }}</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <textarea *ngIf="replayView && !loading" class="form-control" id="commentReplayBox" rows="5" #replyText (keyup)="onReplayKey(replyText.value)" (blur)="onReplayKey(replyText.value)"></textarea>
+            <button type="submit" (click)="submitReplyBox()" class="btn btn-info mar-0-auto pad-x-30 font-25 mar-t-20">Comment</button>
         </div>
     </div>
 </div>

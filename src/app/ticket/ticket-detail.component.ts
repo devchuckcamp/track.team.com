@@ -5,6 +5,8 @@ import { ThreadService } from '../service/thread.service';
 import { AuthService } from '../service/auth.service';
 import { Ticket } from '../model/ticket';
 import { Thread } from '../model/thread';
+import { User } from '../model/user';
+import { MatSnackBar  } from '@angular/material';
 import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 
 @Component({
@@ -16,7 +18,7 @@ export class TicketDetailComponent implements OnInit {
     tickets: Ticket[] = [];
     ticket: any;
     thread:any;
-    user:any;
+    auth:any;
     project_name:string;
     loggedin_user:string;
     replayView:boolean;
@@ -29,12 +31,13 @@ export class TicketDetailComponent implements OnInit {
         private authService:    AuthService,
         private router: Router,
         private route: ActivatedRoute,
+        private snackBar: MatSnackBar,
     ) {
+        this.auth = this.authService.getAuthUser();
         this.loggedin_user = "";
         this.replayView = false;
         this.loading = false;
-        this.user = this.authService.getAuthUser();
-        this.loggedin_user = this.user.username;
+        this.loggedin_user = this.auth.username;
     }
 
     ngOnInit() {
@@ -42,11 +45,20 @@ export class TicketDetailComponent implements OnInit {
         this.route.params.subscribe(params => {
             if (params['ticket_id'] !== undefined) {
                 this.project_name = params['project_name'];
-                this.loading = false;
+                
                 this.ticketService.getProjectTicket(params['project_name'],params['ticket_id']).subscribe( res => {
-                    this.ticket = res;
-                    console.log(res, 'ticket');
-                    console.log(this.user.username, 'logged');
+                  console.log(res); 
+                  if(res){
+                      this.ticket = res;
+                    }
+                    this.loading = true;
+                    this.threadService.getAllTicketThread(res.id).subscribe( res => {
+                      if(res.data){
+                        this.thread = res.data;
+                      }
+                      this.loading = false;
+                    });
+                    this.auth = this.authService.getAuthUser();
                 });
             } else {
 
@@ -72,7 +84,7 @@ export class TicketDetailComponent implements OnInit {
                 this.replayView  = false;
                 let thread = {
                     "ticket_id":this.ticket.id,
-                    "user_id": this.user.id,
+                    "user_id": this.auth.id,
                     "message":this.replayText,
                 };
                 this.threadService.send(thread).subscribe( res => {
@@ -136,4 +148,29 @@ export class TicketDetailComponent implements OnInit {
       console.log(event);
     }
 
+    updateTicketStatus(status:number){
+      console.log(status,'status updated');
+      this.ticket.status_id = status;
+      let data = {
+        status_id:status
+      }
+
+      this.ticketService.update(this.ticket,'status').subscribe( res => {
+
+        if(res && res.status_id == status){
+          console.log(res,'updated');
+          this.snackBar.open('Data has been updated', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "success-snack"
+              }
+          );
+        } else {
+
+        }
+
+      });
+    }
 }

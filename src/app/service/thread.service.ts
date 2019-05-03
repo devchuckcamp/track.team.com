@@ -29,7 +29,10 @@ export class ThreadService {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name, this.jt()).pipe(map( (res:any) => res));
     }
     getTicket(id: number) {
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets/'+id, this.jt()).pipe(map( (res:any) => res));
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/thread/'+id, this.jt()).pipe(map( (res:any) => res));
+    }
+    getAllTicketThread(ticket_id: number) {
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/thread?ticket='+ticket_id, this.jt()).pipe(map( (res:any) => res));
     }
 
     send(thread: any) {

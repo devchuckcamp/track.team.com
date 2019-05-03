@@ -53,11 +53,9 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.projectService.getAll().subscribe(res=>{
-      console.log(res.data,'navbar');
       if(res){
         this.projects = res.data;
       }
-      
     });
   }
 

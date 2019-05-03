@@ -32,7 +32,6 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
         this.active_menu = this.admin_project_sub;
         this.onload_slug_list = [];
         this.is_dashboard = true;
-        console.log(window.location.pathname,'hay');
         let currentURL = window.location.pathname;
         //Get Params
         let indexActUrlParam = currentURL.indexOf("?");
@@ -45,7 +44,11 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
         this.onload_slug_list = slug_list;
         this.admin_project_sub =  slug_list[slug_list.length-1];
         this.admin_sub_3 = this.admin_project_sub;
-        
+        this.project = {
+            id:null,
+            name:'',
+            slug:''
+        };
         if(slug_list.length<4){
             this.is_dashboard = false;
         } else {
@@ -57,8 +60,6 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
             this.admin_project_sub =  slug_list[slug_list.length-1];
             this.project_name = this.admin_project_sub;
             this.getAllProject(this.admin_sub_2);
-
-
         }
         if(slug_list[2] == 'projects' && slug_list[4] == 'tickets'){
             this.admin_project_sub =  'tickets';
@@ -66,6 +67,11 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
         }
         if(slug_list[slug_list.length-1] !== this.admin_project_sub){
             this.is_dashboard = false;
+        }
+        if(slug_list[2] == 'projects' && slug_list[4] == 'members'){
+            this.is_dashboard = false;
+            this.admin_project_sub =  'members';
+            this.admin_sub_3 =  'members';
         }
     }
 
@@ -81,14 +87,11 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
                 }
             });
         });
-        
     }
 
     ngAfterViewInit(){
         this.router.events.subscribe(path =>{
-
             if(path instanceof NavigationEnd ){
-                console.log(this.project_name, 'project_name left');
                 this.createUrlVariables(path);
             }
         });
@@ -115,7 +118,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
         this.onload_slug_list = slug_list;
         this.admin_project_sub =  slug_list[slug_list.length-1];
         this.admin_sub_3 = this.admin_project_sub;
-        
+
         if(slug_list.length<4){
             this.is_dashboard = false;
         } else {
@@ -134,6 +137,11 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
         }
         if(slug_list[slug_list.length-1] !== this.admin_project_sub){
             this.is_dashboard = false;
+        }
+        if(slug_list[2] == 'projects' && slug_list[4] == 'members'){
+            this.is_dashboard = false;
+            this.admin_project_sub =  'members';
+            this.admin_sub_3 =  'members';
         }
     }
 

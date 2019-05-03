@@ -1,9 +1,9 @@
 <div class="col-lg-12">
   <div  class="col-lg-12 content-option text-right mar-10 pad-10">
-      <a href="#" *ngIf="!memberFormShow" (click)="toggleMemberForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add Member</i></a>
-      <a href="#" *ngIf="memberFormShow && !showMemberSearchForm" (click)="toggleMemberForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a>
-      <a href="#" *ngIf="memberFormShow && !showMemberSearchForm" (click)="toggleMemberSearchForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-search mar-r-5 q-width">Search member</i></a> 
-      <a href="#" *ngIf="memberFormShow && showMemberSearchForm" (click)="toggleMemberSearchForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a>
+      <a href="#" *ngIf="auth.role_id < 4 && !memberFormShow" (click)="toggleMemberForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add Member</i></a>
+      <a href="#" *ngIf="auth.role_id < 4 && memberFormShow && !showMemberSearchForm" (click)="toggleMemberForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a>
+      <a href="#" *ngIf="auth.role_id < 4 && memberFormShow && !showMemberSearchForm" (click)="toggleMemberSearchForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-search mar-r-5 q-width">Search member</i></a> 
+      <a href="#" *ngIf="auth.role_id < 4 && memberFormShow && showMemberSearchForm" (click)="toggleMemberSearchForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a>
     </div>
   <div  *ngIf="!memberFormShow" class="row member-list">
     <div class="table-responsive">
@@ -51,7 +51,7 @@
   </div>
   <div  *ngIf="memberFormShow" class="col-lg-12">
     <!-- Add New Account -->
-    <div *ngIf="memberFormShow && !showMemberSearchForm"  [@enterAnimation] mat-form  class="row">
+    <div *ngIf="memberFormShow && !showMemberSearchForm"  [@enterAnimation] mat-form  class="col-lg-8">
       <form
         class="row"
         [formGroup]="memberForm" id="memberForm" 
@@ -76,25 +76,27 @@
         <div class="col-lg-6">
             <!-- Username -->
             <div class="form-group full-w">
-                <mat-form-field class="full-w">
+                <mat-form-field class="full-w" [formGroup]="memberForm">
                     <input matInput formControlName="username" placeholder="Username" [(ngModel)]="memberToAdd.username" required>
                 </mat-form-field>
             </div>
             <!-- Email -->
-            <div class="form-group full-w">
+            <div class="form-group full-w" [formGroup]="memberForm">
                 <mat-form-field class="full-w">
                     <input matInput formControlName="email" placeholder="Email Address" [(ngModel)]="memberToAdd.email" required>
                 </mat-form-field>
             </div>
             <!-- Password -->
             <div class="form-group full-w">
-                <mat-form-field class="full-w">
-                    <input type="password" matInput formControlName="password" placeholder="Password" [(ngModel)]="memberToAdd.password" required>
+                <mat-form-field class="full-w" [formGroup]="memberForm">
+                    <input type="password" matInput formControlName="password" [errorStateMatcher]="errorMatcher" placeholder="Password" [(ngModel)]="memberToAdd.password" required>
                 </mat-form-field>
+                <mat-error *ngIf="memberForm.controls.password.dirty && memberForm.hasError('strong')">Must be alphanumeric with atleast 1 uppercase and lowercase character.</mat-error>
+                <mat-error *ngIf="memberForm.controls.confirmPassword.dirty && memberForm.controls.password.dirty && memberForm.hasError('passwordsDoNotMatch')">Password does not match.</mat-error>
             </div>
             <!-- Confirm Password -->
             <div class="form-group full-w">
-              <mat-form-field class="full-w">
+              <mat-form-field class="full-w" [formGroup]="memberForm">
                   <input type="password" matInput formControlName="confirmPassword" placeholder="Confirm Password" [(ngModel)]="memberToAdd.confirmPassword" required>
               </mat-form-field>
           </div>
@@ -138,9 +140,9 @@
               <!-- <mat-form-field class="full-w">
                   <input matInput formControlName="username" placeholder="Username" [(ngModel)]="memberToAdd.username" required>
               </mat-form-field> -->
-              <mat-form-field>
+              <mat-form-field [formGroup]="memberForm">
                 <mat-label>Role </mat-label>
-                <select matNativeControl  formControlName="role_id" [(ngModel)]="memberToAdd.role_id" name="role_id">
+                <select matNativeControl  formControlName="role_id" [(ngModel)]="memberToAdd.role_id" name="role_id" required>
                   <option value="2" selected>Project Owner</option>
                   <option value="3" selected>Project Manager</option>
                   <option value="4" selected>Developer</option>
@@ -153,13 +155,13 @@
           </div>
           <!-- First Name -->
           <div class="form-group full-w">
-              <mat-form-field class="full-w">
+              <mat-form-field class="full-w" [formGroup]="memberForm">
                   <input matInput formControlName="first_name" placeholder="First Name" [(ngModel)]="memberToAdd.first_name" required>
               </mat-form-field>
           </div>
            <!-- Last Name -->
            <div class="form-group full-w">
-              <mat-form-field class="full-w">
+              <mat-form-field class="full-w" [formGroup]="memberForm">
                   <input matInput formControlName="last_name" placeholder="Last Name" [(ngModel)]="memberToAdd.last_name" required>
               </mat-form-field>
           </div>
@@ -167,7 +169,7 @@
         <div class="col-lg-12">
           <div class="form-group full-w">
             <mat-action-row>
-                <button mat-button color="primary" [disabled]="(!memberForm.valid && !memberForm.touched ) || submitting" >Submit</button>
+                <button mat-button color="primary" [disabled]="memberForm.errors || submitting" >Submit</button>
             </mat-action-row>
           </div>
         </div>

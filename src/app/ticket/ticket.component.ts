@@ -36,7 +36,7 @@ export class TicketComponent implements OnInit {
     ticketToAdd:any = new Object();
     ticket: any;
     thread:any;
-    user:any;
+    auth:any;
     project_name:string;
     project_id: number;
     loggedin_user:string;
@@ -64,6 +64,8 @@ export class TicketComponent implements OnInit {
     }
 
     ngOnInit() {
+      this.auth = this.authService.getAuthUser();
+
       this.route.params.subscribe(params => {
         if (params['project_name'] !== undefined) {
             this.project_name = params['project_name'];
@@ -80,8 +82,6 @@ export class TicketComponent implements OnInit {
         'description': new FormControl('', [Validators.required,]),
         'assigned_to': new FormControl('', [Validators.required,]),
       });
-
-      
 
       this.projectService.getAllMember(this.project_name).subscribe( res => {
         console.log(res.data);
@@ -107,7 +107,6 @@ export class TicketComponent implements OnInit {
       this.ticketService.getProjectTicketAll(project_name).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
-        this.user = this.authService.getAuthUser();
       });
     }
     viewTicket(ticket){
@@ -129,7 +128,7 @@ export class TicketComponent implements OnInit {
                 this.replayView  = false;
                 let thread = {
                     "ticket_id":this.ticket.id,
-                    "user_id": this.user.id,
+                    "user_id": this.auth.id,
                     "message":this.replayText,
                 };
                 this.threadService.send(thread).subscribe( res => {
@@ -137,7 +136,6 @@ export class TicketComponent implements OnInit {
                     this.ticket.thread.push(res);
                 });
             } else {
-                console.log(this.replayText,'replayText is empty');
             }
         } else {
             this.replayView = true;
@@ -196,8 +194,7 @@ export class TicketComponent implements OnInit {
     public toggleTicketForm(){
       if(! this.ticketFormShow ) this.ticketFormShow = true;
       else  this.ticketFormShow = false;
-      console.log("New Ticket Form");
-      
+
       return false;
     }
 
@@ -253,8 +250,7 @@ export class TicketComponent implements OnInit {
             }
         );
       }
-      console.log("New Ticket Form");
-      
+
       return false;
     }
 

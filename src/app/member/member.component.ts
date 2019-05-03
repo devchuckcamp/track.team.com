@@ -3,12 +3,16 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient,HttpClientModule, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { User } from '../model/user';
 import { UserService } from '../service/user.service';
+import { AuthService } from '../service/auth.service';
 import { ProjectService } from '../service/project.service';
 import { MemberService } from '../service/member.service';
 import {MatPaginator, MatSnackBar, MatTableDataSource} from '@angular/material';
-import { FormGroup, FormBuilder, FormControl, Validators, EmailValidator } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators, FormGroupDirective, NgForm, EmailValidator } from '@angular/forms';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { MustMatch } from '../component/validator/must-match.validator';
+import { PasswordValidator } from '../component/validator/password-strong.validator';
+import {ErrorStateMatcher} from '@angular/material';
+
 interface createdAccount {
   id: number,
   name: string,
@@ -16,6 +20,13 @@ interface createdAccount {
   role_id: number
 }
 const ELEMENT_DATA: User[] = [];
+
+/** Error when the parent is invalid */
+class CrossFieldErrorMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    return control.dirty && form.invalid;
+  }
+}
 
 @Component({
   selector: 'app-member',
@@ -40,6 +51,7 @@ export class MemberComponent implements OnInit {
   project_name: string;
   project_id: number;
   users : User[];
+  auth:User;
   memberSearchResult:any;
   displayedColumns: string[] = ['username', 'first_name', 'last_name', 'email', 'action'];
   // MatPaginator Inputs
@@ -47,6 +59,7 @@ export class MemberComponent implements OnInit {
   pageSize = 5;
   pageSizeOptions: number[] = [1, 5, 10, 15, 25, 100];
   // Form
+  errorMatcher = new CrossFieldErrorMatcher();
   memberFormShow:boolean;
   showMemberSearchForm:boolean;
   memberForm: FormGroup;
@@ -60,13 +73,18 @@ export class MemberComponent implements OnInit {
     private http: HttpClient,
     private route: ActivatedRoute,
     private userService:UserService,
+    private authService:AuthService,
     private projectService:ProjectService,
     private memberService:MemberService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
-  ) { }
+  ) {
+
+  }
 
   ngOnInit() {
+    this.auth = this.authService.getAuthUser();
+    console.log(this.auth, 'logged in user');
     this.memberFormShow = false;
     this.showMemberSearchForm = false;
 
@@ -85,9 +103,9 @@ export class MemberComponent implements OnInit {
       'first_name': new FormControl('', [Validators.required]),
       'last_name': new FormControl('', [Validators.required]),
     }, {
-        validator: MustMatch('password', 'confirmPassword')
+        validator: [this.passwordMatchValidator, this.passwordStrenghtValidator],
     });
-    
+    console.log(this.memberForm, 'this.memberForm');
     this.route.params.subscribe(params => {
       if (params['project_name'] !== undefined) {
           this.project_name = params['project_name'];
@@ -135,9 +153,22 @@ export class MemberComponent implements OnInit {
     //    );
   }
 
+  passwordMatchValidator(form: FormGroup) {
+      const condition = form.get('password').value !== form.get('confirmPassword').value;
+      return condition ? { passwordsDoNotMatch: true} : null;
+  }
+
+  passwordStrenghtValidator(form: FormGroup){
+    let hasNumber = /\d/.test(form.get('password').value);
+    let hasUpper = /[A-Z]/.test(form.get('password').value);
+    let hasLower = /[a-z]/.test(form.get('password').value);
+
+    const valid = hasNumber && hasUpper && hasLower;
+    return !valid ? { strong: true } : null;
+  }
+
   getMember(){
     this.projectService.getAllMember(this.project_name).subscribe( res => {
-      console.log(res.data);
       this.dataSource = new MatTableDataSource(res.data);
       this.users = res.data;
       this.length = res.total;
@@ -159,9 +190,7 @@ export class MemberComponent implements OnInit {
   }
 
   memberSearch(term:string){
-    console.log(term,'term');
     this.memberService.searchMember(term).subscribe(res=>{
-      console.log(res, 'member search result');
       if(res.length){
         this.memberSearchResult = res;
       } else {
@@ -172,13 +201,21 @@ export class MemberComponent implements OnInit {
   }
 
   addMemberToProject(member:any){
-
     let memberObj = {
       user_id:member.user.id,
       project_id: this.project_id,
     };
     this.memberService.save(memberObj).subscribe( res => {
-      console.log(res);
+      if(res){
+        this.snackBar.open('User '+res+' Member has been added to the project', 'X', {
+                duration: 5000,
+                direction: "ltr",
+                verticalPosition:"top",
+                horizontalPosition: "right",
+                panelClass: "success-snack"
+            }
+        );
+      }
     });
     return false;
   }
@@ -242,11 +279,17 @@ export class MemberComponent implements OnInit {
           );
         }
       });
-      
-
     } else {
-
+       this.snackBar.open('An error occured during  account creation.', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "fail-snack"
+              }
+          );
     }
+    return false;
   }
 
 }
