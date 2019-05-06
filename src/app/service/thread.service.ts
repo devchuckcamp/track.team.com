@@ -46,7 +46,9 @@ export class ThreadService {
     delete(id: number) {
         return this.http.delete(this.config.apiEndPoint()+'/tickets/id');
     }
-
+    getImage(thread_id:number){
+        return this.http.get('https://homestead.test/uploads/thread/admin.PNG');
+    }
     private jt() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer '+this.Bearer,

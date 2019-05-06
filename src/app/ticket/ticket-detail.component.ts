@@ -173,4 +173,11 @@ export class TicketDetailComponent implements OnInit {
 
       });
     }
+
+    getImage(thread_id:number){
+      this.threadService.getImage(thread_id).subscribe(res =>{
+        return res;
+      });
+      
+    }
 }

@@ -44,6 +44,10 @@
             </div>
             <div *ngFor="let thread of ticket.thread" class="thread-message mar-y-10 full-w pad-0">
                 <div class="card thread-message-content">
+                    <!-- <div class="card-body row">
+                        thread ID:{{thread.id}}
+                        <img [src]="getImage(thread.id)">
+                    </div> -->
                     <div class="card-body row">
                         <div [ngClass]="{'comment-own order-md-2': thread.user_id == auth.id}"
                             class="col card-header thread-message-head q-width border-rad-10 pad-20"> <label
