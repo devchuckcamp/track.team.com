@@ -28,7 +28,7 @@ export class GlobalRoutesService {
     public apiPort = ''; //for staging 
     //public host='167.99.106.79';
     public host='homestead.test'; //for staging
-    public protocol='http://';
+    public protocol='https://';
     
     public googleLogin=this.protocol+this.host+':'+this.apiPort+'/glogin';
 

@@ -62,12 +62,14 @@ export class LoginComponent implements OnInit {
                         localStorage.setItem('csrf_token',JSON.stringify({'token':'lkcc371220183d'}));
                     });
                     if(data.access_token)
-                        this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);
+                        // this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);
+                        window.location.href='/admin'
 
                 },
                 error => {
                     // this.alertService.error(error);
                     this.loading = false;
                 });
+        return false;
     }
 }

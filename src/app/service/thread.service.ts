@@ -7,10 +7,21 @@ import { map, take } from 'rxjs/operators';
 import { Thread } from '../model/thread';
 import { GlobalRoutesService } from '../config/config';
 
+interface ApiUploadResult {
+    url: string;
+}
+ 
+export interface UploadResult {
+    name: string;
+    type: string;
+    size: number;
+    url: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ThreadService {
     apiEndpoint:string;
-    private Bearer:any;
+    Bearer:any;
 
     constructor(
         private config: GlobalRoutesService,
@@ -60,5 +71,58 @@ export class ThreadService {
           })
         let options = { headers: headers };
         return options;
+    }   
+    private fileHeader() {
+        let headers = new HttpHeaders({
+            'Authorization': 'Bearer '+this.Bearer,
+            'Content-Type':  'null',
+            'Accept':'application/json',
+            'Access-Control-Allow-Origin':'*',
+            'Allow_Headers':' Allow, Access-Control-Allow-Origin, Content-type, Accept',
+            'Allow':'GET,POST,PUT,DELETE,OPTION'
+          })
+        let options = { headers: headers };
+        return options;
+    }   
+    
+    uploadThreadFile(thread: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/thread/image/upload', thread, this.fileHeader());
+    }
+
+      // ---
+    // PUBLIC METHODS.
+    // ---
+ 
+    // I upload the given file to the remote server. Returns a Promise.
+    public async uploadFile( file: File ) : Promise<UploadResult> {
+ 
+        var result = await this.http
+            .post<ApiUploadResult>(
+                'https://homestead.test/api/v1/thread/image/upload',
+                file, // Send the File Blob as the POST body.
+                {
+                    // NOTE: Because we are posting a Blob (File is a specialized Blob
+                    // object) as the POST body, we have to include the Content-Type
+                    // header. If we don't, the server will try to parse the body as
+                    // plain text.
+                    headers: {
+                        "Content-Type": file.type
+                    },
+                    params: {
+                        clientFilename: file.name,
+                        mimeType: file.type
+                    }
+                }
+            )
+            .toPromise()
+        ;
+ 
+        return({
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            url: result.url
+        });
+ 
     }
 }

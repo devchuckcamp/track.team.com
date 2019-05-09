@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart, NavigationEnd, NavigationError, NavigationCancel, RoutesRecognized } from '@angular/router';
 import { ProjectService } from '../service/project.service';
 import { AuthService } from '../service/auth.service';
-
+import { UserService } from '../service/user.service';
+import { ThreadService } from '../service/thread.service';
+import { TicketService } from '../service/ticket.service';
+import { MemberService } from '../service/member.service';
 import { Project } from '../model/project';
 
 @Component({
@@ -19,6 +22,10 @@ export class NavbarComponent implements OnInit {
     private activedRoute: ActivatedRoute,
     private projectService: ProjectService,
     private authService:AuthService,
+    private userService:UserService,
+    private ticketService:TicketService,
+    private threadService:ThreadService,
+    private memberService:MemberService,
   ) {
     this.router.events.subscribe(path =>{
 
@@ -62,7 +69,13 @@ export class NavbarComponent implements OnInit {
   logout(){
     localStorage.clear();
     this.authService.Bearer = '';
-    this.router.navigate(['/login'] );
+    this.userService.Bearer = '';
+    this.projectService.Bearer = '';
+    this.threadService.Bearer = '';
+    this.ticketService.Bearer = '';
+    this.memberService.Bearer = '';
+    // this.router.navigate(['/login'] );
+    window.location.href='/login'
     return false;
   }
 

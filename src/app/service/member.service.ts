@@ -10,7 +10,7 @@ import { GlobalRoutesService } from '../config/config';
 @Injectable({ providedIn: 'root' })
 export class MemberService {
     apiEndpoint:string;
-    private Bearer:any;
+    Bearer:any;
 
     constructor(
         private config: GlobalRoutesService,

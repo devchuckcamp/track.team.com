@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, NavigationStart, NavigationEnd, NavigationError, NavigationCancel, RoutesRecognized } from '@angular/router';
+
 import { ProjectService } from '../service/project.service';
 import { Project } from '../model/project';
 
@@ -8,16 +10,22 @@ import { Project } from '../model/project';
   styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit {
-    projects: Project[] = []; 
-    constructor(
-        private projectService: ProjectService
-    ) { }
+  projects: Project[] = []; 
+  constructor(
+    private projectService: ProjectService,
+    private router:Router
+  ) { }
 
-    ngOnInit() {
+  ngOnInit() {
         this.projectService.getAll().subscribe( res => {
-            console.log(res);
             this.projects = res.data;
+            console.log(res.data);
         });
+  }
+
+  goTo(slug:string){
+    this.router.navigate(['/admin/projects', slug] );
+    return false;
   }
 
 }

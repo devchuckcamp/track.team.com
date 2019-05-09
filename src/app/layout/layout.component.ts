@@ -20,6 +20,7 @@ export class LayoutComponent implements OnInit {
   admin_sub_1: string;
   admin_sub_2: string;
   admin_project_sub: string;
+  profile:any;
   breadcrumb:any;
   constructor(
     private authService: AuthService,
@@ -30,7 +31,8 @@ export class LayoutComponent implements OnInit {
       this.admin_sub_2 = "";
       this.admin_project_sub = "";
       this.router.events.subscribe(path =>{
-
+      this.profile = this.authService.getAuthUser();
+      console.log(this.authService.getAuthUser(),'profile');
         if(path instanceof NavigationEnd ){
           //Get Url
           let currentURL = path.url;
@@ -49,6 +51,12 @@ export class LayoutComponent implements OnInit {
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];
           }
+
+          if(slug_list.includes("profile") || slug_list[2] == 'profile'){
+            this.admin_sub_1 = "profile";
+            this.admin_sub_2 =  slug_list[3];
+            this.admin_project_sub =  slug_list[slug_list.length-1];
+          }
         }
       });
 
@@ -57,6 +65,7 @@ export class LayoutComponent implements OnInit {
     }
 
   ngOnInit() {
+
     // this.chartData = {
     //   labels: [ "Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
     //   datasets: [

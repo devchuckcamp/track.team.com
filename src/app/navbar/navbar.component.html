@@ -16,7 +16,7 @@
         </a>
         <div *ngIf="projects" class="dropdown-menu">
           
-          <a  *ngFor="let proj of projects"  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/'+proj.slug }" [routerLink]="['/admin/projects', proj.slug]">{{proj.name}}</a>
+          <a  *ngFor="let proj of projects"  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/'+proj.slug }" [routerLink]="['/admin/projects', proj.slug]">{{proj.name | titlecase}}</a>
           <a  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/new' || activeURL === '/admin/projects' }" [routerLink]="['/admin/projects/new']">Add Project</a>
         </div>
         <div *ngIf="!projects" class="dropdown-menu">
@@ -60,7 +60,7 @@
         </a>
         <div class="dropdown-menu">
           <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/profile' || this.activeURL.split('admin/profile').length - 1}" [routerLink]="['/admin/profile']"><i class="pad-x-5 fa fa-user-circle-o"></i>Profile</a>
-          <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/setting' || this.activeURL.split('admin/setting').length - 1}" [routerLink]="['/admin/setting']"><i class="pad-x-5 fa fa-wrench"></i>Settings</a>
+          <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/settings' || this.activeURL.split('admin/settings').length - 1}" [routerLink]="['/admin/settings']"><i class="pad-x-5 fa fa-wrench"></i>Settings</a>
           <a href="#" class="dropdown-item" (click)="logout()"><i class="pad-x-5 fa fa-sign-out"></i>Logout</a>
         </div>
       </li>

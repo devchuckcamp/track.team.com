@@ -3,4 +3,5 @@ export class Thread {
     ticket_id: number;
     user_id: number;
     message: string;
+    upload: any;
 }

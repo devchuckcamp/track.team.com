@@ -57,6 +57,12 @@ export class AuthService {
         }
         return this.http.get<User[]>(this.config.apiEndPoint()+'/api/user',this.jt());
     }
+    getAuthenticatedUserProfile(id:number){
+        if(localStorage.getItem("currentUser")){
+            this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
+        }
+        return this.http.get<User[]>(this.config.apiEndPoint()+'/api/v1/users/'+id,this.jt());
+    }
     getAuthUser(){
         return JSON.parse(localStorage.getItem("authUser"));
     }

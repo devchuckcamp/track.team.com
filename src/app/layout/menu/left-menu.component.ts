@@ -14,8 +14,11 @@ import { Project } from '../../model/project';
 export class LeftMenuComponent implements OnInit, AfterViewInit {
     @Input('project_name') project_name:string;
     @Input('admin_project_sub') admin_project_sub:string;
+    @Input('auth_profile') auth_profile:any;
+    
     active_menu:string;
     project:Project;
+    profile:any;
     activeURL: string;
     admin_sub_1: string;
     admin_sub_2: string;
@@ -28,6 +31,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
             private route: ActivatedRoute,
             private projectService: ProjectService
     ) { 
+        
         this.admin_sub_3 = '';
         this.active_menu = this.admin_project_sub;
         this.onload_slug_list = [];
@@ -54,7 +58,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
         } else {
             this.is_dashboard = true;
         }
-        if(slug_list.includes("projects") || slug_list[2] == 'projects'){
+        if((slug_list.includes("projects") || slug_list[2] == 'projects') && slug_list.length >= 4){
             this.admin_sub_1 = "projects";
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];
@@ -76,6 +80,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
+        console.log(this.auth_profile,'auth_profile left-menu');
         this.route.params.subscribe(params => {
             if (params['project_name'] !== undefined || this.project_name !== '') {
                 let project_name = this.project_name ? this.project_name : params['project_name'];
@@ -124,7 +129,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
         } else {
             this.is_dashboard = true;
         }
-        if(slug_list.includes("projects") || slug_list[2] == 'projects'){
+        if((slug_list.includes("projects") || slug_list[2] == 'projects') && slug_list.length >= 4){
             this.admin_sub_1 = "projects";
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];

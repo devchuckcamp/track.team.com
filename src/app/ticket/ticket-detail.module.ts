@@ -2,11 +2,15 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TicketDetailComponent } from './ticket-detail.component';
 import { TicketDetailRoutingModule } from './ticket-detail-routing.module';
+import { DialogOverviewExampleDialog } from './dialog-attachment-overview.component';
+
 import { UserService } from '../service/user.service';
 import { ClientGlobalRoutesService } from '../config/client';
 import { GlobalRoutesService } from '../config/config';
 import { FileDropModule } from 'ngx-file-drop';
-
+import { FileUploadModule } from 'ng2-file-upload';
+// Import your library
+import { SlickCarouselModule } from 'ngx-slick-carousel';
 // Material
 import {
   MatAutocompleteModule,
@@ -49,6 +53,7 @@ import {
 @NgModule({
   declarations: [
     TicketDetailComponent,
+    DialogOverviewExampleDialog
   ],
   imports: [
     MatAutocompleteModule,
@@ -89,6 +94,12 @@ import {
     CommonModule,
     TicketDetailRoutingModule,
     FileDropModule,
+    FileUploadModule,
+    SlickCarouselModule,
+  ],
+  exports: [DialogOverviewExampleDialog],
+  entryComponents: [
+    DialogOverviewExampleDialog
   ],
   providers:[
     UserService,
