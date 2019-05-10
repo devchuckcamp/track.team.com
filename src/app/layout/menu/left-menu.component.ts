@@ -51,7 +51,8 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
         this.project = {
             id:null,
             name:'',
-            slug:''
+            slug:'',
+            tickets:[]
         };
         if(slug_list.length<4){
             this.is_dashboard = false;

@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
 import { AuthService } from '../service/auth.service';
-
+import { UserService } from '../service/user.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private authenticationService: AuthService,
+        private userService: UserService,
         //private alertService: AlertService
     ) {
         //redirect to home if already logged in
@@ -41,7 +42,8 @@ export class LoginComponent implements OnInit {
 
     // convenience getter for easy access to form fields
     get f() { return this.loginForm.controls; }
-
+    public u:any;
+    public avatar:any;
     onSubmit() {
         this.submitted = true;
 
@@ -55,16 +57,22 @@ export class LoginComponent implements OnInit {
             .pipe(first())
             .subscribe(
                 data => {
-
+                    let user_id:number;
                     localStorage.setItem('currentUser',JSON.stringify(data));
                     this.authenticationService.getAuthenticatedUser().subscribe( res => {
                         localStorage.setItem('authUser',JSON.stringify(res));
                         localStorage.setItem('csrf_token',JSON.stringify({'token':'lkcc371220183d'}));
+                        user_id = JSON.parse(localStorage.getItem('authUser')).id;
+                        this.authenticationService.getAuthenticatedUserProfile(user_id).subscribe( response => {
+                            this.avatar = response;
+                            localStorage.setItem('avatar',this.avatar.avatar.data);
+                            this.loading = false;
+                            if(data.access_token && !this.loading){
+                                // this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);
+                                window.location.href='/admin';
+                            }
+                        });
                     });
-                    if(data.access_token)
-                        // this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);
-                        window.location.href='/admin'
-
                 },
                 error => {
                     // this.alertService.error(error);

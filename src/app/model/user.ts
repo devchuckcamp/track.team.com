@@ -4,4 +4,6 @@ export class User {
     email: string;
     name: string;
     role_id: number;
+    user_details:Object;
+    projects: Array<any>;
 }

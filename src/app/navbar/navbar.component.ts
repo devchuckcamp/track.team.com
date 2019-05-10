@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart, NavigationEnd, NavigationError, NavigationCancel, RoutesRecognized } from '@angular/router';
 import { ProjectService } from '../service/project.service';
 import { AuthService } from '../service/auth.service';
@@ -7,15 +7,19 @@ import { ThreadService } from '../service/thread.service';
 import { TicketService } from '../service/ticket.service';
 import { MemberService } from '../service/member.service';
 import { Project } from '../model/project';
+import { Observable, Subscription  } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy  {
   activeURL:string;
   parentUrl:string;
+  user_avatar:string;
+  subscription: Subscription;
+
   projects: Project[] = [];
   constructor(
     private router: Router,
@@ -27,6 +31,11 @@ export class NavbarComponent implements OnInit {
     private threadService:ThreadService,
     private memberService:MemberService,
   ) {
+    if(!this.user_avatar){
+      this.user_avatar = localStorage.getItem('avatar');
+    }
+    this.setAvatar();
+
     this.router.events.subscribe(path =>{
 
       if(path instanceof NavigationEnd ){
@@ -59,13 +68,22 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.userService.currentAvatar.subscribe(avatar => {
+      this.user_avatar = avatar;
+    });
     this.projectService.getAll().subscribe(res=>{
       if(res){
         this.projects = res.data;
       }
     });
   }
+  ngOnDestroy(){
+    this.userService.clearAvatar();
+  }
 
+  setAvatar():void {
+    this.subscription = this.userService.currentAvatar.subscribe(avatar => { this.user_avatar = avatar;  });
+  }
   logout(){
     localStorage.clear();
     this.authService.Bearer = '';

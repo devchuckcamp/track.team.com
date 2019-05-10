@@ -61,7 +61,7 @@ export class AuthService {
         if(localStorage.getItem("currentUser")){
             this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
         }
-        return this.http.get<User[]>(this.config.apiEndPoint()+'/api/v1/users/'+id,this.jt());
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/users/'+id,this.jt());
     }
     getAuthUser(){
         return JSON.parse(localStorage.getItem("authUser"));

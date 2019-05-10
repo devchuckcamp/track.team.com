@@ -51,7 +51,8 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
         this.project = {
             id:null,
             name:'',
-            slug:''
+            slug:'',
+            tickets:[]
         };
         if(slug_list.length>=3){
             this.is_dashboard = false;
@@ -115,7 +116,6 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
         this.onload_slug_list = slug_list;
         this.admin_project_sub =  slug_list[slug_list.length-1];
         this.admin_sub_3 = this.admin_project_sub;
-        console.log(slug_list,'slug_list');
         if(slug_list.length>=3){
             this.is_dashboard = false;
         } else {
