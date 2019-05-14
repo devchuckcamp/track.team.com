@@ -27,7 +27,7 @@ const routes:   Routes = [
             { path: 'projects/:project_name/tickets', loadChildren:'../ticket/ticket.module#TicketModule'},
             { path: 'projects/:project_name/tickets/:ticket_id', loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
             { path: 'projects/:project_name/members', loadChildren:'../member/member.module#MemberModule'},
-            { path: 'projects/:project_name/members/:user_id', loadChildren:'../member/member.module#MemberModule'},
+            { path: 'projects/:project_name/members/:user_id', loadChildren:'../member/member-detail.module#MemberDetailModule'},
             { path: 'fund/current', loadChildren:'../fund/fund.module#FundModule'},
             { path: 'fund/incoming', loadChildren:'../fund/fund-incoming.module#FundIncomingModule'},
             { path: 'fund/pending', loadChildren:'../fund/fund-pending.module#FundPendingModule'},

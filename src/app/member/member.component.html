@@ -36,9 +36,10 @@
         </ng-container>
   
         <!-- Options Column -->
-        <ng-container matColumnDef="action">
+        <ng-container matColumnDef="action" *ngIf="auth">
           <th mat-header-cell *matHeaderCellDef> Option </th>
-          <td mat-cell *matCellDef="let element"> <a  class="btn btn-success" [routerLink]="['/admin/projects', project_name , 'members' ,element.user.id ]"> <i class="fa fa-eye"></i></a> </td>
+          
+          <td mat-cell *matCellDef="let element"> <a  class="btn btn-success" [routerLink]="element.user.id !== auth.id ?  [ '/admin/projects', project_name , 'members' ,element.user.id ] : '/admin/profile'" > <i class="fa fa-eye"></i></a> </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

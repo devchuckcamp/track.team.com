@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, Inject , Optional } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, Inject , Optional } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TicketService } from '../service/ticket.service';
 import { ProjectService } from '../service/project.service';
@@ -6,10 +6,34 @@ import { ThreadService } from '../service/thread.service';
 import { AuthService } from '../service/auth.service';
 import { Ticket } from '../model/ticket';
 import { Thread } from '../model/thread';
+import { User } from '../model/user';
 import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { FormGroup, FormBuilder, FormControl, Validators, EmailValidator } from '@angular/forms';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { MatSnackBar  } from '@angular/material';
+import { Observable } from "rxjs"
+
+interface ProjectMemberInfo{
+  id: number;
+  user_id: number;
+  first_name:string;
+  last_name:string;
+}
+interface TaggableMembers {
+  id: number;
+  project_id: number;
+  user_id: number;
+  project_member_info: ProjectMemberInfo;
+  user: User;
+}
+
+interface Members {
+  id: number;
+  project_id: number;
+  user_id: number;
+  project_member_info: ProjectMemberInfo;
+  user: User;
+}
 
 @Component({
   selector: 'app-ticket',
@@ -30,9 +54,12 @@ import { MatSnackBar  } from '@angular/material';
     )
   ],
 })
-export class TicketComponent implements OnInit {
+export class TicketComponent implements OnInit, OnDestroy {
     tickets: Ticket[] = [];
-    members:any[];
+    members:Members[] = [];
+    tag_users:TaggableMembers[] = [];
+    taggable_members:any;
+    tagged_members = new FormControl();
     ticketToAdd:any = new Object();
     ticket: any;
     thread:any;
@@ -87,9 +114,19 @@ export class TicketComponent implements OnInit {
         console.log(res.data);
         if(res.data){
           this.members = res.data;
+          this.taggable_members = res.data;
+
+          console.log(this.taggable_members, 'taggable_members');
         }
         // this.length = res.total;
       });
+
+      // const membersObservable = this.projectService.getAllMemberObs(this.project_name);
+      // membersObservable.subscribe(( members:Members[]) => { this.members = members; });
+
+      // const taggableMembersObservable = this.projectService.getAllMemberObs(this.project_name);
+      // taggableMembersObservable.subscribe(( taggable_members:TaggableMembers[]) => { this.taggable_members = taggable_members; console.log(taggable_members,'taggable_members') });
+
       this.route.params.subscribe(params => {
         if (params['project_name'] !== undefined) {
           this.project_name = params['project_name'];
@@ -103,21 +140,44 @@ export class TicketComponent implements OnInit {
         }
       });
     }
+
+    ngOnDestroy(){
+
+    }
+
+    assignTo(id:number){
+      this.taggable_members = this.members;
+      let new_taggable_members = this.taggable_members.filter( member => member.user_id != id);
+      this.taggable_members = new_taggable_members;
+    }
+
+    tagTo(member:any){
+
+    }
+
+    isTagged(member_id:any){
+      if(this.ticketForm.value.assigned_to == member_id){
+        return true;
+      }
+      return false;
+    }
+
     getTicket(project_name:any){
       this.ticketService.getProjectTicketAll(project_name).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
+        this.tag_users = res.data.tag_users;
       });
     }
+
     viewTicket(ticket){
-        this.ticket = ticket;
-        return false;
+      this.ticket = ticket;
+      return false;
     }
 
     onReplayKey(text:string){
-        this.replayText = text;
-        console.log(this.replayText,'this.replayText');
-        return false;
+      this.replayText = text;
+      return false;
     }
 
     submitReplyBox(){
@@ -198,7 +258,21 @@ export class TicketComponent implements OnInit {
       return false;
     }
 
+    public getTaggedMember(ticket:any = null){
+      let membersTagged = [];
+      this.tagged_members.value.forEach(obj => {
+        let member = {
+          ticket_id:ticket,
+          user_id:obj.user.id
+        };
+        membersTagged.push(member);
+      });
+
+      return membersTagged;
+    }
+
     public addNewTicket(){
+      
       if(this.ticketForm.valid){
         let title = this.ticketForm.value.title;
         let description = this.ticketForm.value.description;
@@ -206,13 +280,19 @@ export class TicketComponent implements OnInit {
         let ticket = {
           title:title,
           description:description,
-          assigned_to:assigned_to,
+          assigned_to:parseInt(assigned_to),
           project_id: this.project_id
         };
         this.submitting= true;
         this.ticketService.save(ticket).subscribe( res => {
 
           if(res){
+            let added_ticket:any = res;
+            let tagged = this.getTaggedMember(added_ticket.id);
+            this.ticketService.addTaggedUser(tagged).subscribe( res => {
+
+            });
+            console.log(tagged,'tagged');
             this.tickets = [];
             this.loading = true;
             this.ticketFormShow = false;

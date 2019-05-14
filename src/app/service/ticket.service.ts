@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
-import { Observable, throwError, Subject } from 'rxjs';
+import { Observable, throwError, Subject, forkJoin } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators'
 import { map, take } from 'rxjs/operators';
 import { Ticket } from '../model/ticket';
@@ -53,6 +53,30 @@ export class TicketService {
 
     delete(id: number) {
         return this.http.delete(this.config.apiEndPoint()+'/api/v1/tickets/'+id, this.jt());
+    }
+
+    addTaggedUser(tagged_member: any) {
+        let tag:{
+            ticket_id:number,
+            user_id:number
+        };
+        let https = [];
+        tagged_member.forEach(obj => {
+            console.log(obj,'member to be tagged from service.');
+            tag = {
+                ticket_id: obj.ticket_id,
+                user_id :obj.user_id
+            };
+
+            https.push(this.http.post(this.config.apiEndPoint()+'/api/v1/tickets-tag-users', tag, this.jt()));
+        });
+        
+        return forkJoin(https);
+        // return this.http.delete(this.config.apiEndPoint()+'/api/v1/tickets-tag-users/'+id, this.jt());
+    }
+
+    removeTag(id: number) {
+        return this.http.delete(this.config.apiEndPoint()+'/api/v1/tickets-tag-users/'+id, this.jt());
     }
 
     private jt() {

@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { TicketDetailComponent } from './ticket-detail.component';
 import { TicketDetailRoutingModule } from './ticket-detail-routing.module';
 import { DialogOverviewExampleDialog } from './dialog-attachment-overview.component';
-
+import { FormsModule } from '@angular/forms';
 import { UserService } from '../service/user.service';
 import { ClientGlobalRoutesService } from '../config/client';
 import { GlobalRoutesService } from '../config/config';
@@ -11,6 +11,7 @@ import { FileDropModule } from 'ngx-file-drop';
 import { FileUploadModule } from 'ng2-file-upload';
 // Import your library
 import { SlickCarouselModule } from 'ngx-slick-carousel';
+import { MentionModule } from 'angular-mentions';
 // Material
 import {
   MatAutocompleteModule,
@@ -96,6 +97,8 @@ import {
     FileDropModule,
     FileUploadModule,
     SlickCarouselModule,
+    FormsModule,
+    MentionModule,
   ],
   exports: [DialogOverviewExampleDialog],
   entryComponents: [

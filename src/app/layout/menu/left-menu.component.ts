@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit  } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, AfterViewInit  } from '@angular/core';
 
 import { Router, ActivatedRoute, NavigationEnd  } from '@angular/router';
 import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase} from '@angular/common/http';
@@ -11,7 +11,7 @@ import { Project } from '../../model/project';
     templateUrl: './left-menu.component.html',
     styleUrls: ['../layout.component.scss']
 })
-export class LeftMenuComponent implements OnInit, AfterViewInit {
+export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input('project_name') project_name:string;
     @Input('admin_project_sub') admin_project_sub:string;
     @Input('auth_profile') auth_profile:any;
@@ -30,8 +30,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
             public router: Router,
             private route: ActivatedRoute,
             private projectService: ProjectService
-    ) { 
-        
+    ) {
         this.admin_sub_3 = '';
         this.active_menu = this.admin_project_sub;
         this.onload_slug_list = [];
@@ -81,7 +80,6 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        console.log(this.auth_profile,'auth_profile left-menu');
         this.route.params.subscribe(params => {
             if (params['project_name'] !== undefined || this.project_name !== '') {
                 let project_name = this.project_name ? this.project_name : params['project_name'];
@@ -95,6 +93,14 @@ export class LeftMenuComponent implements OnInit, AfterViewInit {
         });
     }
 
+    ngOnDestroy(){
+        this.project = {
+            id:null,
+            name:'',
+            slug:'',
+            tickets:[]
+        };
+    }
     ngAfterViewInit(){
         this.router.events.subscribe(path =>{
             if(path instanceof NavigationEnd ){

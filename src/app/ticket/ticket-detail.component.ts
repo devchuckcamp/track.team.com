@@ -3,6 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { TicketService } from '../service/ticket.service';
 import { ThreadService } from '../service/thread.service';
 import { AuthService } from '../service/auth.service';
+import { ProjectService } from '../service/project.service';
+
 import { Ticket } from '../model/ticket';
 import { Thread } from '../model/thread';
 import { User } from '../model/user';
@@ -10,15 +12,16 @@ import { User } from '../model/user';
 import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { FileUploader, FileLikeObject } from 'ng2-file-upload';
 import { concat } from  'rxjs';
-
+import { FormsModule } from '@angular/forms';
 import {MatSnackBar, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {DialogOverviewExampleDialog} from './dialog-attachment-overview.component';
 import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import { projection } from '@angular/core/src/render3';
 
 class ImageSnippet {
   constructor(public src: string, public file: File) {}
 }
-
+const mentionedMember: Array<{ first_name: string, last_name: string, user_id: number}> = [];
 @Component({
   selector: 'app-ticket-detail',
   templateUrl: './ticket-detail.component.html',
@@ -31,6 +34,27 @@ export class TicketDetailComponent implements OnInit {
     auth:any;
     fileType:any;
     uploadImages:any = [];
+    mentions: string[] = ["Noah", "Liam", "Mason", "Jacob"];
+    // mentionedMember:any[] = [];
+    members:any[] =[];
+    
+    items: any[] =[
+      // { "name" : "Noah" },
+      // { "name" : "Liam" },
+      // { "name" : "Mason" },
+      // { "name" : "Jacob" }
+    ];
+    mentionConfig:any;
+    // mentionConfig = {
+    //   mentions:[{
+    //     items: this.items,
+    //       triggerChar: "@",
+    //       labelKey:"first_name",
+    //       disableSearch:false,
+    //       mentionSelect: this.itemMentioned
+    //     }
+    //   ]
+    // };
     project_name:string;
     loggedin_user:string;
     replyView:boolean;
@@ -45,6 +69,7 @@ export class TicketDetailComponent implements OnInit {
         private ticketService: TicketService,
         private threadService:  ThreadService,
         private authService:    AuthService,
+        private projectService: ProjectService,
         private router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
@@ -57,12 +82,13 @@ export class TicketDetailComponent implements OnInit {
         this.loading = false;
         this.loggedin_user = this.auth.username;
     }
+
     openDialog(uploads:any): void {
       const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
         width: '100%',
         data: {uploads: uploads}
       });
-  
+
       dialogRef.afterClosed().subscribe(result => {
         console.log('The dialog was closed');
         this.animal = result;
@@ -92,14 +118,38 @@ export class TicketDetailComponent implements OnInit {
 
             }
         });
+
+        // Get all member
+        this.projectService.getAllMember(this.project_name).subscribe( res => {
+          console.log(res.data,'member');
+          if(res.data){
+            this.members = res.data;
+            
+            for(var i =0;i < this.members.length;i++){
+              this.items.push(this.members[i].project_member_info);
+            }
+            this.mentionConfig = {
+              mentions:[{
+                items: this.items,
+                  triggerChar: "@",
+                  labelKey:"first_name",
+                  disableSearch:false,
+                  mentionSelect: this.itemMentioned
+                }
+              ]
+            };
+          }
+          // this.length = res.total;
+        });
     }
-    
+
+
     processFile(imageInput: any) {
       // const file: File = imageInput.files[0];
       // const reader = new FileReader();
-  
+
       // reader.addEventListener('load', (event: any) => {
-  
+
       //   this.selectedFile = new ImageSnippet(event.target.result, file);
       //   const formData = new FormData();
 
@@ -134,24 +184,24 @@ export class TicketDetailComponent implements OnInit {
     submitReplyBox(){
         if(this.replyView){
             // Check replay
-            if(this.replayText !==''){
-                this.loading = true;
-                this.replyView  = false;
-                let thread = {
-                    "ticket_id":this.ticket.id,
-                    "user_id": this.auth.id,
-                    "message":this.replayText,
-                    "files": this.uploadImages
-                };
-                console.log(thread, 'thread');
-                this.threadService.send(thread).subscribe( res => {
-                    this.loading = false;
-                    this.ticket.thread.push(res);
-                    this.uploadImages = [];
-                });
-            } else {
-                console.log(this.replayText,'replayText is empty');
-            }
+            // if(this.replayText !==''){
+            //     this.loading = true;
+            //     this.replyView  = false;
+            //     let thread = {
+            //         "ticket_id":this.ticket.id,
+            //         "user_id": this.auth.id,
+            //         "message":this.replayText,
+            //         "files": this.uploadImages
+            //     };
+            //     console.log(thread, 'thread');
+            //     this.threadService.send(thread).subscribe( res => {
+            //         this.loading = false;
+            //         this.ticket.thread.push(res);
+            //         this.uploadImages = [];
+            //     });
+            // } else {
+            //     console.log(this.replayText,'replayText is empty');
+            // }
         } else {
             this.replyView = true;
         }
@@ -207,82 +257,38 @@ export class TicketDetailComponent implements OnInit {
                 // console.log(ss);
                 reader.readAsBinaryString(file);
             }
-            // // Here you can access the real file
-            // console.log(droppedFile.relativePath, file);
-   
-            
-            // // You could upload it like this:
-            
-            // formData.append('uploaded_files[]', file, droppedFile.fileEntry.name);
-            // console.log(this.files,'this.files');
-            
-            /**
-            // Headers
-            const headers = new HttpHeaders({
-              'security-token': 'mytoken'
-            })
-            **/
-            // this.http.post('https://homestead.test/api/v1/thread/image/upload', formData, this.fileHeader())
-            // .subscribe(data => {
-            //   // Sanitized logo returned from backend
-            //   console.log(data, 'data');
-            // })
-            
-   
+
           });
         } else {
           // It was a directory (empty directories are added, otherwise only files)
           const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
-          // console.log(droppedFile.relativePath, fileEntry);
         }
       }
     }
     getFiles(): FileLikeObject[] {
       return this.uploader.queue.map((fileItem) => {
-        // console.log(fileItem,'fileItem');
+
         return fileItem.file;
       });
     }
     public imageUrlPREVIEW:any;
     fileOverBase(event):  void {
         this.hasBaseDropZoneOver  =  event;
-        
-
-        // const droppedFile = event.files[0];
-        // const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
-        // const reader = new FileReader();
-        // fileEntry.file((file: File) => {
-        //     reader.readAsDataURL(file);
-        //     reader.onload = (e) => {
-        //       console.log(reader.result);
-        //         this.imageUrlPREVIEW = reader.result;
-        //     };
-        // });
     }
     public requests = [];
     upload() {   
       const files = this.getFiles();
-      // console.log(files,'file');
-      
+
       files.forEach((file) => {
         let formData = new FormData();
         formData.append('uploaded_files' , file.rawFile, file.name);
         this.requests.push(formData);
       });
-      this.http.post('https://homestead.test/api/v1/thread/image/upload', this.requests, this.fileHeader())
+      this.http.post('https://8f90aa5d.ngrok.io//api/v1/thread/image/upload', this.requests, this.fileHeader())
       .subscribe(data => {
         // Sanitized logo returned from backend
         console.log(data, 'data');
       })
-      //console.log(requests, 'requests');
-      // concat(requests, this.jt())).subscribe(
-      //   (res) => {
-      //     console.log(res);
-      //   },
-      //   (err) => {  
-      //     console.log(err);
-      //   }
-      // );
     }
     private fileHeader() {
       let headers = new HttpHeaders({
@@ -335,6 +341,28 @@ export class TicketDetailComponent implements OnInit {
       this.threadService.getImage(thread_id).subscribe(res =>{
         return res;
       });
-      
+    }
+
+    removeTagUser(tag_info:any){
+      let tag_id = tag_info.id;
+      this.ticketService.removeTag(tag_id).subscribe( res => {
+        console.log('removed tag:'+ res);
+        this.ticket.tag_users = this.ticket.tag_users.filter(
+          tag => tag.id !== tag_info.id);
+      });
+
+      return false;
+    }
+
+    itemMentioned(tag:any){
+      console.log(  mentionedMember,' mentionedMember');
+      let mentioned = {
+        first_name:tag.first_name,
+        last_name:tag.last_name,
+        user_id: tag.user_id
+      };
+      mentionedMember.push(mentioned);
+
+      return '@'+tag.first_name+''+tag.last_name;
     }
 }

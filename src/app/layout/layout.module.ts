@@ -61,6 +61,9 @@ import {
   MatTooltipModule,
   MatTreeModule,
 } from '@angular/material';
+// Mention
+import { MentionModule } from 'angular-mentions';
+
 
 @NgModule({
   declarations: [
@@ -118,6 +121,7 @@ import {
     MatTreeModule,
     FormsModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
+    MentionModule,
   ],
   providers: [
     AuthService,

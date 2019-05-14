@@ -65,7 +65,9 @@ export class LoginComponent implements OnInit {
                         user_id = JSON.parse(localStorage.getItem('authUser')).id;
                         this.authenticationService.getAuthenticatedUserProfile(user_id).subscribe( response => {
                             this.avatar = response;
-                            localStorage.setItem('avatar',this.avatar.avatar.data);
+                            if(this.avatar.avatar !== null){
+                                localStorage.setItem('avatar',this.avatar.avatar.data);
+                            }
                             this.loading = false;
                             if(data.access_token && !this.loading){
                                 // this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);

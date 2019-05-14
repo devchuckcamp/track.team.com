@@ -84,6 +84,7 @@ export class MemberComponent implements OnInit {
 
   ngOnInit() {
     this.auth = this.authService.getAuthUser();
+    console.log(this.auth);
     console.log(this.auth, 'logged in user');
     this.memberFormShow = false;
     this.showMemberSearchForm = false;
