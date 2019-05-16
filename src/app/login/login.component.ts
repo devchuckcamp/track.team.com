@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
         //redirect to home if already logged in
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-        if(localStorage.getItem('currentUser') && JSON.parse(this.authenticationService.Bearer).access_token !== ''){
+        if(localStorage.getItem('currentUser') && this.authenticationService.Bearer !== ''){
             this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin'] );
         }
     }

@@ -4,7 +4,7 @@ import { TicketService } from '../service/ticket.service';
 import { ThreadService } from '../service/thread.service';
 import { AuthService } from '../service/auth.service';
 import { ProjectService } from '../service/project.service';
-
+import { GlobalRoutesService } from '../config/config';
 import { Ticket } from '../model/ticket';
 import { Thread } from '../model/thread';
 import { User } from '../model/user';
@@ -75,6 +75,7 @@ export class TicketDetailComponent implements OnInit {
         private snackBar: MatSnackBar,
         private dialog: MatDialog,
         private http: HttpClient,
+        private globalRoutesService:GlobalRoutesService,
     ) {
         this.auth = this.authService.getAuthUser();
         this.loggedin_user = "";
@@ -143,7 +144,7 @@ export class TicketDetailComponent implements OnInit {
         });
     }
 
-
+    apiEndpoint = this.globalRoutesService.apiEndPoint();
     processFile(imageInput: any) {
       // const file: File = imageInput.files[0];
       // const reader = new FileReader();
@@ -284,7 +285,7 @@ export class TicketDetailComponent implements OnInit {
         formData.append('uploaded_files' , file.rawFile, file.name);
         this.requests.push(formData);
       });
-      this.http.post('https://8f90aa5d.ngrok.io//api/v1/thread/image/upload', this.requests, this.fileHeader())
+      this.http.post(this.apiEndpoint+'/api/v1/thread/image/upload', this.requests, this.fileHeader())
       .subscribe(data => {
         // Sanitized logo returned from backend
         console.log(data, 'data');
@@ -299,7 +300,7 @@ export class TicketDetailComponent implements OnInit {
           'Access-Control-Allow-Origin':'*',
           'Allow_Headers':' Allow, Access-Control-Allow-Origin, Content-type, Accept',
           'Allow':'GET,POST,PUT,DELETE,OPTION'
-        })
+        });
       let options = { headers: headers };
       return options;
   }

@@ -26,9 +26,9 @@ export class GlobalRoutesService {
     public mimsPort='80';
     //public apiPort='8181';
     public apiPort = ''; //for staging 
-    public host='8f90aa5d.ngrok.io'; //development
-    //public host='192.168.10.10'; //for staging
-    public protocol='https://';
+    //public host='0736b05d.ngrok.io'; //development
+    public host='192.168.10.10'; //for staging
+    public protocol='http://';
     
     public googleLogin=this.protocol+this.host+':'+this.apiPort+'/glogin';
 
