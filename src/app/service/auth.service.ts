@@ -38,10 +38,8 @@ export class AuthService {
                 "client_secret":client.client_secret,
                 "grant_type" : "password",
             });
-            
 
-            console.log(body);
-            return this.http.post<any>(this.apiEndpoint+'/oauth/token', body, this.jt())
+            return this.http.post<any>(this.apiEndpoint+'/api/v1/oauth/token', body, this.jt())
               .pipe(
                 retry(2),
                 catchError(this.config.handleError)
