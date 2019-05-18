@@ -54,7 +54,29 @@ export class TicketService {
     delete(id: number) {
         return this.http.delete(this.config.apiEndPoint()+'/api/v1/tickets/'+id, this.jt());
     }
-
+    // Mention
+    mentionUser(mentionedUser:any, ticket_id:number){
+        var mention:{
+            email:string,
+            first_name:string,
+            last_name:string,
+            user_id:number
+            ticket_id:number
+        };
+        let ticketID = ticket_id;
+        let mentions = [];
+        mentionedUser.forEach(obj => {
+            mention = {
+                email: obj.email,
+                first_name:obj.first_name,
+                last_name:obj.last_name,
+                user_id :obj.user_id,
+                ticket_id:ticketID
+            };
+            mentions.push(this.http.post(this.config.apiEndPoint()+'/api/v1/tickets-mention-users', mention, this.jt()));
+        });
+        return forkJoin(mentions);
+    }
     addTaggedUser(tagged_member: any) {
         let tag:{
             ticket_id:number,
@@ -70,9 +92,7 @@ export class TicketService {
 
             https.push(this.http.post(this.config.apiEndPoint()+'/api/v1/tickets-tag-users', tag, this.jt()));
         });
-        
         return forkJoin(https);
-        // return this.http.delete(this.config.apiEndPoint()+'/api/v1/tickets-tag-users/'+id, this.jt());
     }
 
     removeTag(id: number) {

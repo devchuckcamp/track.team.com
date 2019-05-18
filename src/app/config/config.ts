@@ -29,8 +29,8 @@ export class GlobalRoutesService {
     //public host='0736b05d.ngrok.io'; //development
     //public host='192.168.10.10'; //for staging
     public host='support.ecomia.com'; //for production
-    public protocol='https://';
-    
+    //public protocol='http://'; //for development
+    public protocol='https://'; //production
     public googleLogin=this.protocol+this.host+':'+this.apiPort+'/glogin';
 
     constructor(

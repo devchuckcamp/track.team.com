@@ -21,7 +21,10 @@ import { projection } from '@angular/core/src/render3';
 class ImageSnippet {
   constructor(public src: string, public file: File) {}
 }
-const mentionedMember: Array<{ first_name: string, last_name: string, user_id: number}> = [];
+const mentionedMember: Array<{ email: string, first_name: string, last_name: string, user_id: number;}> = [];
+type memberListType = Array<{id: number, email: string, first_name:string, last_name: string; }>;
+const memberListArray: memberListType = [];
+
 @Component({
   selector: 'app-ticket-detail',
   templateUrl: './ticket-detail.component.html',
@@ -34,27 +37,12 @@ export class TicketDetailComponent implements OnInit {
     auth:any;
     fileType:any;
     uploadImages:any = [];
-    mentions: string[] = ["Noah", "Liam", "Mason", "Jacob"];
-    // mentionedMember:any[] = [];
+
     members:any[] =[];
-    
-    items: any[] =[
-      // { "name" : "Noah" },
-      // { "name" : "Liam" },
-      // { "name" : "Mason" },
-      // { "name" : "Jacob" }
-    ];
+    memberList = [];
+    items: any[] =[];
     mentionConfig:any;
-    // mentionConfig = {
-    //   mentions:[{
-    //     items: this.items,
-    //       triggerChar: "@",
-    //       labelKey:"first_name",
-    //       disableSearch:false,
-    //       mentionSelect: this.itemMentioned
-    //     }
-    //   ]
-    // };
+
     project_name:string;
     loggedin_user:string;
     replyView:boolean;
@@ -91,7 +79,6 @@ export class TicketDetailComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed');
         this.animal = result;
       });
     }
@@ -100,9 +87,8 @@ export class TicketDetailComponent implements OnInit {
         this.route.params.subscribe(params => {
             if (params['ticket_id'] !== undefined) {
                 this.project_name = params['project_name'];
-
                 this.ticketService.getProjectTicket(params['project_name'],params['ticket_id']).subscribe( res => {
-                  console.log(res);
+                  console.log(res,'getProjectTicket');
                   if(res){
                       this.ticket = res;
                     }
@@ -120,27 +106,28 @@ export class TicketDetailComponent implements OnInit {
             }
         });
 
+        this.mentionConfig = {
+          mentions:[{
+            items: this.items,
+              triggerChar: "@",
+              labelKey:"first_name",
+              disableSearch:false,
+              mentionSelect: this.itemMentioned
+            }
+          ]
+        };
         // Get all member
         this.projectService.getAllMember(this.project_name).subscribe( res => {
-          console.log(res.data,'member');
           if(res.data){
             this.members = res.data;
-            
+            for(var i = 0; i < this.members.length; i++){
+              memberListArray.push(this.members[i].user);
+            }
+            this.memberList = this.members;
             for(var i =0;i < this.members.length;i++){
               this.items.push(this.members[i].project_member_info);
             }
-            this.mentionConfig = {
-              mentions:[{
-                items: this.items,
-                  triggerChar: "@",
-                  labelKey:"first_name",
-                  disableSearch:false,
-                  mentionSelect: this.itemMentioned
-                }
-              ]
-            };
           }
-          // this.length = res.total;
         });
     }
 
@@ -172,6 +159,8 @@ export class TicketDetailComponent implements OnInit {
       // reader.readAsDataURL(file);
     }
 
+
+
     viewTicket(ticket){
         this.ticket = ticket;
         return false;
@@ -185,24 +174,28 @@ export class TicketDetailComponent implements OnInit {
     submitReplyBox(){
         if(this.replyView){
             // Check replay
-            // if(this.replayText !==''){
-            //     this.loading = true;
-            //     this.replyView  = false;
-            //     let thread = {
-            //         "ticket_id":this.ticket.id,
-            //         "user_id": this.auth.id,
-            //         "message":this.replayText,
-            //         "files": this.uploadImages
-            //     };
-            //     console.log(thread, 'thread');
-            //     this.threadService.send(thread).subscribe( res => {
-            //         this.loading = false;
-            //         this.ticket.thread.push(res);
-            //         this.uploadImages = [];
-            //     });
-            // } else {
-            //     console.log(this.replayText,'replayText is empty');
-            // }
+            if(this.replayText !==''){
+              this.loading = true;
+              this.replyView  = false;
+              let thread = {
+                  "ticket_id":this.ticket.id,
+                  "user_id": this.auth.id,
+                  "message":this.replayText,
+                  "files": this.uploadImages
+              };
+
+              this.threadService.send(thread).subscribe( res => {
+                if(res){
+                  this.ticketService.mentionUser(mentionedMember, this.ticket.id).subscribe(res => {
+                    mentionedMember.length = 0;
+
+                  });
+                  this.loading = false;
+                  this.ticket.thread.push(res);
+                  this.uploadImages = [];
+                }
+              });
+            }
         } else {
             this.replyView = true;
         }
@@ -211,19 +204,6 @@ export class TicketDetailComponent implements OnInit {
 
     // File Upload
     public files: UploadFile[] = [];
-  // handleFileSelect(evt){
-  //     var files = evt.target.files;
-  //     var file = files[0];
-
-  //   if (files && file) {
-  //       var reader = new FileReader();
-
-  //       reader.onload = this._handleReaderLoaded.bind(this);
-  //       let ss = this._handleReaderLoaded.bind(this);
-  //       console.log(ss);
-  //       reader.readAsBinaryString(file);
-  //   }
-  // }
 
     getFileType(){
       return this.fileType;
@@ -231,7 +211,7 @@ export class TicketDetailComponent implements OnInit {
 
     _handleReaderLoaded(readerEvt) {
       var binaryString = readerEvt.target.result;
-     
+
       let base64textString = '';
       base64textString= btoa(binaryString);
       this.uploadImages.push('data:'+this.getFileType()+';base64,'+btoa(binaryString));
@@ -305,14 +285,14 @@ export class TicketDetailComponent implements OnInit {
       return options;
   }
     public fileOver(event){
-      console.log(event);
+
     }
    
     public fileLeave(event){
-      console.log(event);
+      
     }
 
-    updateTicketStatus(status:number){
+    public updateTicketStatus(status:number){
       console.log(status,'status updated');
       this.ticket.status_id = status;
       let data = {
@@ -347,7 +327,6 @@ export class TicketDetailComponent implements OnInit {
     removeTagUser(tag_info:any){
       let tag_id = tag_info.id;
       this.ticketService.removeTag(tag_id).subscribe( res => {
-        console.log('removed tag:'+ res);
         this.ticket.tag_users = this.ticket.tag_users.filter(
           tag => tag.id !== tag_info.id);
       });
@@ -356,11 +335,12 @@ export class TicketDetailComponent implements OnInit {
     }
 
     itemMentioned(tag:any){
-      console.log(  mentionedMember,' mentionedMember');
+      let mentionedUserEmail = memberListArray.filter( res =>  res.id == tag.user_id );
       let mentioned = {
         first_name:tag.first_name,
         last_name:tag.last_name,
-        user_id: tag.user_id
+        email:mentionedUserEmail[0].email,
+        user_id: tag.user_id,
       };
       mentionedMember.push(mentioned);
 
