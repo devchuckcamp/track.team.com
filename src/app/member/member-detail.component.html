@@ -1,5 +1,132 @@
-<div class="row">
+<!-- <div class="row">
   <div *ngIf="user" class="col-md-12 pad-20 text-center">
     {{user.name}} Detail Page works!
   </div>
+</div> -->
+<div class="col-lg-12">
+  <!-- Profile Form -->
+
+  <form *ngIf="userProfileForm && user && user.user_details && auth_user"
+          class="row"
+          [formGroup]="userProfileForm" id="userProfileForm" 
+          (submit)="updateMemberProfile()"
+          novalidate>
+      <div class="col-lg-12 text-center form-header-title mar-y-15">
+          <h2>Member Profile</h2>
+      </div>
+      <div class="divider mar-y-15"></div>
+      <!-- Account Avatar -->
+      <!-- Profile Info -->
+      <div class="half-width col-2">
+          <!-- Avatar -->
+          <div class="form-group full-w" >
+                  <img class="rounded-circle" *ngIf="!user_avatar" [src]="default_avatar" width="100" height="100">
+                  <img class="rounded-circle" *ngIf="user_avatar" [src]="userAvatar" width="100" height="100">
+                  <!-- <img class="rounded-circle" *ngIf="loadingImage" src="../../assets/icon/loading.gif"  width="50" height="50" alt="loading logo"> -->
+                  <div>
+                      <!-- <label for="file">Update</label><mat-icon>attachment</mat-icon> -->
+                      <!-- <button mat-button color="accent" 
+                              mat-mini-fab (click)="imageInput.click() return false;">
+                          <mat-icon>attachment</mat-icon>
+                      </button>  -->
+                      <!-- <input type='file'(change)="readUrl($event)"> -->
+                      <!-- <label class="image-upload-container btn btn-bwm">
+                              <span>Select Image</span> -->
+                      <input *ngIf="user.id == auth_user.id" mat-button color="accent" #imageInput type="file" accept="image/*" (change)="handleFileSelect($event)">
+                      <!-- </label> -->
+                  </div>
+          </div>
+      </div>
+      <!-- Account Info -->
+      <div class="half-width col">
+          <div class="form-group full-w">
+              <mat-form-field class="full-w">
+                  <input matInput formControlName="username" placeholder="Username" readonly [(ngModel)]="user.username">
+              </mat-form-field>
+          </div>
+          <!-- Email -->
+          <div class="form-group full-w">
+              <mat-form-field class="full-w">
+                  <input [readonly]="user.id !== auth_user.id" matInput formControlName="email" placeholder="Email Address" [(ngModel)]="user.email">
+              </mat-form-field>
+          </div>
+      </div>
+      <!-- Profile Info -->
+      <div class="half-width col">
+          <!-- First Name -->
+          <div class="form-group full-w">
+              <mat-form-field class="full-w">
+                  <input [readonly]="user.id !== auth_user.id"  matInput formControlName="first_name" placeholder="First Name"
+                      [(ngModel)]="user.user_details.first_name">
+              </mat-form-field>
+          </div>
+          <!-- Last Name -->
+          <div class="form-group full-w">
+              <mat-form-field class="full-w">
+                  <input [readonly]="user.id !== auth_user.id" matInput formControlName="last_name" placeholder="Last Name" [(ngModel)]="user.user_details.last_name">
+              </mat-form-field>
+          </div>
+      </div>
+      <!-- Action -->
+      <div *ngIf="user.id == auth_user.id" class="full-w col-lg-12 text-center">
+          <div class="form-group full-w">
+              <mat-action-row>
+                  <button mat-button color="primary"
+                      [disabled]="(!userProfileForm.valid && !userProfileForm.touched ) || submitting"
+                      (click)="updateMemberProfile()">Update</button>
+              </mat-action-row>
+          </div>
+      </div>
+  </form>
+  <!-- User Project -->
+  <form *ngIf="!userProfileForm && !user"
+          class="row"
+          [formGroup]="userProfileForm" id="userProfileForm"
+          (submit)="updateMemberProfile()"
+          novalidate>
+      <div class="col-lg-12 text-center form-header-title mar-y-15">
+          <h2>Projects</h2>
+      </div>
+      <div class="divider mar-y-15"></div>
+      <!-- Account Info -->
+      <div class="half-width col">
+          <div class="form-group full-w">
+              <mat-form-field class="full-w">
+                  <input matInput formControlName="username" placeholder="Username" readonly [(ngModel)]="user.username">
+              </mat-form-field>
+          </div>
+          <!-- Email -->
+          <div class="form-group full-w">
+              <mat-form-field class="full-w">
+                  <input matInput formControlName="email" placeholder="Email Address" [(ngModel)]="user.email">
+              </mat-form-field>
+          </div>
+      </div>
+      <!-- Profile Info -->
+      <div class="half-width col">
+          <!-- First Name -->
+          <div class="form-group full-w">
+              <mat-form-field class="full-w">
+                  <input matInput formControlName="first_name" placeholder="First Name"
+                      [(ngModel)]="user.user_details.first_name">
+              </mat-form-field>
+          </div>
+          <!-- Last Name -->
+          <div class="form-group full-w">
+              <mat-form-field class="full-w">
+                  <input matInput formControlName="last_name" placeholder="Last Name" [(ngModel)]="user.user_details.last_name">
+              </mat-form-field>
+          </div>
+      </div>
+      <!-- Action -->
+      <div *ngIf="user_details.user_id === auth_user.id" class="full-w col-lg-12 text-center">
+          <div class="form-group full-w">
+              <mat-action-row>
+                  <button mat-button color="primary"
+                      [disabled]="(!userProfileForm.valid && !userProfileForm.touched ) || submitting"
+                      (click)="updateMemberProfile()">Update</button>
+              </mat-action-row>
+          </div>
+      </div>
+  </form>
 </div>

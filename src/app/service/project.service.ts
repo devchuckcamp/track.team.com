@@ -10,7 +10,7 @@ import { GlobalRoutesService } from '../config/config';
 @Injectable({ providedIn: 'root' })
 export class ProjectService {
     apiEndpoint:string;
-    private Bearer:any;
+    Bearer:any;
 
     constructor(
         private config: GlobalRoutesService,
@@ -26,7 +26,15 @@ export class ProjectService {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/projects', this.jt()).pipe(map( (res:any) => res));
     }
 
-    getProject(id: number) {
+    getAllMember(project_name:string) {
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+project_name+'?'+'members=all', this.jt()).pipe(map( (res:any) => res));
+    }
+
+    getAllMemberObs(project_name:string) {
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+project_name+'?'+'members=all', this.jt()).pipe(map( (res:any) => res.data));
+    }
+
+    getProject(id: any) {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+id, this.jt()).pipe(map( (res:any) => res));
     }
 

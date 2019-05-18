@@ -1,0 +1,136 @@
+<div *ngIf="ticket" class="col-lg-12">
+    <div class="thread-container col-lg-12">
+        <h2>{{ticket.title}}     <span *ngIf="ticket.assigned_to.id == auth.id" class="badge font-white font-12 bg-success">Assigned to you</span></h2> 
+         
+        <form>
+            <!-- <div class="form-group">
+                <label for="exampleInputEmail1">Email address</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+                <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                </div> -->
+            <div class="form-group"  *ngIf="ticket.assigned_to.id == auth.id || ticket.created_by.id == auth.username">
+                <label class="mar-r-10" for="ticket-status">Status  </label>
+                <select #ticketStatus (change)="updateTicketStatus(ticketStatus.value)">
+                    <option value="1" [selected]="ticket.status_id == 1">Open</option>
+                    <option value="2" [selected]="ticket.status_id == 2">In progress</option>
+                    <option value="3" [selected]="ticket.status_id == 3">For Testing</option>
+                    <option value="4" [selected]="ticket.status_id == 4">On QA</option>
+                    <option value="5" [selected]="ticket.status_id == 5">Complete</option>
+                </select>
+            </div>
+            <div *ngIf="ticket.tag_users" class="row form-group">
+                <div  class="col-lg-12">
+                    <label for="tag_users">Tagged users:</label>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div *ngFor="let tag of ticket.tag_users" class="col-lg-3 col-md-4 col-sm-6 border-rad-5 bg-success font-white pad-5 mar-10">
+                            {{tag.user.user_details.first_name}} {{tag.user.user_details.last_name}} ({{tag.user.username}})
+                            <a href="#" class="pull-right" (click)="removeTagUser(tag)"> <i class="btn btn-danger pos-ab fa fa-remove"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">Description</label>
+                <textarea disabled class="form-control" id="exampleFormControlTextarea1"
+                    rows="3">{{ticket.description}}</textarea>
+            </div>
+            <!-- <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                </div> -->
+            <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+        </form>
+    </div>
+    <div *ngIf="!thread loading" class="col-lg-12 loading text-center">
+        <img *ngIf="loading" src="../../assets/icon/loading.gif">
+    </div>
+    <div class="thread-container col-lg-12">
+        <div *ngIf="thread" class="thread-list-container row mar-0 text-center">
+            <div>
+                <label for="no-list" class="label text-info">Ticket has {{ticket.thread.length}} discussions</label>
+            </div>
+            <div *ngFor="let thread of ticket.thread; let i = index" [attr.data-index]="i" class="thread-message mar-y-10 full-w pad-0">
+                <div class="card thread-message-content text-left">
+                    <div class="row thread-attachment-list-container" *ngIf="thread.upload && thread.upload.length">
+                        <div *ngFor="let upload of thread.upload; let ii = index" [attr.data-index]="ii" class="comment-attachment-container col">
+                            <!-- thread ID:{{thread.id}} -->
+                            <img (click)="openDialog(thread.upload)"  class="mar-x-30 full-w full-h" src="{{upload.url ? upload.url : 'https://homestead.test/'+upload.path+'/'+upload.name}}">
+                        </div>
+                    </div>
+                    <div class="card-body row">
+                        <div [ngClass]="{'comment-own order-md-2': thread.user_id == auth.id}"
+                            class="col card-header thread-message-head q-width border-rad-10 pad-20 mar-r-10"> <label
+                                for="">{{thread.user_id == auth.id ? 'You' : thread.message_by.name }}</label>
+                            : <label class="message-create">{{thread.created_at}}</label></div>
+                        <div [ngClass]="{'text-right': thread.user_id == auth.id, 'text-left': thread.message_by.username != loggedin_user}"
+                            class="col-lg-9 card-body thread-message-wrapper">{{thread.message}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!ticket.thread" class="thread-list-container row mar-0 text-center">
+            <label for="no-list" class="label text-danger">This ticket has not started a discussion yet.</label>
+        </div>
+
+        <div *ngIf="ticket.thread" class="thread-list-reply-container row mar-0 text-center">
+            <div *ngIf="replyView && !loading" class="center full-w pad-y-10">
+                
+                <file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)" (onFileOver)="fileOver($event)"
+                    (onFileLeave)="fileLeave($event)">
+                    <span>File</span>
+                </file-drop>
+                <div class="upload-table hidden">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody class="upload-name-style">
+                            <tr *ngFor="let item of files; let i=index">
+                                <td><strong>{{ item.relativePath }}</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- <div ng2FileDrop
+                [ngClass]="{'drop-file-over': hasBaseDropZoneOver}"
+                (fileOver)="fileOverBase($event)"
+                [uploader]="uploader"
+                class="area">
+                <div id="dropZone">Drop files here</div>
+                </div>
+
+                <input type="file" ng2FileSelect [uploader]="uploader" multiple  />
+                <button (click)="upload()">Upload files</button>
+
+                <h2>Your files: {{ uploader?.queue?.length }}</h2>
+                <ul>
+                <li *ngFor="let item of uploader.queue">
+                    {{ item?.file?.name }}
+                </li>
+                </ul> -->
+
+                <!-- <label class="image-upload-container btn btn-bwm">
+                    <span>Select Image</span>
+                    <input #imageInput type="file" accept="image/*" (change)="handleFileSelect($event)">
+                </label> -->
+                <div class="row thread-attachment-list-container" *ngIf="uploadImages.length">
+                    <div *ngFor="let img of uploadImages; let i = index" [attr.data-index]="ii" class="comment-attachment-container col">
+                            <img [src]="img" class="mar-x-30 full-w full-h"  alt="">
+                    </div>
+                </div>
+            </div>
+            <!-- <input type="text" [mention]="mentions" [mentionConfig]="mentionConfig"> -->
+            <textarea *ngIf="replyView && !loading"  class="form-control"[mention]="items"  [mentionConfig]="mentionConfig" id="commentReplayBox" rows="5" #replyText (keyup)="onReplayKey(replyText.value)" (blur)="onReplayKey(replyText.value)"></textarea>
+            <button type="submit" (click)="submitReplyBox()" class="btn btn-info mar-0-auto pad-x-30 font-25 mar-t-20">Comment</button>
+        </div>
+    </div>
+</div>

@@ -12,7 +12,7 @@ import { ClientGlobalRoutesService } from '../config/client';
 export class AuthService {
     apiEndpoint:string;
     Bearer:any;
-
+    CSRF_TOKEN:any;
     constructor(
         private config: GlobalRoutesService,
         private client:ClientGlobalRoutesService,
@@ -20,7 +20,12 @@ export class AuthService {
         ) {
             this.apiEndpoint = this.config.apiEndPoint();
             if(localStorage.getItem("currentUser")){
-                this.Bearer = localStorage.getItem("currentUser");
+                this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
+            }
+            if(localStorage.getItem("csrf_token")){
+                this.CSRF_TOKEN = JSON.parse(localStorage.getItem("csrf_token")).token;
+            } else {
+                localStorage.setItem('csrf_token',JSON.stringify({'token':'lkcc371220183d'}));
             }
         }
 
@@ -33,10 +38,8 @@ export class AuthService {
                 "client_secret":client.client_secret,
                 "grant_type" : "password",
             });
-            
 
-            console.log(body);
-            return this.http.post<any>(this.apiEndpoint+'/oauth/token', body, this.jt())
+            return this.http.post<any>(this.apiEndpoint+'/api/v1/oauth/token', body, this.jt())
               .pipe(
                 retry(2),
                 catchError(this.config.handleError)
@@ -46,7 +49,21 @@ export class AuthService {
     getAll(): Observable<User[]> {
         return this.http.get<User[]>(this.config.apiEndPoint()+'/users');
     }
-
+    getAuthenticatedUser(){
+        if(localStorage.getItem("currentUser")){
+            this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
+        }
+        return this.http.get<User[]>(this.config.apiEndPoint()+'/api/user',this.jt());
+    }
+    getAuthenticatedUserProfile(id:number){
+        if(localStorage.getItem("currentUser")){
+            this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
+        }
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/users/'+id,this.jt());
+    }
+    getAuthUser(){
+        return JSON.parse(localStorage.getItem("authUser"));
+    }
     getById(id: number) {
         return this.http.get<User>(this.config.apiEndPoint()+'/users/'+id, this.jt());
     }

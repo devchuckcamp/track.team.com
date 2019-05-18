@@ -7,6 +7,8 @@ import { LoginComponent } from '../login/login.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { NavbarModule } from '../navbar/navbar.module';
 import { LayoutComponent } from './layout.component';
+import { ProjectNewComponent } from '../project/project-new.component';
+import { ProfileComponent } from '../profile/profile.component';
 import { AuthGuard } from '../guard/auth';
 
 const routes:   Routes = [
@@ -19,10 +21,13 @@ const routes:   Routes = [
         path: 'admin', component:LayoutComponent,
         canActivate:[AuthGuard],
         children:[
-            { path: 'projects', loadChildren:'../project/project.module#ProjectModule'},
+            { path: 'projects',  component:LayoutComponent },
+            { path: 'projects/new', component:ProjectNewComponent},
             { path: 'projects/:project_name', loadChildren:'../project/project-detail.module#ProjectDetailModule'},
             { path: 'projects/:project_name/tickets', loadChildren:'../ticket/ticket.module#TicketModule'},
-            { path: 'projects/:name/tasks', loadChildren:'../project/project-detail.module#ProjectDetailModule'},
+            { path: 'projects/:project_name/tickets/:ticket_id', loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
+            { path: 'projects/:project_name/members', loadChildren:'../member/member.module#MemberModule'},
+            { path: 'projects/:project_name/members/:user_id', loadChildren:'../member/member-detail.module#MemberDetailModule'},
             { path: 'fund/current', loadChildren:'../fund/fund.module#FundModule'},
             { path: 'fund/incoming', loadChildren:'../fund/fund-incoming.module#FundIncomingModule'},
             { path: 'fund/pending', loadChildren:'../fund/fund-pending.module#FundPendingModule'},
@@ -30,8 +35,8 @@ const routes:   Routes = [
             { path: 'member', loadChildren:'../member/member.module#MemberModule', },
             { path: 'member/:username', loadChildren:'../member/member-detail.module#MemberDetailModule', },
             { path: 'rollin', loadChildren:'../rollin/rollin.module#RollinModule', },
-            { path: 'profile', loadChildren:'../profile/profile.module#ProfileModule'},
-            { path: 'setting', loadChildren:'../setting/setting.module#SettingModule'},
+            { path: 'profile', component:ProfileComponent},
+            { path: 'settings', loadChildren:'../setting/setting.module#SettingModule'},
         ]
     },
 ];

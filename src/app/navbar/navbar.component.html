@@ -16,8 +16,8 @@
         </a>
         <div *ngIf="projects" class="dropdown-menu">
           
-          <a  *ngFor="let proj of projects"  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/'+proj.slug }" [routerLink]="['/admin/projects', proj.slug]">{{proj.name}}</a>
-          <!-- <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/incoming' }" [routerLink]="['/admin/fund/{{proj.name}}']">Mass Depot</a> -->
+          <a  *ngFor="let proj of projects"  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/'+proj.slug }" [routerLink]="['/admin/projects', proj.slug]">{{proj.name | titlecase}}</a>
+          <a  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/new' || activeURL === '/admin/projects' }" [routerLink]="['/admin/projects/new']">Add Project</a>
         </div>
         <div *ngIf="!projects" class="dropdown-menu">
           
@@ -25,7 +25,7 @@
             <!-- <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/incoming' }" [routerLink]="['/admin/fund/{{proj.name}}']">Mass Depot</a> -->
           </div>
       </li>
-      <li class="nav-item dropdown" 
+      <!-- <li class="nav-item dropdown" 
       [ngClass]="{'active':activeURL === '/admin/fund' || activeURL === '/admin/fund/current' || activeURL === '/admin/fund/incoming' || activeURL === '/admin/fund/pending'}"
       >
         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
@@ -38,7 +38,7 @@
           <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">Completed</a>
           <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/pending' }" [routerLink]="['/admin/fund/pending']">All</a>
         </div>
-      </li>
+      </li> -->
       <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/investor' }">
         <a class="nav-link" [routerLink]="['/admin/investor']">User</a>
       </li>
@@ -56,17 +56,15 @@
         <a class="nav-link dropdown-toggle pad-x-40 pad-x-sm-0" href="#" id="navbardrop" data-toggle="dropdown"
         [ngClass]="{'active':activeURL === '/admin/profile' || activeURL === '/admin/setting' || this.activeURL.split('admin/profile').length - 1 || this.activeURL.split('admin/setting').length - 1}"
         >
-          Account
+          <img *ngIf="user_avatar" class="rounded-circle" [src]="user_avatar" height="22" width="22" alt="Account">
         </a>
         <div class="dropdown-menu">
           <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/profile' || this.activeURL.split('admin/profile').length - 1}" [routerLink]="['/admin/profile']"><i class="pad-x-5 fa fa-user-circle-o"></i>Profile</a>
-          <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/setting' || this.activeURL.split('admin/setting').length - 1}" [routerLink]="['/admin/setting']"><i class="pad-x-5 fa fa-wrench"></i>Settings</a>
+          <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/settings' || this.activeURL.split('admin/settings').length - 1}" [routerLink]="['/admin/settings']"><i class="pad-x-5 fa fa-wrench"></i>Settings</a>
           <a href="#" class="dropdown-item" (click)="logout()"><i class="pad-x-5 fa fa-sign-out"></i>Logout</a>
         </div>
       </li>
     </ul>
 
   </div>
-
-
 </nav>

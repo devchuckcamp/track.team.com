@@ -46,7 +46,7 @@ import {
 
 @NgModule({
   declarations: [
-    ProjectComponent,
+    // ProjectComponent,
   ],
   imports: [
     MatAutocompleteModule,

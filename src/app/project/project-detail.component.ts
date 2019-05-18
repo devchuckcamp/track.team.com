@@ -12,6 +12,10 @@ import { Project } from '../model/project';
 })
 export class ProjectDetailComponent implements OnInit {
     project:Project;
+    tickets:any;
+    openTickets:number;
+    inProgressTickets:number;
+    completedTickets:number;
 
     constructor(
             private http: HttpClient,
@@ -24,9 +28,18 @@ export class ProjectDetailComponent implements OnInit {
         this.route.params.subscribe(params => {
             if (params['project_name'] !== undefined) {
                 this.projectService.getProject(params['project_name']).subscribe( res => {
-                    console.log(res,'detail');
+                    
                     if(res){
                         this.project = res;
+                        this.tickets = this.project.tickets;
+                        this.openTickets = this.tickets.filter(book => book.status_id == 1);
+                        this.inProgressTickets = this.tickets.filter(book => book.status_id == 2);
+                        this.completedTickets = this.tickets.filter(book => book.status_id == 5);
+
+                        console.log( this.openTickets,' this.openTickets');
+                        console.log( this.inProgressTickets,' this.inProgressTickets');
+                        console.log( this.completedTickets,' this.completedTickets');
+
                     }
                 });
             }

@@ -9,4 +9,5 @@ export class Ticket {
     created: number;
     modified: number;
     last_modified_by: number;
+    tag_users:Array<any>;
 }

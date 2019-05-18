@@ -1,41 +1,193 @@
-<div class="col-12">
-  <div class="container">
-    <div class="row member-list">
-      <div class="table-responsive">
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<div class="col-lg-12">
+  <div  class="col-lg-12 content-option text-right mar-10 pad-10">
+      <a href="#" *ngIf="auth.role_id < 4 && !memberFormShow" (click)="toggleMemberForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add Member</i></a>
+      <a href="#" *ngIf="auth.role_id < 4 && memberFormShow && !showMemberSearchForm" (click)="toggleMemberForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a>
+      <a href="#" *ngIf="auth.role_id < 4 && memberFormShow && !showMemberSearchForm" (click)="toggleMemberSearchForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-search mar-r-5 q-width">Search member</i></a> 
+      <a href="#" *ngIf="auth.role_id < 4 && memberFormShow && showMemberSearchForm" (click)="toggleMemberSearchForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a>
+    </div>
+  <div  *ngIf="!memberFormShow" class="row member-list">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-w">
+        <!--- Note that these columns can be defined in any order.
+                      The actual rendered columns are set as a property on the row definition" -->
+  
+        <!-- Username Column -->
+        <ng-container matColumnDef="username">
+          <th mat-header-cell *matHeaderCellDef> Username </th>
+          <td mat-cell *matCellDef="let element"> {{element.user.name}} </td>
+        </ng-container>
+  
+        <!-- First Name Column -->
+        <ng-container matColumnDef="first_name">
+          <th mat-header-cell *matHeaderCellDef> First Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.project_member_info.first_name}} </td>
+        </ng-container>
+  
+        <!-- Last Name Column -->
+        <ng-container matColumnDef="last_name">
+          <th mat-header-cell *matHeaderCellDef> Last Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.project_member_info.last_name}} </td>
+        </ng-container>
+  
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef> Email </th>
+          <td mat-cell *matCellDef="let element"> {{element.user.email}} </td>
+        </ng-container>
+  
+        <!-- Options Column -->
+        <ng-container matColumnDef="action" *ngIf="auth">
+          <th mat-header-cell *matHeaderCellDef> Option </th>
+          
+          <td mat-cell *matCellDef="let element"> <a  class="btn btn-success" [routerLink]="element.user.id !== auth.id ?  [ '/admin/projects', project_name , 'members' ,element.user.id ] : '/admin/profile'" > <i class="fa fa-eye"></i></a> </td>
+        </ng-container>
 
-          <!--- Note that these columns can be defined in any order.
-                    The actual rendered columns are set as a property on the row definition" -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <mat-paginator *ngIf="length" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)">
+        ></mat-paginator>
+    </div>
+  </div>
+  <div  *ngIf="memberFormShow" class="col-lg-12">
+    <!-- Add New Account -->
+    <div *ngIf="memberFormShow && !showMemberSearchForm"  [@enterAnimation] mat-form  class="col-lg-8">
+      <form
+        class="row"
+        [formGroup]="memberForm" id="memberForm" 
+        (submit)="addNewAccountToProject()"
+        novalidate>
+        <!-- <div class="inline-block pull-left half-width text-left">
+                <img class=""   *ngIf="(uploadedImage || defaultImage != null) && !loadingImage" ngShow="!loadingImage" [src]="defaultImage ? defaultImage : uploadedImage" width="100" height="100">
+                <img class="rounded-circle" *ngIf="loadingImage" src="../../assets/icon/loading.gif"  width="50" height="50" alt="loading logo">
+                <div>
+                    <label for="file">Update</label>
+                    <button mat-button color="accent" 
+                            mat-mini-fab (click)="imgFileInput.click();">
+                        <mat-icon>attachment</mat-icon>
+                    </button> 
+                    <input hidden type='file'#imgFileInput (change)="readUrl($event)">
+                </div>
+        </div> -->
 
-          <!-- Username Column -->
-          <ng-container matColumnDef="username">
-            <th mat-header-cell *matHeaderCellDef> Username </th>
-            <td mat-cell *matCellDef="let element"> {{element.username}} </td>
-          </ng-container>
+        <!-- <div class="inline-block pull-left half-width">
+            
+        </div> -->
+        <div class="col-lg-6">
+            <!-- Username -->
+            <div class="form-group full-w">
+                <mat-form-field class="full-w" [formGroup]="memberForm">
+                    <input matInput formControlName="username" placeholder="Username" [(ngModel)]="memberToAdd.username" required>
+                </mat-form-field>
+            </div>
+            <!-- Email -->
+            <div class="form-group full-w" [formGroup]="memberForm">
+                <mat-form-field class="full-w">
+                    <input matInput formControlName="email" placeholder="Email Address" [(ngModel)]="memberToAdd.email" required>
+                </mat-form-field>
+            </div>
+            <!-- Password -->
+            <div class="form-group full-w">
+                <mat-form-field class="full-w" [formGroup]="memberForm">
+                    <input type="password" matInput formControlName="password" [errorStateMatcher]="errorMatcher" placeholder="Password" [(ngModel)]="memberToAdd.password" required>
+                </mat-form-field>
+                <mat-error *ngIf="memberForm.controls.password.dirty && memberForm.hasError('strong')">Must be alphanumeric with atleast 1 uppercase and lowercase character.</mat-error>
+                <mat-error *ngIf="memberForm.controls.confirmPassword.dirty && memberForm.controls.password.dirty && memberForm.hasError('passwordsDoNotMatch')">Password does not match.</mat-error>
+            </div>
+            <!-- Confirm Password -->
+            <div class="form-group full-w">
+              <mat-form-field class="full-w" [formGroup]="memberForm">
+                  <input type="password" matInput formControlName="confirmPassword" placeholder="Confirm Password" [(ngModel)]="memberToAdd.confirmPassword" required>
+              </mat-form-field>
+          </div>
+            <!-- Project -->
+            <!-- <div class="form-group full-w">
+                <p *ngIf="!members.length " class="text-danger">This project has no member yet. Consider adding one first.</p>
+                <mat-form-field>
+                    <mat-label>Assign to </mat-label>
+                    <select matNativeControl  formControlName="assigned_to" [(ngModel)]="memberToAdd.assigned_to" name="assigned_to">
+                      <option value="" selected>None</option>
+                      <option *ngFor="let member of members" [value]="member.user.id">
+                        {{member.user_info.first_name }} {{ member.user_info.last_name }} ({{member.user.username}})
+                      </option>
+                    </select>
+                </mat-form-field>
+            </div> -->
+            <!-- Action -->
+            
+            <!-- <mat-form-field class="">
+                <input matInput [matDatepicker]="picker" (blur)="setAge()" (input)="setAge()" formControlName="birth_date" placeholder="Birth Date" [matDatepicker]="picker" (focus)="picker.open()" [(ngModel)]="memberToAdd.title" required [readonly]="!canEditData">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #picker (closed)="setAge()"></mat-datepicker>
+                <mat-hint align="end">
+                    <mat-icon class="mat-icon">schedule</mat-icon>
+                    <span aria-live="polite">Age: {{ age ? age : 0}} </span>
+                </mat-hint>
+            </mat-form-field> -->
 
-          <!-- Name Column -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef> Name </th>
-            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-          </ng-container>
+            <!-- <mat-form-field class="">
+                <input matInput [(ngModel)]="memberToAdd.title" formControlName="zip" #postalCode maxLength="4" placeholder="Postal Code" pattern="[0-9]{4}" required [readonly]="!canEditData">
+                <mat-hint align="end">
+                    <mat-icon>mode_edit</mat-icon>
+                    <span aria-live="polite">{{postalCode.value.length}} / 4</span>
+                </mat-hint>
+            </mat-form-field> -->
+        </div>
 
-          <!-- Email Column -->
-          <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef> Email </th>
-            <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-          </ng-container>
-
-          <!-- Options Column -->
-          <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef> Option </th>
-            <td mat-cell *matCellDef="let element"> <a [routerLink]="['/admin/member', element.id ]"> View</a> </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-        <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
-          ></mat-paginator>
+        <div class="col-lg-6">
+          <!-- User Role -->
+          <div class="form-group full-w">
+              <!-- <mat-form-field class="full-w">
+                  <input matInput formControlName="username" placeholder="Username" [(ngModel)]="memberToAdd.username" required>
+              </mat-form-field> -->
+              <mat-form-field [formGroup]="memberForm">
+                <mat-label>Role </mat-label>
+                <select matNativeControl  formControlName="role_id" [(ngModel)]="memberToAdd.role_id" name="role_id" required>
+                  <option value="2" selected>Project Owner</option>
+                  <option value="3" selected>Project Manager</option>
+                  <option value="4" selected>Developer</option>
+                  <option value="5" selected>Tester</option>
+                  <!-- <option *ngFor="let member of members" [value]="member.user.id">
+                    {{member.user_info.first_name }} {{ member.user_info.last_name }} ({{member.user.username}})
+                  </option> -->
+                </select>
+            </mat-form-field>
+          </div>
+          <!-- First Name -->
+          <div class="form-group full-w">
+              <mat-form-field class="full-w" [formGroup]="memberForm">
+                  <input matInput formControlName="first_name" placeholder="First Name" [(ngModel)]="memberToAdd.first_name" required>
+              </mat-form-field>
+          </div>
+           <!-- Last Name -->
+           <div class="form-group full-w">
+              <mat-form-field class="full-w" [formGroup]="memberForm">
+                  <input matInput formControlName="last_name" placeholder="Last Name" [(ngModel)]="memberToAdd.last_name" required>
+              </mat-form-field>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="form-group full-w">
+            <mat-action-row>
+                <button mat-button color="primary" [disabled]="memberForm.errors || submitting" >Submit</button>
+            </mat-action-row>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- Search for existing members from other projects not yet assigend to this project -->
+    <div *ngIf="memberFormShow && showMemberSearchForm"  [@enterAnimation] mat-form  class="row">
+        <div class="form-group p-rel">
+            <label for="member-search-lbl">Search for members:</label>
+            <input type="email" #memberSearchField class="form-control" id="memberSearch" aria-describedby="member-search-help" placeholder="Search ...">
+            <a href="#" class="member-search-btn p-ab" (click)="memberSearch(memberSearchField.value)"><i class="fa fa-search"></i></a>
+            <small id="member-search-help" class="form-text text-muted">Directory only include members that are member of projects you are part of.</small>
+        </div>
+    </div>
+    <div *ngIf="memberFormShow && showMemberSearchForm && memberSearchResult" class="row">
+      <div class="col-lg-12 full-w mar-y-5" *ngFor="let member of memberSearchResult">
+        <a href="#" (click)="addMemberToProject(member)"  class="clickable pad-y-10 font-20 member-search-result-name full-w btn btn-success">{{member.user_info.first_name}} {{member.user_info.last_name}} ({{member.user.username}}) as {{member.user.user_role.name | titlecase}} - {{ member.project.name }}</a>
       </div>
     </div>
   </div>

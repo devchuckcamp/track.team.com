@@ -1,1 +1,10 @@
-Projects List
+<div class="col-lg-12 projects-page">
+    <div class="mx-auto pad-20 text-center" style="width:280px">
+          Project page works!
+    </div>
+    <div class="row">
+        <div class="col-lg-3 project-list-container pad-25 bor-rad-5 mar-10" *ngFor="let project of projects" data-url="project.slug" (click)="goTo(project.slug)">
+            <a href="#" class="col-lg-4 project-list-btn full-w" (click)="goTo(project.slug)">{{project.name | titlecase}}</a>
+        </div>
+    </div>
+</div>
