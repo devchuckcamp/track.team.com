@@ -24,11 +24,11 @@ export class GlobalRoutesService {
     private err:any;
     private userID = '';
     public mimsPort='80';
-    //public apiPort='8181';
-    public apiPort = ''; //for staging 
-    //public host='0736b05d.ngrok.io'; //development
+    public apiPort='';
+    //public apiPort = '8081'; //for staging
+    public host='56abd4ef.ngrok.io'; //development
     //public host='192.168.10.10'; //for staging
-    public host='support.ecomia.com'; //for production
+    //public host='support.ecomia.com'; //for production
     //public protocol='http://'; //for development
     public protocol='https://'; //production
     public googleLogin=this.protocol+this.host+':'+this.apiPort+'/glogin';
