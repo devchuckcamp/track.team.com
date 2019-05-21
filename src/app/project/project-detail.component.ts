@@ -26,7 +26,7 @@ export class ProjectDetailComponent implements OnInit {
 
     ngOnInit() {
         this.route.params.subscribe(params => {
-            if (params['project_name'] !== undefined) {
+            if (params['project_name'] !== undefined && params['project_name'] !== 'add') {
                 this.projectService.getProject(params['project_name']).subscribe( res => {
                     
                     if(res){

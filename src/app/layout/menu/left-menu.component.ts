@@ -58,7 +58,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.is_dashboard = true;
         }
-        if((slug_list.includes("projects") || slug_list[2] == 'projects') && slug_list.length >= 4){
+        if( (!slug_list.includes("add")) && (slug_list.includes("projects") || slug_list[2] == 'projects') && slug_list.length >= 4){
             this.admin_sub_1 = "projects";
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];
@@ -81,12 +81,13 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit() {
         this.route.params.subscribe(params => {
-            if (params['project_name'] !== undefined || this.project_name !== '') {
+            if ( (params['project_name'] !== 'add' ) && params['project_name'] !== undefined || this.project_name !== '') {
                 let project_name = this.project_name ? this.project_name : params['project_name'];
                 this.getAllProject(project_name);
             }
             this.router.events.subscribe(path =>{
                 if(path instanceof NavigationEnd ){
+                    console.log(path,'path');
                     this.createUrlVariables(path);
                 }
             });
@@ -136,7 +137,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.is_dashboard = true;
         }
-        if((slug_list.includes("projects") || slug_list[2] == 'projects') && slug_list.length >= 4){
+        if( (!slug_list.includes("add") ) && (slug_list.includes("projects") || slug_list[2] == 'projects') && slug_list.length >= 4){
             this.admin_sub_1 = "projects";
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];

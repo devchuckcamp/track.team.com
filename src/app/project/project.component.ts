@@ -17,10 +17,16 @@ export class ProjectComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-        this.projectService.getAll().subscribe( res => {
-            this.projects = res.data;
-            console.log(res.data);
+    this.router.events.subscribe(path =>{
+
+      if(path instanceof NavigationEnd ){
+        this.projectService.getAllProjects().subscribe( res => {
+            this.projects = res;
+            console.log(res);
         });
+       
+      }
+    });
   }
 
   goTo(slug:string){

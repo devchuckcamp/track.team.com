@@ -19,8 +19,8 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   parentUrl:string;
   user_avatar:string;
   subscription: Subscription;
-
-  projects: Project[] = [];
+  default_avatar = '../assets/default-profile.png';
+  projects: any[] = [];
   constructor(
     private router: Router,
     private activedRoute: ActivatedRoute,
@@ -71,11 +71,15 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     this.userService.currentAvatar.subscribe(avatar => {
       this.user_avatar = avatar;
     });
-    this.projectService.getAll().subscribe(res=>{
-      if(res){
-        this.projects = res.data;
-      }
-    });
+      // this.projectService.getAllProjects().subscribe(res=>{
+      //   if(res){
+      //     this.projects = res;
+      //   }
+      // });
+      this.projectService.loadAll();
+      this.projectService.projects.subscribe( (res:any) => {
+        this.projects = res;
+      });
   }
   ngOnDestroy(){
     this.userService.clearAvatar();

@@ -18,9 +18,9 @@ export class ClientGlobalRoutesService {
 
         
         //Development Key
-            this.clientSecret = "qQw77McftRqbYgFdFPaohqcBtEGi5Hf0F53kD1HZ";
+            //this.clientSecret = "qQw77McftRqbYgFdFPaohqcBtEGi5Hf0F53kD1HZ";
         //Production Key
-            //this.clientSecret = "daQUm35rekLrDeRoMdlTCyjbrOrTHvoev107mhdO";
+            this.clientSecret = "daQUm35rekLrDeRoMdlTCyjbrOrTHvoev107mhdO";
 
         //2nd Key
             //this.clientSecret   =   "cYoSGSGh9CVwemD0uwKeFztSNB9e75v5VbdIRh2f";

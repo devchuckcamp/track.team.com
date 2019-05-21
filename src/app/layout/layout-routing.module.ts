@@ -22,7 +22,7 @@ const routes:   Routes = [
         canActivate:[AuthGuard],
         children:[
             { path: 'projects',  component:LayoutComponent },
-            { path: 'projects/new', component:ProjectNewComponent},
+            { path: 'projects/add', component:ProjectNewComponent},
             { path: 'projects/:project_name', loadChildren:'../project/project-detail.module#ProjectDetailModule'},
             { path: 'projects/:project_name/tickets', loadChildren:'../ticket/ticket.module#TicketModule'},
             { path: 'projects/:project_name/tickets/:ticket_id', loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},

@@ -13,6 +13,7 @@ export class UserService {
     Bearer:any;
     Avatar =  new BehaviorSubject(localStorage.getItem("avatar"));
     currentAvatar = this.Avatar.asObservable();
+    
     constructor(
         private config: GlobalRoutesService,
         private http: HttpClient,

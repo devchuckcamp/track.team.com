@@ -59,7 +59,7 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
         } else {
             this.is_dashboard = true;
         }
-        if(slug_list.includes("projects") || slug_list[2] == 'projects'){
+        if( (!slug_list.includes("add")) && slug_list.includes("projects") || slug_list[2] == 'projects'){
             this.admin_sub_1 = "projects";
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];
@@ -121,7 +121,7 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
         } else {
             this.is_dashboard = true;
         }
-        if(slug_list.includes("projects") || slug_list[2] == 'projects'){
+        if((!slug_list.includes("add")) && slug_list.includes("projects") || slug_list[2] == 'projects'){
             this.admin_sub_1 = "projects";
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];

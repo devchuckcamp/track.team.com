@@ -4,8 +4,10 @@ import Chart from 'chart.js';
 import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
 import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
-
+import { ProjectService } from '../service/project.service';
 import { User } from '../model/user';
+import { Observable, Subscription  } from 'rxjs';
+
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
@@ -18,24 +20,27 @@ export class LayoutComponent implements OnInit {
   public chartData: any;
   public authUser:User;
   private viewInfoRoute : string;
+  subscription:Subscription;
   activeURL: string;
   admin_sub_1: string;
   admin_sub_2: string;
   admin_project_sub: string;
   profile:any;
   breadcrumb:any;
+  projectsList:any;
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private projectService: ProjectService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     ) {
+
       this.admin_sub_1 = "";
       this.admin_sub_2 = "";
       this.admin_project_sub = "";
       this.router.events.subscribe(path =>{
       this.profile = this.authService.getAuthUser();
-
         if(path instanceof NavigationEnd ){
           //Get Url
           let currentURL = path.url;
@@ -64,9 +69,12 @@ export class LayoutComponent implements OnInit {
       });
 
     }
-
   ngOnInit() {
     this.avatar = localStorage.getItem('avatar');
+    this.projectService.getAllProjects().subscribe( res =>{
+      let list = res;
+      this.projectsList = list;
+    });
   }
 
   ngAfterViewInit() {
