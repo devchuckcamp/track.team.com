@@ -27,7 +27,7 @@ export class LayoutComponent implements OnInit {
   admin_project_sub: string;
   profile:any;
   breadcrumb:any;
-  projectsList:any;
+  projectsList:any[] =[];
   constructor(
     private authService: AuthService,
     private userService: UserService,
@@ -71,10 +71,14 @@ export class LayoutComponent implements OnInit {
     }
   ngOnInit() {
     this.avatar = localStorage.getItem('avatar');
-    this.projectService.getAllProjects().subscribe( res =>{
-      let list = res;
-      this.projectsList = list;
-    });
+    // this.projectService.getAllProjects().subscribe( res =>{
+    //   let list = res;
+    //   this.projectsList = list;
+    // });
+    this.projectService.loadAll();
+        this.projectService.projects.subscribe( (res:any) => {
+          this.projectsList = res;
+        });
   }
 
   ngAfterViewInit() {

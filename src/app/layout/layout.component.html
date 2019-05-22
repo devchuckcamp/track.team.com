@@ -28,6 +28,7 @@
             <app-project-new  *ngIf="activeURL == '/admin/projects/add'" [projectsList]="projectsList"></app-project-new>
             <!-- <app-profile *ngIf="activeURL == '/admin/profile' && activeURL !== '/admin/projects' && activeURL !== '/admin/settings'"></app-profile> -->
             <!-- <router-outlet *ngIf="profile || activeURL == '/admin/settings'  && (!admin_project_sub && !admin_sub_2)"></router-outlet> -->
+            <router-outlet *ngIf="activeURL == '/admin/settings'"></router-outlet>
         </div>
     </div>
     <div class="col-md-12 mar-0 h-100 second" *ngIf="activeURL !== '/admin/profile' && activeURL !== '/admin/projects' && activeURL !== '/admin/projects/add' && activeURL !== '/admin/settings' && activeURL !== '/admin'">

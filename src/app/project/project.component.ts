@@ -17,14 +17,12 @@ export class ProjectComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.projectService.projects.subscribe( (res:any) => {
+      this.projects = res;
+    });
     this.router.events.subscribe(path =>{
 
       if(path instanceof NavigationEnd ){
-        this.projectService.getAllProjects().subscribe( res => {
-            this.projects = res;
-            console.log(res);
-        });
-       
       }
     });
   }
