@@ -26,7 +26,7 @@ export class GlobalRoutesService {
     public mimsPort='80';
     public apiPort='';
     //public apiPort = '8081'; //for staging
-    public host='a380e6c5.ngrok.io'; //development
+    public host='4d5bc654.ngrok.io'; //development
     //public host='192.168.10.10'; //for staging
     //public host='support.ecomia.com'; //for production
     //public protocol='http://'; //for development
