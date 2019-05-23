@@ -5,6 +5,7 @@ import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
 import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
 import { ProjectService } from '../service/project.service';
+import { SettingService } from '../service/setting.service';
 import { User } from '../model/user';
 import { Observable, Subscription  } from 'rxjs';
 
@@ -20,6 +21,7 @@ export class LayoutComponent implements OnInit {
   public chartData: any;
   public authUser:User;
   private viewInfoRoute : string;
+  settings:any[] = [];
   subscription:Subscription;
   activeURL: string;
   admin_sub_1: string;
@@ -32,10 +34,12 @@ export class LayoutComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private projectService: ProjectService,
+    private settingService:SettingService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     ) {
-
+      // Settings
+      this.settingService.loadAll();
       this.admin_sub_1 = "";
       this.admin_sub_2 = "";
       this.admin_project_sub = "";
@@ -70,6 +74,11 @@ export class LayoutComponent implements OnInit {
 
     }
   ngOnInit() {
+    this.settingService.settings.subscribe( (res:any) => {
+      this.settings = res;
+      console.log(res);
+    });
+
     this.avatar = localStorage.getItem('avatar');
     // this.projectService.getAllProjects().subscribe( res =>{
     //   let list = res;

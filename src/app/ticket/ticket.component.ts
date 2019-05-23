@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef, Inject , Optional } fr
 import { Router, ActivatedRoute } from '@angular/router';
 import { TicketService } from '../service/ticket.service';
 import { ProjectService } from '../service/project.service';
+import { SettingService } from '../service/setting.service';
 import { ThreadService } from '../service/thread.service';
 import { AuthService } from '../service/auth.service';
 import { Ticket } from '../model/ticket';
@@ -58,6 +59,7 @@ export class TicketComponent implements OnInit, OnDestroy {
     tickets: Ticket[] = [];
     members:Members[] = [];
     tag_users:TaggableMembers[] = [];
+    ticketPriorities:any[] =[];
     taggable_members:any;
     tagged_members = new FormControl();
     ticketToAdd:any = new Object();
@@ -79,6 +81,7 @@ export class TicketComponent implements OnInit, OnDestroy {
         private projectService: ProjectService,
         private threadService:  ThreadService,
         private authService:    AuthService,
+        private settingService:SettingService,
         private router: Router,
         private route: ActivatedRoute,
         private formBuilder: FormBuilder,
@@ -93,6 +96,9 @@ export class TicketComponent implements OnInit, OnDestroy {
     ngOnInit() {
       this.auth = this.authService.getAuthUser();
 
+      this.settingService.settings.subscribe( (res:any) => {
+        this.ticketPriorities = res;
+      });
       this.route.params.subscribe(params => {
         if (params['project_name'] !== undefined) {
             this.project_name = params['project_name'];
@@ -107,6 +113,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.ticketForm = new FormGroup({
         'title': new FormControl('', [Validators.required,]),
         'description': new FormControl('', [Validators.required,]),
+        'priority': new FormControl('', [Validators.required,]),
         'assigned_to': new FormControl('', [Validators.required,]),
       });
 

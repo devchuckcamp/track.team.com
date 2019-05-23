@@ -8,6 +8,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { NavbarModule } from '../navbar/navbar.module';
 import { LayoutComponent } from './layout.component';
 import { ProjectNewComponent } from '../project/project-new.component';
+import { UnderConstructionComponent } from '../share/under-construction.component';
 import { ProfileComponent } from '../profile/profile.component';
 import { AuthGuard } from '../guard/auth';
 
@@ -28,6 +29,7 @@ const routes:   Routes = [
             { path: 'projects/:project_name/tickets/:ticket_id', loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
             { path: 'projects/:project_name/members', loadChildren:'../member/member.module#MemberModule'},
             { path: 'projects/:project_name/members/:user_id', loadChildren:'../member/member-detail.module#MemberDetailModule'},
+            { path: 'projects/:project_name/settings', component:UnderConstructionComponent},
             { path: 'fund/current', loadChildren:'../fund/fund.module#FundModule'},
             { path: 'fund/incoming', loadChildren:'../fund/fund-incoming.module#FundIncomingModule'},
             { path: 'fund/pending', loadChildren:'../fund/fund-pending.module#FundPendingModule'},

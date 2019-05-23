@@ -1,5 +1,59 @@
 <div class="col-12">
-  <div class="mx-auto pad-20 text-center" style="width:280px">
+  <div class="row pad-20 text-left">
     <h2>Settings</h2>
+    <div *ngIf="ticketPriorityList && ticketOptionLoaded" class="col-lg-12">
+      <h2 class="ticket-settings-title">Ticket</h2>
+      <div class="row">
+        <!-- Existing Ticket Setting Options -->
+        <div class="col-lg-6">
+          <div  *ngFor="let setting of ticketPriorityList;index as i"  class="row">
+            <div class="form-group half-width">
+              <div class="form-group full-width">
+                <!-- <label for="setting.name" class="w-limit-60p"> {{setting.name}}</label> -->
+                <input [(ngModel)]="setting.name" name="setting-{{setting.id}}-name" />
+                <input (colorPickerSelect)="updateColorOption(setting.color)"
+                  name="setting-{{setting.id}}-color"
+                  [(colorPicker)]="setting.color"
+                  [style.background]="setting.color"
+                  [(ngModel)]="setting.color" />
+                <button mat-button color="primary" (click)="updateTicketPrioritySetting(setting)">Update</button>
+              </div>
+            </div>
+          </div>
+          <!-- <div *ngIf="ticketPriorityList.length && ticketOptionLoaded" class="form-group half-width">
+              <mat-action-row>
+                  <button mat-button color="primary" (click)="updateTicketSetting()" >Update</button>
+              </mat-action-row>
+          </div> -->
+        </div>
+        <!-- Add New Ticket Setting Options -->
+        <div class="col-lg-6" *ngIf="ticketSettingToAdd">
+            <div class="form-group half-width">
+              <div class="form-group full-width">
+                <label for="setting.name" class="w-limit-60p">Name</label>
+                <input name="ticket-setting-name" [(ngModel)]="ticketSettingToAdd.name" placeholder="Name"/>
+              </div>
+              <div class="form-group full-width">
+                <label for="setting.name" class="w-limit-60p">Indicator</label>
+                <input
+                  name="ticket-setting-color"
+                  placeholder="Select color"
+                  (colorPickerSelect)="updateColorOption(ticketSettingToAdd.color)"
+                  [(colorPicker)]="ticketSettingToAdd.color"
+                  [style.background]="ticketSettingToAdd.color"
+                  [(ngModel)]="ticketSettingToAdd.color" />
+                <div class="form-group full-width">
+                  <button mat-raised-button color="primary" (click)="addTicketPrioritySetting()">Save</button>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col-lg-12">
+      <div class="row">
+
+      </div>
+    </div> -->
   </div>
 </div>

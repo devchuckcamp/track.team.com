@@ -54,6 +54,10 @@ li.active{
   width: 120px!important;
   max-width: 120px!important;
 }
+.w-limit-60p{
+  width: 60px!important;
+  max-width: 60px!important;
+}
 /* Padding */
 .pad-y-60{
   padding-bottom: 60px;

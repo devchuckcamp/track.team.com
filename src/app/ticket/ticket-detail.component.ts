@@ -100,6 +100,7 @@ export class TicketDetailComponent implements OnInit {
                       this.loading = false;
                     });
                     this.auth = this.authService.getAuthUser();
+                    console.log(this.auth,'auth');
                 });
             } else {
 

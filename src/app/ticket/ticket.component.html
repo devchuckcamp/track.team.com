@@ -15,7 +15,7 @@
                     <th scope="col">Description</th>
                     <th scope="col">Assignee</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Priority</th>
+                    <th scope="col" class="text-center">Priority</th>
                     <th scope="col">Created By</th>
                     <th scope="col">Created</th>
                     <th scope="col">Modified</th>
@@ -42,13 +42,13 @@
                     <td>{{ticket.description}}</td>
                     <td [attr.data-user-id]="ticket.assigned_to.id">{{ticket.assigned_to.name}}</td>
                     <td>{{ticket.status.name | titlecase}}</td>
-                    <td>{{ticket.priority.name | titlecase}}</td>
+                    <td class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
                     <td>{{ticket.created_by}}</td>
                     <td>{{ticket.created_at}}</td>
                     <td>{{ ticket.updated_at == ticket.created_at ? '' : ticket.updated_at}}</td>
                     <td>
-                        <a href="#" 
-                            [routerLink]="['/admin/projects', project_name, 'tickets', ticket.id]" 
+                        <a href="#"
+                            [routerLink]="['/admin/projects', project_name, 'tickets', ticket.id]"
                             class="btn btn-success mar-r-5"><i
                                 class="fa fa-eye"></i></a>
                         <a href="#" (click)="deleteTicket(ticket.id)" class="btn btn-danger"><i class="fa fa-trash"></i></a>
@@ -60,7 +60,6 @@
                     <td>No Ticket</td>
                 </tr>
             </tbody>
-            
         </table>
     </div>
    
@@ -98,6 +97,20 @@
                     <textarea matInput formControlName="description" matTextareaAutosize matAutosizeMinRows=5  matAutosizeMaxRows=6 placeholder="Description" [(ngModel)]="ticketToAdd.description" required></textarea>
                 </mat-form-field>
             </div>
+
+             <!-- Priority -->
+             <div class="form-group half-width">
+                    <p *ngIf="!ticketPriorities.length " class="text-danger">No priority options found. Please check account settings - admin/settings.</p>
+                    <mat-form-field>
+                       <mat-label>Priority</mat-label>
+                       <select matNativeControl #priority  formControlName="priority" [(ngModel)]="ticketToAdd.priority" name="priority">
+                         <option *ngFor="let prio of ticketPriorities;let i = index" [value]="prio.id">
+                           {{prio.name }}
+                         </option>
+                       </select>
+                   </mat-form-field>
+               </div>
+
              <!-- Assignee -->
              <div class="form-group half-width">
                  <p *ngIf="!members.length " class="text-danger">This project has no member yet. Consider adding one first.</p>

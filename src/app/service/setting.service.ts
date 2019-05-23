@@ -11,11 +11,11 @@ import { GlobalRoutesService } from '../config/config';
 export class SettingService {
     apiEndpoint:string;
     Bearer:any;
-    projects: Observable<Project[]>
-        private _projects: BehaviorSubject<Project[]>;
+    settings: Observable<any[]>
+        private _settings: BehaviorSubject<any[]>;
         private baseUrl: string;
         private dataStore: {
-            projects: any[]
+            settings: any[]
         };
     ProjectsList: Project[]= [];
     constructor(
@@ -27,26 +27,26 @@ export class SettingService {
                 this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
             }
             this.baseUrl = this.config.apiEndPoint()+'/api/v1/projects?all=1';
-            this.dataStore = { projects: [] };
-            this._projects = <BehaviorSubject<Project[]>>new BehaviorSubject([]);
-            this.projects = this._projects.asObservable();
+            this.dataStore = { settings: [] };
+            this._settings = <BehaviorSubject<any[]>>new BehaviorSubject([]);
+            this.settings = this._settings.asObservable();
         }
 
     getAll() {
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/projects', this.jt()).pipe(map( (res:any) => res));
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/ticket-priorities', this.jt()).pipe(map( (res:any) => res));
     }
 
     loadAll() {
-        this.http.get(this.config.apiEndPoint()+'/api/v1/projects?all=1', this.jt()).subscribe( (data :any)=> {
-          this.dataStore.projects = data;
-          this._projects.next(Object.assign({}, this.dataStore).projects);
+        this.http.get(this.config.apiEndPoint()+'/api/v1/ticket-priorities?all=1', this.jt()).subscribe( (res :any)=> {
+          this.dataStore.settings = res;
+          this._settings.next(Object.assign({}, this.dataStore).settings);
         }, error => console.log('Could not load projects.'));
     }
     
-    create(project: Project) {
-        this.http.post(this.config.apiEndPoint()+'/api/v1/projects', JSON.stringify(project)).subscribe( (data:any) => {
-            this.dataStore.projects.push(data);
-            this._projects.next(Object.assign({}, this.dataStore).projects);
+    create(ticket: any) {
+        this.http.post(this.config.apiEndPoint()+'/api/v1/ticket-priorities', JSON.stringify(ticket)).subscribe( (data:any) => {
+            this.dataStore.settings.push(data);
+            this._settings.next(Object.assign({}, this.dataStore).settings);
           }, error => console.log('Could not create todo.'));
       }
 
@@ -66,12 +66,16 @@ export class SettingService {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+id, this.jt()).pipe(map( (res:any) => res));
     }
 
-    save(project: Project) {
-        return this.http.post(this.config.apiEndPoint()+'/api/v1/projects', project, this.jt());
+    save(ticketOption: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/ticket-priorities', ticketOption, this.jt());
     }
 
-    update(project: Project) {
-        return this.http.put(this.config.apiEndPoint()+'/api/v1/projects/project.id', project);
+    update(ticket: any, ticket_id: number) {
+        let data = JSON.stringify({
+            name:ticket.name,
+            color:ticket.color,
+        });
+        return this.http.put(this.config.apiEndPoint()+'/api/v1/ticket-priorities/'+ticket_id, data, this.jt());
     }
 
     delete(id: number) {

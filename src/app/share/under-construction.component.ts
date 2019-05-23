@@ -10,12 +10,12 @@ const add = {
 
 
 @Component({
-  selector: 'app-setting',
-  templateUrl: './setting.component.html',
-  styleUrls: ['./setting.component.scss']
+  selector: 'app-under-construction',
+  templateUrl: './under-construction.component.html',
+  styleUrls: ['./under-construction.component.scss']
 })
 
-export class SettingComponent implements OnInit {
+export class UnderConstructionComponent implements OnInit {
   settings:any[] = [];
 
   // Option Initiators
