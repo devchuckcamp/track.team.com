@@ -17,7 +17,7 @@ const add = {
 
 export class SettingComponent implements OnInit {
   settings:any[] = [];
-
+  step:number;
   // Option Initiators
   ticketOptionLoaded: boolean;
   ticketPriorityList: TicketPriorityType = [];
@@ -25,7 +25,7 @@ export class SettingComponent implements OnInit {
   constructor(
     private settingService:SettingService,
   ) {
-
+    this.step = 0;
   }
 
   ngOnInit() {
@@ -52,6 +52,18 @@ export class SettingComponent implements OnInit {
 
   updateColorOption(color:string){
     console.log(color,'color');
+  }
+
+  setStep(index: number) {
+    this.step = index;
+  }
+
+  nextStep() {
+    this.step++;
+  }
+
+  prevStep() {
+    this.step--;
   }
 
 }

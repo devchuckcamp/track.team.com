@@ -72,7 +72,11 @@ THE SOFTWARE.
 
 @angular/material/dialog
 
+@angular/material/expansion
+
 @angular/material/form-field
+
+@angular/material/icon
 
 @angular/material/paginator
 

@@ -3,7 +3,7 @@
 <app-navbar></app-navbar>
 </div>
 <div class="col-md-12 pad-0">
-    <div class="col-md-12 mar-0 h-100" *ngIf="activeURL == '/admin/profile' || activeURL == '/admin/settings' || activeURL == '/admin/projects' || activeURL == '/admin' || activeURL == '/admin/projects/add'">
+    <div class="col-md-12 mar-0 h-100 pad-t-10" *ngIf="activeURL == '/admin/profile' || activeURL == '/admin/settings' || activeURL == '/admin/projects' || activeURL == '/admin' || activeURL == '/admin/projects/add'">
     <!--
         <div class="col-md-6 pad-20 text-center">
             <canvas id="chart-content" #chart></canvas>
@@ -31,7 +31,7 @@
             <router-outlet *ngIf="activeURL == '/admin/settings'"></router-outlet>
         </div>
     </div>
-    <div class="col-md-12 mar-0 h-100 second" *ngIf="activeURL !== '/admin/profile' && activeURL !== '/admin/projects' && activeURL !== '/admin/projects/add' && activeURL !== '/admin/settings' && activeURL !== '/admin'">
+    <div class="col-md-12 mar-0 h-100 second pad-t-10" *ngIf="activeURL !== '/admin/profile' && activeURL !== '/admin/projects' && activeURL !== '/admin/projects/add' && activeURL !== '/admin/settings' && activeURL !== '/admin'">
         <app-left-menu *ngIf="admin_sub_2" [auth_profile]="profile"  [project_name]="admin_sub_2" [admin_project_sub]="admin_project_sub"></app-left-menu>
         <div class="col-lg-10 offset-lg-2 col-md-11 offset-md-1">
             <!-- Breadcrumbs -->
