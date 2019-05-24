@@ -4,6 +4,7 @@ import { TicketService } from '../service/ticket.service';
 import { ThreadService } from '../service/thread.service';
 import { AuthService } from '../service/auth.service';
 import { ProjectService } from '../service/project.service';
+import { SettingService } from '../service/setting.service';
 import { GlobalRoutesService } from '../config/config';
 import { Ticket } from '../model/ticket';
 import { Thread } from '../model/thread';
@@ -39,6 +40,7 @@ export class TicketDetailComponent implements OnInit {
     uploadImages:any = [];
 
     members:any[] =[];
+    settings:any[] = [];
     memberList = [];
     items: any[] =[];
     mentionConfig:any;
@@ -58,6 +60,7 @@ export class TicketDetailComponent implements OnInit {
         private threadService:  ThreadService,
         private authService:    AuthService,
         private projectService: ProjectService,
+        private settingService: SettingService,
         private router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
@@ -83,6 +86,11 @@ export class TicketDetailComponent implements OnInit {
       });
     }
     ngOnInit() {
+      // Settings
+      this.settingService.settings.subscribe( (res:any) => {
+        this.settings = res;
+        console.log(res);
+      });
         this.replayText = "";
         this.route.params.subscribe(params => {
             if (params['ticket_id'] !== undefined) {
@@ -288,13 +296,11 @@ export class TicketDetailComponent implements OnInit {
     public fileOver(event){
 
     }
-   
     public fileLeave(event){
-      
+
     }
 
     public updateTicketStatus(status:number){
-      console.log(status,'status updated');
       this.ticket.status_id = status;
       let data = {
         status_id:status
@@ -316,6 +322,28 @@ export class TicketDetailComponent implements OnInit {
 
         }
 
+      });
+    }
+
+    updateTicketPriority(priority_id:any){
+      let priorityObj = this.settings.find( (res) =>  res.id == priority_id);
+     
+      this.ticketService.update(this.ticket, 'priority', priorityObj).subscribe( res => {
+
+        if(res && res.priority_id == status){
+          console.log(res,'updated');
+          this.ticket.priority = res;
+          this.snackBar.open('Priority has been updated', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "success-snack"
+              }
+          );
+        } else {
+
+        }
       });
     }
 

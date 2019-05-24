@@ -39,13 +39,18 @@ export class TicketService {
         return this.http.post(this.config.apiEndPoint()+'/api/v1/tickets', ticket, this.jt());
     }
 
-    update(ticket: any, type:string = 'all'):any {
+    update(ticket: any, type:string = 'all', customData:any = null):any {
         let data = JSON.stringify({
             status_id:ticket.status_id
         });
         if(type == 'status'){
             data = JSON.stringify({
                 status_id:ticket.status_id
+            });
+        }
+        if(type == 'priority'){
+            data = JSON.stringify({
+                priority_id:customData.id
             });
         }
         return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets/'+ticket.id, data, this.jt());

@@ -267,14 +267,15 @@ export class TicketComponent implements OnInit, OnDestroy {
 
     public getTaggedMember(ticket:any = null){
       let membersTagged = [];
-      this.tagged_members.value.forEach(obj => {
-        let member = {
-          ticket_id:ticket,
-          user_id:obj.user.id
-        };
-        membersTagged.push(member);
-      });
-
+      if(this.tagged_members.value){
+        this.tagged_members.value.forEach(obj => {
+          let member = {
+            ticket_id:ticket,
+            user_id:obj.user.id
+          };
+          membersTagged.push(member);
+        });
+      }
       return membersTagged;
     }
 
@@ -288,17 +289,21 @@ export class TicketComponent implements OnInit, OnDestroy {
           title:title,
           description:description,
           assigned_to:parseInt(assigned_to),
-          project_id: this.project_id
+          project_id: this.project_id,
+          priority_id:this.ticketToAdd.priority
         };
+        console.log(this.ticketToAdd,'ticketToAdd');
         this.submitting= true;
         this.ticketService.save(ticket).subscribe( res => {
 
           if(res){
             let added_ticket:any = res;
             let tagged = this.getTaggedMember(added_ticket.id);
-            this.ticketService.addTaggedUser(tagged).subscribe( res => {
+            if(tagged.length){
+              this.ticketService.addTaggedUser(tagged).subscribe( res => {
 
-            });
+              });
+            }
             console.log(tagged,'tagged');
             this.tickets = [];
             this.loading = true;

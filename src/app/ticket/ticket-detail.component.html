@@ -27,15 +27,11 @@
             <div class="form-group" >
                 <label class="mar-r-10" for="ticket-status">Priority</label>
                 <select *ngIf="ticket.created_by == auth.username"  #ticketPriority (change)="updateTicketPriority(ticketPriority.value)">
-                    <option value="1" [selected]="ticket.status_id == 1">Open</option>
-                    <option value="2" [selected]="ticket.status_id == 2">In progress</option>
-                    <option value="3" [selected]="ticket.status_id == 3">For Testing</option>
-                    <option value="4" [selected]="ticket.status_id == 4">On QA</option>
-                    <option value="5" [selected]="ticket.status_id == 5">Complete</option>
+                    <option  *ngFor="let setting of settings" [value]="setting.id" [selected]="setting.id == ticket.priority.id">{{setting.name}}</option>
                 </select>
                 <span *ngIf="ticket.created_by !== auth.username" class="badge font-white font-12 bg-success">{{ticket.priority.name}}</span> 
             </div>
-
+            <!-- Tagged Users -->
             <div *ngIf="ticket.tag_users" class="row form-group">
                 <div  class="col-lg-12">
                     <label for="tag_users">Tagged users:</label>
@@ -147,4 +143,7 @@
             <button type="submit" (click)="submitReplyBox()" class="btn btn-info mar-0-auto pad-x-30 font-25 mar-t-20">Comment</button>
         </div>
     </div>
+</div>
+<div *ngIf="!ticket" class="col-lg-12 text-center">
+    <img src="../../assets/icon/loading.gif">
 </div>
