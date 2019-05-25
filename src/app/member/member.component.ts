@@ -6,12 +6,14 @@ import { UserService } from '../service/user.service';
 import { AuthService } from '../service/auth.service';
 import { ProjectService } from '../service/project.service';
 import { MemberService } from '../service/member.service';
-import {MatPaginator, MatSnackBar, MatTableDataSource} from '@angular/material';
+import {MatPaginator, MatSnackBar, MatTableDataSource, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { FormGroup, FormBuilder, FormControl, Validators, FormGroupDirective, NgForm, EmailValidator } from '@angular/forms';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { MustMatch } from '../component/validator/must-match.validator';
 import { PasswordValidator } from '../component/validator/password-strong.validator';
 import {ErrorStateMatcher} from '@angular/material';
+
+import { ConfirmDeleteDialog } from '../share/alert/confirm-delete-dialog.component';
 
 interface createdAccount {
   id: number,
@@ -64,7 +66,7 @@ export class MemberComponent implements OnInit {
   showMemberSearchForm:boolean;
   memberForm: FormGroup;
   memberToAdd:any =  {};
-
+  dialogRef: MatDialogRef<ConfirmDeleteDialog>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   dataSource = new MatTableDataSource<User>(ELEMENT_DATA);
 
@@ -78,10 +80,26 @@ export class MemberComponent implements OnInit {
     private memberService:MemberService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
   ) {
 
   }
+  confirmRemoveFromProject(member_info:any): void {
+    const dialogRef = this.dialog.open(ConfirmDeleteDialog, {
+      width: '280px',
+      data: {member_info: member_info}
+    });
 
+    dialogRef.componentInstance.confirmMessage = "Are you sure you want to remove "+member_info.project_member_info.first_name+" "+ member_info.project_member_info.last_name +"'s account from this project.";
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result,'closed dialog');
+      if(result){
+        // this.removeUser(user);
+        this.removeUserFromProject(member_info);
+      }
+    });
+  }
   ngOnInit() {
     this.auth = this.authService.getAuthUser();
     console.log(this.auth);
@@ -106,7 +124,7 @@ export class MemberComponent implements OnInit {
     }, {
         validator: [this.passwordMatchValidator, this.passwordStrenghtValidator],
     });
-    console.log(this.memberForm, 'this.memberForm');
+
     this.route.params.subscribe(params => {
       if (params['project_name'] !== undefined) {
           this.project_name = params['project_name'];
@@ -130,7 +148,6 @@ export class MemberComponent implements OnInit {
 
   //Pagination Section
   onPageChange(event) {
-    console.log(event);
     // alert(JSON.stringify("Current page index: " + event.pageIndex));
     //   this.currentPage = event.pageIndex+1;
     //    console.log(event,'event');
@@ -291,6 +308,38 @@ export class MemberComponent implements OnInit {
           );
     }
     return false;
+  }
+
+  removeUser(user_id:any){
+    this.memberService.delete(user_id).subscribe( (res:any) =>{
+      if(res == null){
+        this.dataSource.data = this.dataSource.data.filter( (user:any) => user.user_id !== user_id);
+        this.snackBar.open('User has been deleted!', 'X', {
+                duration: 5000,
+                direction: "ltr",
+                verticalPosition:"top",
+                horizontalPosition: "right",
+                panelClass: "success-snack"
+            }
+        );
+      }
+    });
+  }
+
+  removeUserFromProject(member:any){
+    this.memberService.removeUserFromProject(member.id).subscribe( (res:any) =>{
+      if(res == null){
+        this.dataSource.data = this.dataSource.data.filter( (user:any) => user.user_id !== member.user_id);
+        this.snackBar.open('User has been deleted!', 'X', {
+                duration: 5000,
+                direction: "ltr",
+                verticalPosition:"top",
+                horizontalPosition: "right",
+                panelClass: "success-snack"
+            }
+        );
+      }
+    });
   }
 
 }

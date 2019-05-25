@@ -48,7 +48,11 @@ export class MemberService {
     }
 
     delete(id: number) {
-        return this.http.delete(this.config.apiEndPoint()+'/tickets/id');
+        return this.http.delete(this.config.apiEndPoint()+'/api/v1/users/'+id, this.jt());
+    }
+
+    removeUserFromProject(user_id: number) {
+        return this.http.delete(this.config.apiEndPoint()+'/api/v1/projects/members/'+user_id, this.jt());
     }
 
     private jt() {

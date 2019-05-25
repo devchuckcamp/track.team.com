@@ -8,6 +8,7 @@ import { ClientGlobalRoutesService } from '../config/client';
 import { GlobalRoutesService } from '../config/config';
 import { FormsModule,ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators, EmailValidator,
   FormGroupDirective, NgForm, } from '@angular/forms';
+import { ConfirmDeleteDialog } from '../share/alert/confirm-delete-dialog.component';
 // Material
 import {
   MatAutocompleteModule,
@@ -50,6 +51,7 @@ import {
 @NgModule({
   declarations: [
     MemberComponent,
+    ConfirmDeleteDialog,
   ],
   imports: [
     MatAutocompleteModule,
@@ -92,6 +94,10 @@ import {
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     FormsModule,
 
+  ],
+  exports: [ConfirmDeleteDialog],
+  entryComponents: [
+    ConfirmDeleteDialog
   ],
   providers:[
     UserService,
