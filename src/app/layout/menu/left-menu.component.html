@@ -29,6 +29,12 @@
                     <a href="#" [routerLink]="['/admin/projects',project.slug,'settings']"><i
                             class="fa fa-gears mar-r-5"></i>Setting</a>
                 </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': admin_project_sub == 'activity' || admin_sub_3 == 'activity'}"
+                >
+                    <a href="#" [routerLink]="['/admin/projects',project.slug,'activity']"><i
+                            class="fa fa-file-text-o mar-r-5"></i>Avtivity Log</a>
+                </li>
             </ul>
         </div>
     </div>

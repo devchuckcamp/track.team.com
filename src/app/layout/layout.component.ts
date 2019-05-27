@@ -30,6 +30,7 @@ export class LayoutComponent implements OnInit {
   profile:any;
   breadcrumb:any;
   projectsList:any[] =[];
+
   constructor(
     private authService: AuthService,
     private userService: UserService,
@@ -54,7 +55,6 @@ export class LayoutComponent implements OnInit {
           let indexActUrl = indexActUrlParam == -1 ? currentURL : currentURL.slice(0, indexActUrlParam );
           //Assign to our private activeUrl
           this.activeURL = indexActUrl;
-
           let slug_list = this.activeURL.split('/');
           this.breadcrumb = slug_list;
           let isSubRoute = (this.activeURL.match(/\//g) || []).length;
@@ -69,16 +69,24 @@ export class LayoutComponent implements OnInit {
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];
           }
+
+          if(slug_list.includes("activity") || slug_list[2] == 'activity'){
+            this.admin_sub_1 = "activity";
+            this.admin_sub_2 =  slug_list[3];
+            this.admin_project_sub =  slug_list[slug_list.length-1];
+          }
         }
+        
       });
 
     }
   ngOnInit() {
+    const id = this.activatedRoute.snapshot.params['filter'];
+
     this.settingService.settings.subscribe( (res:any) => {
       this.settings = res;
-      console.log(res);
     });
-
+    
     this.avatar = localStorage.getItem('avatar');
     // this.projectService.getAllProjects().subscribe( res =>{
     //   let list = res;

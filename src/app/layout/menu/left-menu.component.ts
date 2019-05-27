@@ -58,7 +58,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.is_dashboard = true;
         }
-        if( (!slug_list.includes("add")) && (slug_list.includes("projects") || slug_list[2] == 'projects') && slug_list.length >= 4){
+        if( (!slug_list.includes("activity") && !slug_list.includes("add")) && (slug_list.includes("projects") || slug_list[2] == 'projects') && slug_list.length >= 4){
             this.admin_sub_1 = "projects";
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];
@@ -77,6 +77,11 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
             this.admin_project_sub =  'members';
             this.admin_sub_3 =  'members';
         }
+        if(slug_list[2] == 'projects' && slug_list[4] == 'activity'){
+            this.is_dashboard = false;
+            this.admin_project_sub =  'activity';
+            this.admin_sub_3 =  'activity';
+        }
     }
 
     ngOnInit() {
@@ -87,7 +92,6 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.router.events.subscribe(path =>{
                 if(path instanceof NavigationEnd ){
-                    console.log(path,'path');
                     this.createUrlVariables(path);
                 }
             });
@@ -111,11 +115,11 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     getAllProject(project_name:any){
-        this.projectService.getProject(project_name).subscribe( res => {
-            if(res){
-                this.project = res;
-            }
-        });
+            this.projectService.getProject(project_name).subscribe( res => {
+                if(res){
+                    this.project = res;
+                }
+            });
     }
     createUrlVariables(path:any){
         //Get Url
@@ -137,7 +141,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.is_dashboard = true;
         }
-        if( (!slug_list.includes("add") ) && (slug_list.includes("projects") || slug_list[2] == 'projects') && slug_list.length >= 4){
+        if( (!slug_list.includes("add") && !slug_list.includes("activity") ) && (slug_list.includes("projects") || slug_list[2] == 'projects') && slug_list.length >= 4){
             this.admin_sub_1 = "projects";
             this.admin_sub_2 =  slug_list[3];
             this.admin_project_sub =  slug_list[slug_list.length-1];
@@ -155,6 +159,11 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
             this.is_dashboard = false;
             this.admin_project_sub =  'members';
             this.admin_sub_3 =  'members';
+        }
+        if(slug_list[2] == 'projects' && slug_list[4] == 'activity'){
+            this.is_dashboard = false;
+            this.admin_project_sub =  'activity';
+            this.admin_sub_3 =  'activity';
         }
     }
 

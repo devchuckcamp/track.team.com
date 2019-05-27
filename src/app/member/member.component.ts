@@ -55,7 +55,7 @@ export class MemberComponent implements OnInit {
   users : User[];
   auth:User;
   memberSearchResult:any;
-  displayedColumns: string[] = ['username', 'first_name', 'last_name', 'email', 'action'];
+  displayedColumns: string[] = ['avatar', 'username', 'first_name', 'last_name', 'email', 'action'];
   // MatPaginator Inputs
   length = 5;
   pageSize = 5;
@@ -69,7 +69,8 @@ export class MemberComponent implements OnInit {
   dialogRef: MatDialogRef<ConfirmDeleteDialog>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   dataSource = new MatTableDataSource<User>(ELEMENT_DATA);
-
+  default_avatar = '../assets/default-profile.png';
+  loading = '../assets/icon/loading.gif';
   constructor(
     private router: Router,
     private http: HttpClient,

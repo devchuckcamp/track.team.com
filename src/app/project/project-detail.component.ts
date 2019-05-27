@@ -26,19 +26,15 @@ export class ProjectDetailComponent implements OnInit {
 
     ngOnInit() {
         this.route.params.subscribe(params => {
-            if (params['project_name'] !== undefined && params['project_name'] !== 'add') {
+            if (params['project_name'] !== undefined && params['project_name'] !== 'add' && params['project_name'] !== 'activity') {
                 this.projectService.getProject(params['project_name']).subscribe( res => {
-                    
+
                     if(res){
                         this.project = res;
                         this.tickets = this.project.tickets;
-                        this.openTickets = this.tickets.filter(book => book.status_id == 1);
-                        this.inProgressTickets = this.tickets.filter(book => book.status_id == 2);
-                        this.completedTickets = this.tickets.filter(book => book.status_id == 5);
-
-                        console.log( this.openTickets,' this.openTickets');
-                        console.log( this.inProgressTickets,' this.inProgressTickets');
-                        console.log( this.completedTickets,' this.completedTickets');
+                        this.openTickets = this.tickets.filter(ticket => ticket.status_id == 1);
+                        this.inProgressTickets = this.tickets.filter(ticket => ticket.status_id == 2);
+                        this.completedTickets = this.tickets.filter(ticket => ticket.status_id == 5);
 
                     }
                 });

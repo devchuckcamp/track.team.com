@@ -21,6 +21,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   subscription: Subscription;
   default_avatar = '../assets/default-profile.png';
   projects: any[] = [];
+  logo = '../assets/logo/ecomia-header-logo.svg';
   constructor(
     private router: Router,
     private activedRoute: ActivatedRoute,
@@ -30,6 +31,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     private ticketService:TicketService,
     private threadService:ThreadService,
     private memberService:MemberService,
+    private activatedRoute: ActivatedRoute,
   ) {
     if(!this.user_avatar){
       this.user_avatar = localStorage.getItem('avatar');
@@ -58,8 +60,9 @@ export class NavbarComponent implements OnInit, OnDestroy  {
           this.parentUrl = "users";
         }else if(slug_list.includes("user-role")){
           this.parentUrl = "user-role";
-        } else if(slug_list.includes("log")){
-          this.parentUrl = "log";
+        } else if(slug_list.includes("activity")){
+          this.parentUrl = "activity";
+          console.log(slug_list,'activity slug_list');
         } else {
           this.parentUrl = "";
         }
@@ -67,15 +70,12 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     });
   }
 
+
   ngOnInit() {
+
     this.userService.currentAvatar.subscribe(avatar => {
       this.user_avatar = avatar;
     });
-      // this.projectService.getAllProjects().subscribe(res=>{
-      //   if(res){
-      //     this.projects = res;
-      //   }
-      // });
       this.projectService.loadAll();
       this.projectService.projects.subscribe( (res:any) => {
         this.projects = res;
@@ -100,5 +100,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     window.location.href='/login'
     return false;
   }
+
+
 
 }

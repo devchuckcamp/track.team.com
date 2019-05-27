@@ -15,6 +15,7 @@ import { LeftMenuComponent } from '../layout/menu/left-menu.component';
 import { LeftMenuTopComponent } from '../layout/menu/left-menu-top.component';
 import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
 import { UnderConstructionComponent } from '../share/under-construction.component';
+import { ActivityLogComponent } from '../share/activity-log.component';
 // Services
 import { SettingService } from '../service/setting.service';
 import { AuthService } from '../service/auth.service';
@@ -22,6 +23,7 @@ import { UserService } from '../service/user.service';
 import { ProjectService } from '../service/project.service';
 import { TicketService } from '../service/ticket.service';
 import { ThreadService } from '../service/thread.service';
+import { ActivityService } from '../service/activity.service';
 
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { FormsModule,ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators, EmailValidator,
@@ -79,7 +81,8 @@ import { MentionModule } from 'angular-mentions';
     ProjectComponent,
     ProjectNewComponent,
     ProfileComponent,
-    UnderConstructionComponent
+    UnderConstructionComponent,
+    ActivityLogComponent,
   ],
   imports: [
     CommonModule,
@@ -134,6 +137,7 @@ import { MentionModule } from 'angular-mentions';
     ProjectService,
     TicketService,
     ThreadService,
+    ActivityService,
   ],
   bootstrap: [LayoutComponent]
 })

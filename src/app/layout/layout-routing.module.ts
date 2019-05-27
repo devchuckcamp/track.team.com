@@ -9,6 +9,7 @@ import { NavbarModule } from '../navbar/navbar.module';
 import { LayoutComponent } from './layout.component';
 import { ProjectNewComponent } from '../project/project-new.component';
 import { UnderConstructionComponent } from '../share/under-construction.component';
+import { ActivityLogComponent } from '../share/activity-log.component';
 import { ProfileComponent } from '../profile/profile.component';
 import { AuthGuard } from '../guard/auth';
 
@@ -30,13 +31,15 @@ const routes:   Routes = [
             { path: 'projects/:project_name/members', loadChildren:'../member/member.module#MemberModule'},
             { path: 'projects/:project_name/members/:user_id', loadChildren:'../member/member-detail.module#MemberDetailModule'},
             { path: 'projects/:project_name/settings', component:UnderConstructionComponent},
+            { path: 'projects/:project_name/activity', component:ActivityLogComponent},
             { path: 'fund/current', loadChildren:'../fund/fund.module#FundModule'},
             { path: 'fund/incoming', loadChildren:'../fund/fund-incoming.module#FundIncomingModule'},
             { path: 'fund/pending', loadChildren:'../fund/fund-pending.module#FundPendingModule'},
             { path: 'investor', loadChildren:'../investor/investor.module#InvestorModule', },
             { path: 'member', loadChildren:'../member/member.module#MemberModule', },
             { path: 'member/:username', loadChildren:'../member/member-detail.module#MemberDetailModule', },
-            { path: 'rollin', loadChildren:'../rollin/rollin.module#RollinModule', },
+            { path: 'activity', component:ActivityLogComponent,},
+            { path: 'activity/:filter', component:ActivityLogComponent,},
             { path: 'profile', component:ProfileComponent},
             { path: 'settings', loadChildren:'../setting/setting.module#SettingModule'},
         ]
