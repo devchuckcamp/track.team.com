@@ -20,15 +20,16 @@ const ELEMENT_DATA: any[] = [];
 
 export class ActivityLogComponent implements OnInit {
     // Option Initiators
+    loading = '../../assets/icon/loading.gif';
     ticketOptionLoaded: boolean;
     ticketPriorityList: TicketPriorityType = [];
     ticketSettingToAdd:TicketOptionSetting;
     logs: any[] = [];
     displayedColumns: string[] = ['module',  'user', 'description', 'project', 'updated_at'];
     // MatPaginator Inputs
-    length = 5;
-    pageSize = 5;
-    pageSizeOptions: number[] = [1, 5, 10, 15, 25, 100];
+    length = 15;
+    pageSize = 15;
+    pageSizeOptions: number[] = [15, 25, 100];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     dataSource = new MatTableDataSource<any>(ELEMENT_DATA);
     project_name:any;

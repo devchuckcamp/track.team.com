@@ -42,4 +42,10 @@ export class ProjectDetailComponent implements OnInit {
         });
     }
 
+    goToFilterTicket(filter:any){
+        console.log(filter);
+        this.router.navigate([ 'admin/projects/',this.project.slug,'tickets', 'filter',filter]);
+        return false;
+    }
+
 }

@@ -4,13 +4,13 @@
 </div>
 <div class="col-lg-12 content-main">
     <div *ngIf="tickets" class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-4 clickable" (click)="goToFilterTicket('open');">
             <mat-card class="font-white bg-info">Open Tickets <span class="badge"> {{ openTickets.length }}</span></mat-card>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-4 clickable" (click)="goToFilterTicket('in-progress');">
             <mat-card class="font-white bg-warning">In Progress Tickets <span class="badge">{{ inProgressTickets.length }}</span></mat-card>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-4 clickable" (click)="goToFilterTicket('complete');">
             <mat-card class="font-white bg-success">Completed Tickets <span class="badge">{{ completedTickets.length }}</span> </mat-card>
         </div>
     </div>

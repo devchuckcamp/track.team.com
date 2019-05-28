@@ -70,7 +70,8 @@ export class MemberComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   dataSource = new MatTableDataSource<User>(ELEMENT_DATA);
   default_avatar = '../assets/default-profile.png';
-  loading = '../assets/icon/loading.gif';
+  loading = '../../assets/icon/loading.gif';
+
   constructor(
     private router: Router,
     private http: HttpClient,

@@ -138,7 +138,12 @@ export class TicketComponent implements OnInit, OnDestroy {
         if (params['project_name'] !== undefined) {
           this.project_name = params['project_name'];
           this.loading = true;
-          this.getTicket(params['project_name']);
+          console.log(params['filter_type'],'filter_type');
+          if (params['filter_type'] !== undefined) {
+            this.getFilterTicket(params['project_name'],params['filter_type']);
+          } else {
+            this.getTicket(params['project_name']);
+          }
           this.projectService.getProject(params['project_name']).subscribe( res=>{
             if(res) this.project_id = res.id;
           });
@@ -168,7 +173,13 @@ export class TicketComponent implements OnInit, OnDestroy {
       }
       return false;
     }
-
+    getFilterTicket(project_name:any,filter:any){
+      this.ticketService.getProjectTicketFilter(project_name,filter).subscribe(res => {
+        this.loading = false;
+        this.tickets = res.data;
+        this.tag_users = res.data.tag_users;
+      });
+    }
     getTicket(project_name:any){
       this.ticketService.getProjectTicketAll(project_name).subscribe(res => {
         this.loading = false;
