@@ -12,6 +12,7 @@ import { Project } from '../../model/project';
 })
 export class BreadcrumbComponent implements OnInit {
     @Input('slug_list') breadcrumbs:any;
+    @Input('auth_client') auth_client:any;
     @Input('admin_project_sub') admin_project_sub:string;
     @Input('project_name') project_name:string;
 
@@ -48,10 +49,11 @@ export class BreadcrumbComponent implements OnInit {
     }
 
     getRouterLink(index:number){
-        if(index == 1 || index == 0)  return '/admin';
-        if(index == 2) return '/admin/'+this.breadcrumbs[index];
-        if(index == 3) return '/admin/projects/'+this.project_name;
-        if(index == 4) return '/admin/projects/'+this.project_name+'/'+this.breadcrumbs[index];
-        if(index == 5) return '/admin/projects/'+this.project_name+'/'+this.breadcrumbs[4]+'/'+this.breadcrumbs[index];
+        // if(index == 0)  return '/'+this.auth_client;
+        if(index == 0 || index == 1 || index == 2)  return '/'+this.auth_client+'/admin';
+        if(index == 3) return ''+this.breadcrumbs[index];
+        if(index == 4) return 'projects/'+this.project_name;
+        if(index == 5) return 'projects/'+this.project_name+'/'+this.breadcrumbs[index];
+        if(index == 6) return 'projects/'+this.project_name+'/'+this.breadcrumbs[5]+'/'+this.breadcrumbs[index];
     }
 }

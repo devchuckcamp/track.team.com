@@ -1,11 +1,11 @@
-<ngx-slick-carousel *ngIf="data.uploads" class="carousel" 
+<ngx-slick-carousel *ngIf="data.uploads" class="carousel"
     #slickModal="slick-carousel"
     [config]="slideConfig"
     (init)="slickInit($event)"
     (breakpoint)="breakpoint($event)"
     (afterChange)="afterChange($event)"
     (beforeChange)="beforeChange($event)" >
-    <div ngxSlickItem *ngFor="let upload of data.uploads" class="slide">
-        <img src="{{upload.url ? upload.url : 'https://homestead.test/'+upload.path+'/'+upload.name}}" alt="" width="100%">
+    <div ngxSlickItem *ngFor="let upload of data.uploads" class="slide clickable">
+        <img (click)="download(upload.url,upload.name)" [src]="getSantizeUrl(upload.url)" alt="" width="100%">
     </div>
 </ngx-slick-carousel>

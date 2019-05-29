@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-
+import { Observable, Subscription  } from 'rxjs';
 import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
+import { ClientService } from '../service/client.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -15,6 +16,9 @@ export class LoginComponent implements OnInit {
     loading = false;
     submitted = false;
     returnUrl: string;
+    auth_client:any;
+    subscription:Subscription;
+    client:any;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -22,22 +26,36 @@ export class LoginComponent implements OnInit {
         private router: Router,
         private authenticationService: AuthService,
         private userService: UserService,
-        //private alertService: AlertService
+        private clientService: ClientService
     ) {
+        this.subscription = this.clientService.currentClient.subscribe( client => { this.client = client });
         //redirect to home if already logged in
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
         if(localStorage.getItem('currentUser') && this.authenticationService.Bearer !== ''){
             this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin'] );
         }
+        if (localStorage.getItem('client')) {
+            this.auth_client = localStorage.getItem('client');
+
+            this.clientService.validate(this.auth_client).subscribe( (res:any) => {
+                this.client = res;
+                this.clientService.setClient(res);
+                this.auth_client = this.client.slug;
+            }, error=>{
+                console.log('error:'+error);
+
+            });
+        }
+        
     }
 
     ngOnInit() {
+        
         this.loginForm = this.formBuilder.group({
             username: ['', Validators.required],
             password: ['', Validators.required]
         });
-        
     }
 
     // convenience getter for easy access to form fields
@@ -68,10 +86,15 @@ export class LoginComponent implements OnInit {
                             if(this.avatar.avatar !== null){
                                 localStorage.setItem('avatar',this.avatar.avatar.data);
                             }
+                            let auth_client= '';
                             this.loading = false;
-                            if(data.access_token && !this.loading){
+                            if (!this.auth_client) {
+                                auth_client = localStorage.getItem('client');
+                            }
+                            console.log(localStorage.getItem('client'),'auth_client');
+                            if(localStorage.getItem('client') && data.access_token && !this.loading){
                                 // this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);
-                                window.location.href='/admin';
+                                window.location.href=localStorage.getItem('client')+'/admin';
                             }
                         });
                     });

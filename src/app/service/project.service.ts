@@ -22,6 +22,7 @@ export class ProjectService {
         private config: GlobalRoutesService,
         private http: HttpClient,
         ) {
+
             this.apiEndpoint = this.config.apiEndPoint();
             if(localStorage.getItem("currentUser")){
                 this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
@@ -42,7 +43,7 @@ export class ProjectService {
           this._projects.next(Object.assign({}, this.dataStore).projects);
         }, error => console.log('Could not load projects.'));
     }
-    
+
     create(project: Project) {
         this.http.post(this.config.apiEndPoint()+'/api/v1/projects', JSON.stringify(project)).subscribe( (data:any) => {
             this.dataStore.projects.push(data);

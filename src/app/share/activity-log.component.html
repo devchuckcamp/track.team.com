@@ -39,12 +39,16 @@
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
+            <div *ngIf="!logs.length && !loadingProgress" class="text-center pad-y-20">
+              <label for="" class="text-danger">No Activity</label>
+              <p>Stay tuned. This feature is under development <i class="fa fa-wrench"></i></p>
+            </div>
             <mat-paginator *ngIf="logs.length" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
               (page)="onPageChange($event)">
               ></mat-paginator>
 
           </div>
-          <div *ngIf="!logs.length" class="col-lg-12 text-center">
+          <div *ngIf="loadingProgress" class="col-lg-12 text-center">
             <img  [src]="loading" alt="Please wait...">
           </div>
     </div>

@@ -13,7 +13,8 @@ export class UserService {
     Bearer:any;
     Avatar =  new BehaviorSubject(localStorage.getItem("avatar"));
     currentAvatar = this.Avatar.asObservable();
-    
+    client_slug =  new BehaviorSubject(localStorage.getItem("client"));
+    currentClient = this.client_slug.asObservable();
     constructor(
         private config: GlobalRoutesService,
         private http: HttpClient,
@@ -22,6 +23,17 @@ export class UserService {
             if(localStorage.getItem("currentUser")){
                 this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
             }
+            // if (!localStorage.getItem('client')) {
+            //     localStorage.setItem('client','sos');
+            // }
+    }
+
+    setClient(client:string){
+        this.client_slug.next(client);
+    }
+
+    clearClient(){
+        this.client_slug.complete();
     }
 
     setAvatar(avatar:string){

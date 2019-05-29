@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
 import { TicketService } from '../service/ticket.service';
 import { ThreadService } from '../service/thread.service';
 import { AuthService } from '../service/auth.service';
@@ -38,7 +39,7 @@ export class TicketDetailComponent implements OnInit {
     auth:any;
     fileType:any;
     uploadImages:any = [];
-
+    pdfImages = '../assets/pdf-file-preview.png';
     members:any[] =[];
     settings:any[] = [];
     memberList = [];
@@ -67,6 +68,7 @@ export class TicketDetailComponent implements OnInit {
         private dialog: MatDialog,
         private http: HttpClient,
         private globalRoutesService:GlobalRoutesService,
+        private sanitizer: DomSanitizer
     ) {
         this.auth = this.authService.getAuthUser();
         this.loggedin_user = "";
@@ -78,6 +80,7 @@ export class TicketDetailComponent implements OnInit {
     openDialog(uploads:any): void {
       const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
         width: '100%',
+        height: '100%',
         data: {uploads: uploads}
       });
 
@@ -85,6 +88,13 @@ export class TicketDetailComponent implements OnInit {
         this.animal = result;
       });
     }
+    getSantizeUrl(url : string) {
+      if(url.includes("application/pdf")){
+        url = this.pdfImages;
+      }
+      return this.sanitizer.bypassSecurityTrustUrl(url);
+    }
+    
     ngOnInit() {
       // Settings
       this.settingService.settings.subscribe( (res:any) => {
@@ -213,17 +223,28 @@ export class TicketDetailComponent implements OnInit {
 
     // File Upload
     public files: UploadFile[] = [];
-
+    pdf = '';
     getFileType(){
       return this.fileType;
     }
+    showPdf() {
+      const linkSource = 'data:application/pdf;base64,' + this.pdf;
+      const downloadLink = document.createElement("a");
+      const fileName = "sample.pdf";
 
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.click();
+  }
     _handleReaderLoaded(readerEvt) {
       var binaryString = readerEvt.target.result;
 
       let base64textString = '';
       base64textString= btoa(binaryString);
+      this.pdf = base64textString;
+      
       this.uploadImages.push('data:'+this.getFileType()+';base64,'+btoa(binaryString));
+      console.log(this.uploadImages,'uploadImages');
       return base64textString;
     }
     public dropped(event: UploadEvent) {
@@ -235,16 +256,13 @@ export class TicketDetailComponent implements OnInit {
         if (droppedFile.fileEntry.isFile) {
           const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
           fileEntry.file((file: File) => {
-            // var files = evt.target.files;
-            //this.files= file;
             this.fileType = file.type;
-            console.log(this.fileType,'filetype');
+
             if (file) {
                 var reader = new FileReader();
-                console.log(file,'file droppped');
                 reader.onload = this._handleReaderLoaded.bind(this);
                 let binary = this._handleReaderLoaded.bind(this);
-                // console.log(ss);
+
                 reader.readAsBinaryString(file);
             }
 

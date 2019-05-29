@@ -18,6 +18,9 @@ li.active{
 .font-white{
   color: #fafafa!important;
 }
+.font-bold{
+  font-weight: bolder;
+}
 /* Form */
 .form-header-title{
   background-color: gray;

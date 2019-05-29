@@ -5,7 +5,7 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
-
+import { ClientGuard } from './guard/client';
 const routes:   Routes = [
     { path: 'investor', loadChildren:'./investor/investor.module#InvestorModule'},
     {
@@ -18,6 +18,7 @@ const routes:   Routes = [
     },
     {
         path: 'login', component: LoginComponent,
+        canActivate:[ClientGuard],
     },
     {
         path: 'register', component: RegisterComponent,

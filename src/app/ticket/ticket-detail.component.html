@@ -1,4 +1,6 @@
 <div *ngIf="ticket" class="col-lg-12">
+    <a (click)="showPdf()">PDF</a>
+    <img *ngIf="imgTest" [src]="imgTest" alt="" height="100" width="100">
     <div class="thread-container col-lg-12">
         <h2>{{ticket.title}}     <span *ngIf="ticket.assigned_to.id == auth.id" class="badge font-white font-12 bg-success">Assigned to you</span></h2> 
          
@@ -30,6 +32,21 @@
                     <option  *ngFor="let setting of settings" [value]="setting.id" [selected]="setting.id == ticket.priority.id">{{setting.name}}</option>
                 </select>
                 <span *ngIf="ticket.created_by !== auth.username" class="badge font-white font-12 bg-success">{{ticket.priority.name}}</span> 
+            </div>
+            <!-- Assignees -->
+            <div *ngIf="ticket.assignees" class="row form-group">
+                <div  class="col-lg-12">
+                    <label *ngIf="ticket.assignees.length == 1" for="tag_users">Assignee:</label>
+                    <label *ngIf="ticket.assignees.length > 1" for="tag_users">Assignees:</label>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div *ngFor="let assignee of ticket.assignees" class="col-lg-2 col-md-3 col-sm-4 border-rad-5 bg-success font-white pad-5 mar-10">
+                            {{assignee.user.user_details.first_name}} {{assignee.user.user_details.last_name}} ({{assignee.user.username}})
+                            <!-- <a href="#" class="pull-right" (click)="removeTagUser(tag)"> <i class="btn btn-danger pos-ab fa fa-remove"></i></a> -->
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- Tagged Users -->
             <div *ngIf="ticket.tag_users" class="row form-group">
@@ -70,7 +87,7 @@
                     <div class="row thread-attachment-list-container" *ngIf="thread.upload && thread.upload.length">
                         <div *ngFor="let upload of thread.upload; let ii = index" [attr.data-index]="ii" class="comment-attachment-container col">
                             <!-- thread ID:{{thread.id}} -->
-                            <img (click)="openDialog(thread.upload)"  class="mar-x-30 full-w full-h" src="{{upload.url ? upload.url : 'https://homestead.test/'+upload.path+'/'+upload.name}}">
+                            <img (click)="openDialog(thread.upload)"  class="mar-x-30 full-w full-h" [src]="getSantizeUrl(upload.url)">
                         </div>
                     </div>
                     <div class="card-body row">

@@ -118,12 +118,12 @@ export class TicketComponent implements OnInit, OnDestroy {
       });
 
       this.projectService.getAllMember(this.project_name).subscribe( res => {
-        console.log(res.data);
+        // console.log(res.data);
         if(res.data){
           this.members = res.data;
           this.taggable_members = res.data;
 
-          console.log(this.taggable_members, 'taggable_members');
+          // console.log(this.taggable_members, 'taggable_members');
         }
         // this.length = res.total;
       });
@@ -138,7 +138,7 @@ export class TicketComponent implements OnInit, OnDestroy {
         if (params['project_name'] !== undefined) {
           this.project_name = params['project_name'];
           this.loading = true;
-          console.log(params['filter_type'],'filter_type');
+
           if (params['filter_type'] !== undefined) {
             this.getFilterTicket(params['project_name'],params['filter_type']);
           } else {
@@ -234,7 +234,7 @@ export class TicketComponent implements OnInit, OnDestroy {
           fileEntry.file((file: File) => {
    
             // Here you can access the real file
-            console.log(droppedFile.relativePath, file);
+            // console.log(droppedFile.relativePath, file);
    
             /**
             // You could upload it like this:
@@ -256,17 +256,17 @@ export class TicketComponent implements OnInit, OnDestroy {
         } else {
           // It was a directory (empty directories are added, otherwise only files)
           const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
-          console.log(droppedFile.relativePath, fileEntry);
+          // console.log(droppedFile.relativePath, fileEntry);
         }
       }
     }
    
     public fileOver(event){
-      console.log(event);
+      // console.log(event);
     }
    
     public fileLeave(event){
-      console.log(event);
+      // console.log(event);
     }
 
     public toggleTicketForm(){

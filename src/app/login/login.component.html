@@ -1,6 +1,6 @@
 <div class="col-lg-12 col-md-8  mar-t-20 pad-t-20">
-    <div class="col-lg-2 container mar-0-auto pad-25 pad-y-30 font-white border-rad-5 mar-t-30" style="background-color:black;">
-        <h2>Login</h2>
+    <div *ngIf="client" class="col-lg-2 container mar-0-auto pad-25 pad-y-30 font-white border-rad-5 mar-t-30" style="background-color:black;">
+        <h2 *ngIf="client.name">{{client.name}} Login</h2>
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <div class="form-group 3q-width">
                 <i class="fa fa-user mar-r-5"></i>

@@ -18,6 +18,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   activeURL:string;
   parentUrl:string;
   user_avatar:string;
+  auth_client:string;
   subscription: Subscription;
   default_avatar = '../assets/default-profile.png';
   projects: any[] = [];
@@ -36,6 +37,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     if(!this.user_avatar){
       this.user_avatar = localStorage.getItem('avatar');
     }
+    this.setClient();
     this.setAvatar();
 
     this.router.events.subscribe(path =>{
@@ -72,7 +74,6 @@ export class NavbarComponent implements OnInit, OnDestroy  {
 
 
   ngOnInit() {
-
     this.userService.currentAvatar.subscribe(avatar => {
       this.user_avatar = avatar;
     });
@@ -83,6 +84,11 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   }
   ngOnDestroy(){
     this.userService.clearAvatar();
+    this.userService.clearClient();
+  }
+
+  setClient():void {
+    this.subscription = this.userService.currentClient.subscribe(client => { this.auth_client = client;  });
   }
 
   setAvatar():void {
@@ -97,7 +103,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     this.ticketService.Bearer = '';
     this.memberService.Bearer = '';
     // this.router.navigate(['/login'] );
-    window.location.href='/login'
+    window.location.href='/'
     return false;
   }
 

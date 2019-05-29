@@ -15,7 +15,7 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
     @Input('project_name') project_name:string;
     @Input('admin_project_sub') admin_project_sub:string;
     @Input('auth_profile') auth_profile:any;
-    
+    @Input('auth_client') auth_client:any;
     active_menu:string;
     project:Project;
     profile:any;
@@ -54,37 +54,37 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
             slug:'',
             tickets:[]
         };
-        if(slug_list.length>=3){
+        if(slug_list.length>=4){
             this.is_dashboard = false;
         } else {
             this.is_dashboard = true;
         }
-        if( (!slug_list.includes("activity") || !slug_list.includes("add")) && slug_list.includes("projects") || slug_list[2] == 'projects'){
+        if( (!slug_list.includes("activity") || !slug_list.includes("add")) && slug_list.includes("projects") || slug_list[3] == 'projects'){
             this.admin_sub_1 = "projects";
-            this.admin_sub_2 =  slug_list[3];
+            this.admin_sub_2 =  slug_list[4];
             this.admin_project_sub =  slug_list[slug_list.length-1];
             this.project_name = this.admin_project_sub;
         }
-        if(slug_list[2] == 'projects' && slug_list[4] == 'tickets'){
+        if(slug_list[3] == 'projects' && slug_list[5] == 'tickets'){
             this.admin_project_sub =  'tickets';
             this.admin_sub_3 =  'tickets';
         }
         if(slug_list[slug_list.length-1] !== this.admin_project_sub){
             this.is_dashboard = false;
         }
-        if(slug_list[2] == 'projects' && slug_list[4] == 'members'){
+        if(slug_list[3] == 'projects' && slug_list[5] == 'members'){
             this.is_dashboard = false;
             this.admin_project_sub =  'members';
             this.admin_sub_3 =  'members';
         }
 
-        if(slug_list[2] == 'profile'){
+        if(slug_list[3] == 'profile'){
             this.is_dashboard = true;
             this.admin_project_sub =  'members';
             this.admin_sub_3 =  'members';
         }
 
-        if(slug_list[2] == 'activity'){
+        if(slug_list[3] == 'activity'){
             this.is_dashboard = false;
             this.admin_project_sub =  'activity';
             this.admin_sub_3 =  'activity';
@@ -122,31 +122,31 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
         this.onload_slug_list = slug_list;
         this.admin_project_sub =  slug_list[slug_list.length-1];
         this.admin_sub_3 = this.admin_project_sub;
-        if(slug_list.length>=3){
+        if(slug_list.length>=4){
             this.is_dashboard = false;
         } else {
             this.is_dashboard = true;
         }
-        if((!slug_list.includes("activity") || !slug_list.includes("add")) && slug_list.includes("projects") || slug_list[2] == 'projects'){
+        if((!slug_list.includes("activity") || !slug_list.includes("add")) && slug_list.includes("projects") || slug_list[3] == 'projects'){
             this.admin_sub_1 = "projects";
-            this.admin_sub_2 =  slug_list[3];
+            this.admin_sub_2 =  slug_list[4];
             this.admin_project_sub =  slug_list[slug_list.length-1];
             this.project_name = this.admin_project_sub;
         }
-        if(slug_list[2] == 'projects' && slug_list[4] == 'tickets'){
+        if(slug_list[3] == 'projects' && slug_list[5] == 'tickets'){
             this.admin_project_sub =  'tickets';
             this.admin_sub_3 =  'tickets';
         }
         if(slug_list[slug_list.length-1] !== this.admin_project_sub){
             this.is_dashboard = false;
         }
-        if(slug_list[2] == 'projects' && slug_list[4] == 'members'){
+        if(slug_list[3] == 'projects' && slug_list[5] == 'members'){
             this.is_dashboard = false;
             this.admin_project_sub =  'members';
             this.admin_sub_3 =  'members';
         }
 
-        if(slug_list[2] == 'activity'){
+        if(slug_list[3] == 'activity'){
             this.is_dashboard = false;
             this.admin_project_sub =  'activity';
             this.admin_sub_3 =  'activity';

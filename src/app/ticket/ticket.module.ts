@@ -47,9 +47,12 @@ import {
   MatTreeModule,
 } from '@angular/material';
 
+import { EllipsisPipe } from '../component/pipe/ellipses.pipe';
+
 @NgModule({
   declarations: [
     TicketComponent,
+    EllipsisPipe,
   ],
   imports: [
     MatAutocompleteModule,

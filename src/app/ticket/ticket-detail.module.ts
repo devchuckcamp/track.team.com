@@ -12,6 +12,9 @@ import { FileUploadModule } from 'ng2-file-upload';
 // Import your library
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { MentionModule } from 'angular-mentions';
+
+
+import { SafeHtml } from '../component/pipe/sanitize.pipe';
 // Material
 import {
   MatAutocompleteModule,
@@ -54,7 +57,8 @@ import {
 @NgModule({
   declarations: [
     TicketDetailComponent,
-    DialogOverviewExampleDialog
+    DialogOverviewExampleDialog,
+    SafeHtml
   ],
   imports: [
     MatAutocompleteModule,

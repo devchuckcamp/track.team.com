@@ -25,6 +25,7 @@ export class ActivityLogComponent implements OnInit {
     ticketPriorityList: TicketPriorityType = [];
     ticketSettingToAdd:TicketOptionSetting;
     logs: any[] = [];
+    loadingProgress:boolean;
     displayedColumns: string[] = ['module',  'user', 'description', 'project', 'updated_at'];
     // MatPaginator Inputs
     length = 15;
@@ -39,7 +40,7 @@ export class ActivityLogComponent implements OnInit {
         public router: Router,
         private route: ActivatedRoute,
     ) {
-
+        this.loadingProgress= true;
     }
 
   ngOnInit() {
@@ -60,10 +61,11 @@ export class ActivityLogComponent implements OnInit {
 
     getAllProjectActivity(project_name:string){
         console.log(project_name);
+        this.loadingProgress = false;
     }
     getAllActivity(){
         this.activityService.getAll().subscribe( (res:any) => {
-            console.log(res, 'all activities');
+            this.loadingProgress = false;
             this.dataSource = new MatTableDataSource(res.data);
                 this.logs = res.data;
                 this.length = res.total;

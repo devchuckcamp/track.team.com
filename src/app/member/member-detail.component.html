@@ -3,7 +3,7 @@
     {{user.name}} Detail Page works!
   </div>
 </div> -->
-<div class="col-lg-12">
+<div class="col-lg-12 divider mar-y-15">
   <!-- Profile Form -->
 
   <form *ngIf="userProfileForm && user && user.user_details && auth_user"
@@ -78,6 +78,7 @@
           </div>
       </div>
   </form>
+
   <!-- User Project -->
   <form *ngIf="!userProfileForm && !user"
           class="row"
@@ -129,4 +130,15 @@
           </div>
       </div>
   </form>
+</div>
+
+<div *ngIf="user.projects" class="col-lg-12 text-center">
+    <div class="row">
+        <h2>Member of:</h2>
+    </div>
+    <div class="row">
+        <div class="col-lg-2 text-center bg-success mar-x-5 pad-y-5 font-white font-bold border-rad-5 clickable" *ngFor="let project of user.projects">
+            {{project.project.name | titlecase}}
+        </div>
+    </div>
 </div>

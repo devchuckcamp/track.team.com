@@ -20,7 +20,12 @@ const routes:   Routes = [
         pathMatch:'full',
     },
     {
-        path: 'admin', component:LayoutComponent,
+        path: ':auth_client',
+        redirectTo:':auth_client/admin',
+        pathMatch:'full',
+    },
+    {
+        path: ':auth_client/admin', component:LayoutComponent,
         canActivate:[AuthGuard],
         children:[
             { path: 'projects',  component:LayoutComponent },

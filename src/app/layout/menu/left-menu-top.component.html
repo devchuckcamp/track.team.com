@@ -8,26 +8,26 @@
                     <li class="parent-left-menu-item"
                         [ngClass]="{'active': is_dashboard == true || admin_project_sub == active_menu || admin_project_sub == 'profile' || (project_name && project_name == active_menu )}"
                     >
-                        <a href="#" [routerLink]="['/admin']"><i
+                        <a href="#" [routerLink]="['/',auth_client,'admin']"><i
                                 class="fa fa-home mar-r-5"></i>Dashboard</a>
                     </li>
                     <li class="parent-left-menu-item"
                         [ngClass]="{'active':admin_project_sub == 'projects' || admin_sub_3 == 'projects' || admin_project_sub == 'add'}"
                     >
-                        <a href="#" [routerLink]="['/admin/projects']"><i
+                        <a href="#" [routerLink]="['projects']"><i
                                 class="fa fa-ticket mar-r-5"></i>Projects</a>
                     </li>
                     
                     <li class="parent-left-menu-item"
                         [ngClass]="{'active': admin_project_sub == 'settings' || admin_sub_3 == 'settings'}"
                     >
-                        <a href="#" [routerLink]="['/admin/settings']"><i
+                        <a href="#" [routerLink]="['settings']"><i
                                 class="fa fa-gears mar-r-5"></i>Setting</a>
                     </li>
                     <li class="parent-left-menu-item"
                         [ngClass]="{'active': admin_project_sub == 'activity' || admin_sub_3 == 'activity'}"
                     >
-                        <a href="#" [routerLink]="['/admin/activity']"><i
+                        <a href="#" [routerLink]="['activity']"><i
                                 class="fa fa-file-text-o mar-r-5"></i>Activity Logs</a>
                     </li>
                 </ul>

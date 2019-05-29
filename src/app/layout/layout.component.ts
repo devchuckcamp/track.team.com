@@ -16,6 +16,7 @@ import { Observable, Subscription  } from 'rxjs';
 })
 export class LayoutComponent implements OnInit {
   avatar:any;
+  auth_client:any;
   @ViewChild("chart")
   public refChart: ElementRef;
   public chartData: any;
@@ -39,6 +40,7 @@ export class LayoutComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     ) {
+      this.setClient();
       // Settings
       this.settingService.loadAll();
       this.admin_sub_1 = "";
@@ -58,21 +60,21 @@ export class LayoutComponent implements OnInit {
           let slug_list = this.activeURL.split('/');
           this.breadcrumb = slug_list;
           let isSubRoute = (this.activeURL.match(/\//g) || []).length;
-          if(slug_list.includes("projects") || slug_list[2] == 'projects'){
+          if(slug_list.includes("projects") || slug_list[3] == 'projects'){
             this.admin_sub_1 = "projects";
-            this.admin_sub_2 =  slug_list[3];
+            this.admin_sub_2 =  slug_list[4];
             this.admin_project_sub =  slug_list[slug_list.length-1];
           }
 
           if(slug_list.includes("profile") || slug_list[2] == 'profile'){
             this.admin_sub_1 = "profile";
-            this.admin_sub_2 =  slug_list[3];
+            this.admin_sub_2 =  slug_list[4];
             this.admin_project_sub =  slug_list[slug_list.length-1];
           }
 
-          if(slug_list.includes("activity") || slug_list[2] == 'activity'){
+          if(slug_list.includes("activity") || slug_list[3] == 'activity'){
             this.admin_sub_1 = "activity";
-            this.admin_sub_2 =  slug_list[3];
+            this.admin_sub_2 =  slug_list[4];
             this.admin_project_sub =  slug_list[slug_list.length-1];
           }
         }
@@ -88,6 +90,7 @@ export class LayoutComponent implements OnInit {
     });
     
     this.avatar = localStorage.getItem('avatar');
+    this.auth_client = localStorage.getItem('client');
     // this.projectService.getAllProjects().subscribe( res =>{
     //   let list = res;
     //   this.projectsList = list;
@@ -99,6 +102,10 @@ export class LayoutComponent implements OnInit {
   }
 
   ngAfterViewInit() {
+  }
+
+  setClient():void {
+    this.subscription = this.userService.currentClient.subscribe(client => { this.auth_client = client;  });
   }
 
 }

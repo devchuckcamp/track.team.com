@@ -10,7 +10,8 @@ import { Project } from '../model/project';
   styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit {
-  projects: Project[] = []; 
+  projects: Project[] = [];
+  auth_client:any = localStorage.getItem('client');
   constructor(
     private projectService: ProjectService,
     private router:Router
@@ -28,7 +29,7 @@ export class ProjectComponent implements OnInit {
   }
 
   goTo(slug:string){
-    this.router.navigate(['/admin/projects', slug] );
+    this.router.navigate(['/'+this.auth_client+'/admin/projects', slug] );
     return false;
   }
 
