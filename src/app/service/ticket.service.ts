@@ -85,23 +85,44 @@ export class TicketService {
         });
         return forkJoin(mentions);
     }
-    addTaggedUser(tagged_member: any) {
+    addTaggedUser(assigned_members: any) {
         let tag:{
             ticket_id:number,
             user_id:number
         };
         let https = [];
-        tagged_member.forEach(obj => {
-            console.log(obj,'member to be tagged from service.');
+        assigned_members.forEach(obj => {
+            console.log(obj,'assigned members from service.');
             tag = {
                 ticket_id: obj.ticket_id,
-                user_id :obj.user_id
+                user_id :obj.user_id,
             };
 
             https.push(this.http.post(this.config.apiEndPoint()+'/api/v1/tickets-tag-users', tag, this.jt()));
         });
         return forkJoin(https);
     }
+
+    addAssignees(assignees: any) {
+        let tag:{
+            ticket_id:number,
+            user_id:number,
+            project_id:number
+        };
+        let https = [];
+        assignees.forEach(obj => {
+            console.log(obj,'member to be tagged from service.');
+            tag = {
+                ticket_id: obj.ticket_id,
+                user_id :obj.user_id,
+                project_id :obj.project_id
+            };
+
+            https.push(this.http.post(this.config.apiEndPoint()+'/api/v1/tickets-assign-users', tag, this.jt()));
+        });
+        return forkJoin(https);
+    }
+
 
     removeTag(id: number) {
         return this.http.delete(this.config.apiEndPoint()+'/api/v1/tickets-tag-users/'+id, this.jt());

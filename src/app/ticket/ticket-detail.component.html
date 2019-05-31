@@ -1,9 +1,6 @@
 <div *ngIf="ticket" class="col-lg-12">
-    <a (click)="showPdf()">PDF</a>
-    <img *ngIf="imgTest" [src]="imgTest" alt="" height="100" width="100">
     <div class="thread-container col-lg-12">
-        <h2>{{ticket.title}}     <span *ngIf="ticket.assigned_to.id == auth.id" class="badge font-white font-12 bg-success">Assigned to you</span></h2> 
-         
+        <h2>{{ticket.title}}</h2>
         <form>
             <!-- <div class="form-group">
                 <label for="exampleInputEmail1">Email address</label>
@@ -15,7 +12,7 @@
                 <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
                 </div> -->
             <!-- Status -->
-            <div class="form-group"  *ngIf="ticket.assigned_to.id == auth.id || ticket.created_by == auth.username">
+            <div class="form-group"  *ngIf="ticket.assigned_to && ticket.assigned_to.id == auth.id || ticket.created_by == auth.username">
                 <label class="mar-r-10" for="ticket-status">Status  </label>
                 <select #ticketStatus (change)="updateTicketStatus(ticketStatus.value)">
                     <option value="1" [selected]="ticket.status_id == 1">Open</option>
@@ -34,20 +31,58 @@
                 <span *ngIf="ticket.created_by !== auth.username" class="badge font-white font-12 bg-success">{{ticket.priority.name}}</span> 
             </div>
             <!-- Assignees -->
-            <div *ngIf="ticket.assignees" class="row form-group">
+            <div *ngIf="ticket.assignees.length" class="row form-group">
                 <div  class="col-lg-12">
                     <label *ngIf="ticket.assignees.length == 1" for="tag_users">Assignee:</label>
                     <label *ngIf="ticket.assignees.length > 1" for="tag_users">Assignees:</label>
                 </div>
                 <div class="col-lg-12">
                     <div class="row">
-                        <div *ngFor="let assignee of ticket.assignees" class="col-lg-2 col-md-3 col-sm-4 border-rad-5 bg-success font-white pad-5 mar-10">
-                            {{assignee.user.user_details.first_name}} {{assignee.user.user_details.last_name}} ({{assignee.user.username}})
+                        <div *ngFor="let assignee of ticket.assignees" class="col-lg-2 col-md-3 col-sm-4 border-rad-5 text-center bg-success font-white pad-5 mar-10">
+                            <strong *ngIf="ticketAssigned(assignee.user.id)">Assigned to you</strong>
+                            <strong  *ngIf="!ticketAssigned(assignee.user.id)">{{assignee.user.user_details.first_name}} {{assignee.user.user_details.last_name}} ({{assignee.user.username}})</strong>
+                            <!-- <a href="#" class="pull-right" (click)="removeTagUser(tag)"> <i class="btn btn-danger pos-ab fa fa-remove"></i></a> -->
+                        </div>
+                    </div>
+                    <div  class="row">
+                         <div class="col">
+                            <div class="col-lg-4">
+                                <div><h2>Add Assignee</h2></div>
+                                <div class="row pad-x-10">
+                                    <input #searchMember class="half-width pad-10" type="text" placeholder="search member">
+                                    <button (click)="searchMemberToAssign(searchMember.value)"mat-button mat-raised-button><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 pos-rel">
+                                <div *ngIf="assignableMembers && assignableMembersFiltered" class="search-result-container row pos-abs z-index-10 bg-lightgray">
+                                    <a href="#" *ngIf="assignableMembers.length" class="pos-abs close-search-result-btn bg-danger"><i class="fa fa-close"></i></a>
+                                    <div class="col-lg-12">
+                                        <div *ngFor="let member of assignableMembers" (click)="additionalAssignee(member)" class="clickable search-member-row-result-container row border-rad-5 text-center bg-success font-white pad-5 mar-10">
+                                            <strong>{{ member.user.user_details.first_name }} {{ member.user.user_details.last_name }} ({{ member.user.username }})</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Assignee -->
+            <div *ngIf="ticket.assigned_to && !ticket.assignees" class="row form-group">
+                <div  class="col-lg-12">
+                    <label for="assigned_to">Assignee:</label>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-3 col-sm-4 border-rad-5 text-center bg-success font-white pad-5 mar-10">
+                            <strong *ngIf="ticketAssigned(ticket.assigned_to.user_details.user_id)">Assigned to you</strong>
+                            <strong  *ngIf="!ticketAssigned(ticket.assigned_to.user_details.user_id)">{{ticket.assigned_to.user_details.first_name}} {{ticket.assigned_to.user_details.last_name}} ({{ticket.assigned_to.username}})</strong>
                             <!-- <a href="#" class="pull-right" (click)="removeTagUser(tag)"> <i class="btn btn-danger pos-ab fa fa-remove"></i></a> -->
                         </div>
                     </div>
                 </div>
             </div>
+
             <!-- Tagged Users -->
             <div *ngIf="ticket.tag_users" class="row form-group">
                 <div  class="col-lg-12">

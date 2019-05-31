@@ -62,6 +62,7 @@ export class TicketComponent implements OnInit, OnDestroy {
     ticketPriorities:any[] =[];
     taggable_members:any;
     tagged_members = new FormControl();
+    assignees = new FormControl();
     ticketToAdd:any = new Object();
     ticket: any;
     thread:any;
@@ -107,6 +108,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.ticketToAdd.title = '';
       this.ticketToAdd.description = '';
       this.ticketToAdd.assigned_to = null;
+      this.ticketToAdd.assignees = null;
       this.ticketToAdd.status_id = null;
       this.replayText = "";
       this.ticketFormShow = false;
@@ -114,14 +116,15 @@ export class TicketComponent implements OnInit, OnDestroy {
         'title': new FormControl('', [Validators.required,]),
         'description': new FormControl('', [Validators.required,]),
         'priority': new FormControl('', [Validators.required,]),
-        'assigned_to': new FormControl('', [Validators.required,]),
+        'assigned_to': new FormControl('', []),
+        'assignees': new FormControl('', []),
       });
 
-      this.projectService.getAllMember(this.project_name).subscribe( res => {
-        // console.log(res.data);
-        if(res.data){
-          this.members = res.data;
-          this.taggable_members = res.data;
+      this.projectService.getAllMemberFullList(this.project_name).subscribe( res => {
+        console.log(res);
+        if(res){
+          this.members = res;
+          this.taggable_members = res;
 
           // console.log(this.taggable_members, 'taggable_members');
         }
@@ -158,9 +161,9 @@ export class TicketComponent implements OnInit, OnDestroy {
     }
 
     assignTo(id:number){
-      this.taggable_members = this.members;
-      let new_taggable_members = this.taggable_members.filter( member => member.user_id != id);
-      this.taggable_members = new_taggable_members;
+      // this.taggable_members = this.members;
+      // let new_taggable_members = this.taggable_members.filter( member => member.user_id != id);
+      // this.taggable_members = new_taggable_members;
     }
 
     tagTo(member:any){
@@ -290,8 +293,22 @@ export class TicketComponent implements OnInit, OnDestroy {
       return membersTagged;
     }
 
+    public getAssignedMembers(ticket_id:any = null){
+      let membersAssigned = [];
+      if(this.ticketToAdd.assignees.length){
+        this.ticketToAdd.assignees.forEach(obj => {
+          let member = {
+            ticket_id:ticket_id,
+            project_id:this.project_id,
+            user_id:obj.id
+          };
+          membersAssigned.push(member);
+        });
+      }
+      return membersAssigned;
+    }
+
     public addNewTicket(){
-      
       if(this.ticketForm.valid){
         let title = this.ticketForm.value.title;
         let description = this.ticketForm.value.description;
@@ -299,9 +316,9 @@ export class TicketComponent implements OnInit, OnDestroy {
         let ticket = {
           title:title,
           description:description,
-          assigned_to:parseInt(assigned_to),
+          assigned_to:null,
           project_id: this.project_id,
-          priority_id:this.ticketToAdd.priority
+          priority_id:this.ticketToAdd.priority,
         };
         console.log(this.ticketToAdd,'ticketToAdd');
         this.submitting= true;
@@ -315,21 +332,32 @@ export class TicketComponent implements OnInit, OnDestroy {
 
               });
             }
-            console.log(tagged,'tagged');
-            this.tickets = [];
-            this.loading = true;
-            this.ticketFormShow = false;
-            this.ticketForm.reset();
-            this.snackBar.open('Data has been updated', 'X', {
-                    duration: 5000,
-                    direction: "ltr",
-                    verticalPosition:"top",
-                    horizontalPosition: "right",
-                    panelClass: "success-snack"
-                }
-            );
-            // Refresh ticket table
-            this.getTicket(this.project_name);
+
+              if(this.ticketToAdd.assignees.length){
+                const assigned_members:any = this.getAssignedMembers(added_ticket.id);
+                console.log(assigned_members,'assigned_members');
+                this.addAssignees(assigned_members);
+                this.submitting =false;
+              }
+            if(!this.submitting){
+              console.log(tagged,'tagged');
+              this.tickets = [];
+              this.loading = true;
+              this.ticketFormShow = false;
+              this.ticketForm.reset();
+              this.snackBar.open('Data has been updated', 'X', {
+                      duration: 5000,
+                      direction: "ltr",
+                      verticalPosition:"top",
+                      horizontalPosition: "right",
+                      panelClass: "success-snack"
+                  }
+              );
+              this.ticketToAdd = {};
+              // Refresh ticket table
+              this.getTicket(this.project_name);
+            }
+            
           } else {
             this.snackBar.open('Data entered is not valid!', 'X', {
                     duration: 5000,
@@ -356,7 +384,11 @@ export class TicketComponent implements OnInit, OnDestroy {
 
       return false;
     }
-
+    addAssignees(assignees){
+      this.ticketService.addAssignees(assignees).subscribe( res => {
+        console.log(res,'saved assinees');
+      });
+    }
     deleteTicket(ticket_id:number){
       console.log(ticket_id);
       this.ticketService.delete(ticket_id).subscribe( res => {

@@ -26,13 +26,13 @@
         <!-- First Name Column -->
         <ng-container matColumnDef="first_name">
           <th mat-header-cell *matHeaderCellDef> First Name </th>
-          <td mat-cell *matCellDef="let element"> {{element.project_member_info.first_name}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.user.user_details.first_name}} </td>
         </ng-container>
   
         <!-- Last Name Column -->
         <ng-container matColumnDef="last_name">
           <th mat-header-cell *matHeaderCellDef> Last Name </th>
-          <td mat-cell *matCellDef="let element"> {{element.project_member_info.last_name}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.user.user_details.last_name}} </td>
         </ng-container>
   
         <!-- Email Column -->
@@ -46,7 +46,7 @@
           <th mat-header-cell *matHeaderCellDef> Option </th>
           
           <td mat-cell *matCellDef="let element"> 
-            <a  class="btn btn-success mar-x-5" [routerLink]="element.user.id !== auth.id ?  [ '/admin/projects', project_name , 'members' ,element.user.id ] : '/admin/profile'" > <i class="fa fa-eye"></i></a> 
+            <a  class="btn btn-success mar-x-5" [routerLink]="element.user.id !== auth.id ?  [ '/sos/admin/projects', project_name , 'members' ,element.user.id ] : '/sos/admin/profile'" > <i class="fa fa-eye"></i></a> 
             <a  *ngIf="auth.role_id < 4 || element.user.id == auth.id" [title]="element.user.id == auth.id ? 'Leave from Project' : 'Remove from Project'" (click)="confirmRemoveFromProject(element)" class="btn btn-danger mar-x-5 font-white"><i class="fa fa-minus-circle"></i></a>
             <!-- Have this feature remove for the meantime, soft delete and account lock feature must be finished on API first -->
             <!-- <a (click)="confirmDeleteAccount(element.user.id)" class="btn btn-warning mar-x-5 font-white"><i class="fa fa-lock"></i></a>
@@ -202,7 +202,7 @@
     </div>
     <div *ngIf="memberFormShow && showMemberSearchForm && memberSearchResult" class="row">
       <div class="col-lg-12 full-w mar-y-5" *ngFor="let member of memberSearchResult">
-        <a href="#" (click)="addMemberToProject(member)"  class="clickable pad-y-10 font-20 member-search-result-name full-w btn btn-success">{{member.project_member_info.first_name}} {{member.project_member_info.last_name}} ({{member.user.username}}) as {{member.user.user_role.name | titlecase}} - {{ member.project.name }}</a>
+        <a href="#" (click)="addMemberToProject(member)"  class="clickable pad-y-10 font-20 member-search-result-name full-w btn btn-success">{{member.user.user_details.first_name}} {{member.user.user_details.last_name}} ({{member.user.username}}) as {{member.user.user_role.name | titlecase}} - {{ member.project.name }}</a>
       </div>
     </div>
   </div>

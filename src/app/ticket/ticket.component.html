@@ -2,8 +2,8 @@
     <h2 class="header-title" *ngIf="project_name">{{project_name | uppercase}} Ticket</h2>
 </div>
 <div  *ngIf="auth" class="col-lg-12 content-option text-right mar-10 pad-10">
-    <a href="#" *ngIf="auth.role_id < 4 && !ticketFormShow" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a>
-    <a href="#" *ngIf="auth.role_id < 4 && ticketFormShow" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
+    <a href="#" *ngIf="auth.role_id < 4 && !ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a>
+    <a href="#" *ngIf="auth.role_id < 4 && ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
 </div>
 <div  class="col-lg-12 content-main">
     <div *ngIf="!ticketFormShow" class="table-responsive table-striped">
@@ -41,7 +41,8 @@
                     <th scope="row">{{ticket.id}}</th>
                     <td>{{ticket.title}}</td>
                     <td>{{ticket.description | ellipsis:80}}</td>
-                    <td [attr.data-user-id]="ticket.assigned_to.id">{{ticket.assigned_to.name}}</td>
+                    <td *ngIf="ticket.assigned_to" [attr.data-user-id]="ticket.assigned_to.id">{{ticket.assigned_to.name}}</td>
+                    <td *ngIf="!ticket.assigned_to" >Multiple User</td>
                     <td>{{ticket.status.name | titlecase}}</td>
                     <td class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
                     <td>{{ticket.created_by}}</td>
@@ -114,18 +115,18 @@
 
              <!-- Assignee -->
              <div class="form-group half-width">
-                 <p *ngIf="!members.length " class="text-danger">This project has no member yet. Consider adding one first.</p>
+                 <p *ngIf="!members " class="text-danger">This project has no member yet. Consider adding one first.</p>
                 <mat-form-field>
                     <mat-label>Assign to </mat-label>
-                    <mat-select  matNativeControl #assignedTo  formControlName="assigned_to" (change)="assignTo(assignedTo.value)" [(ngModel)]="ticketToAdd.assigned_to" name="assigned_to" multiple>
+                    <mat-select  matNativeControl #assignedTo  formControlName="assignees"  [(ngModel)]="ticketToAdd.assignees" name="assigned_to" multiple>
                       <mat-option value="" selected>None</mat-option>
-                      <mat-option *ngFor="let member of members;let i = index" [value]="member.user.id" [disabled]="isTagged(member.user_id)">
-                        {{member.project_member_info.first_name }} {{ member.project_member_info.last_name }} ({{member.user.username}})
+                      <mat-option *ngFor="let member of members;let i = index" [value]="member.user" [disabled]="isTagged(member.user_id)">
+                        {{member.user.user_details.first_name }} {{ member.user.user_details.last_name }} ({{member.user.username}})
                       </mat-option>
                     </mat-select>
                     <!-- <mat-select [formControl]="assigned_to" #assignedTo (change)="assignTo(assignedTo.value)" [(ngModel)]="ticketToAdd.assigned_to" name="assigned_to" multiple>
                         <mat-option *ngFor="let member of members;let i = index" [attr.data-index]="i" [value]="member.user.id" [disabled]="isTagged(member.user_id)">
-                            {{member.project_member_info.first_name }} {{ member.project_member_info.last_name }} ({{member.user.username}})
+                            {{member.user.user_details.first_name }} {{ member.user.user_details.last_name }} ({{member.user.username}})
                         </mat-option>
                     </mat-select> -->
                 </mat-form-field>
@@ -133,12 +134,12 @@
 
             <!-- Tagged members -->
             <div class="form-group half-width">
-                <p *ngIf="!taggable_members.length" class="text-danger">This project has no member yet. Consider adding one first.</p>
-               <mat-form-field *ngIf="taggable_members.length">
+                <p *ngIf="!taggable_members" class="text-danger">This project has no member yet. Consider adding one first.</p>
+               <mat-form-field *ngIf="taggable_members">
                     <mat-label>Tag Member</mat-label>
                     <mat-select [formControl]="tagged_members" #tgbl_member (change)="tagTo(tgbl_member.value)"  multiple>
                         <mat-option *ngFor="let tgbl_member of taggable_members" [attr.data-index]="i" [value]="tgbl_member" >
-                            {{tgbl_member.project_member_info.first_name }} {{ tgbl_member.project_member_info.last_name }} ({{tgbl_member.user.username}})
+                            {{tgbl_member.user.user_details.first_name }} {{ tgbl_member.user.user_details.last_name }} ({{tgbl_member.user.username}})
                         </mat-option>
                     </mat-select>
                </mat-form-field>
@@ -147,7 +148,7 @@
              <!-- Action -->
              <div class="form-group full-w">
                 <mat-action-row>
-                    <button mat-button color="primary" [disabled]="(!ticketForm.valid && !ticketForm.touched ) || submitting" (click)="addNewTicket()" >Update</button>
+                    <button mat-button color="primary" [disabled]="(!ticketForm.valid && !ticketForm.touched ) || submitting" (click)="addNewTicket()" >Create</button>
                 </mat-action-row>
             </div>
             <!-- <mat-form-field class="">

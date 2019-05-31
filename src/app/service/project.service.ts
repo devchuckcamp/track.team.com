@@ -63,6 +63,12 @@ export class ProjectService {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+project_name+'?'+'members=all', this.jt()).pipe(map( (res:any) => res.data));
     }
 
+    getAllMemberFullList(project_name:string, filter_keyword:string = null) {
+        let filter = '';
+        if(filter_keyword){ filter = '&filter='+filter_keyword; }
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+project_name+'?'+'members=all&full=1'+filter, this.jt()).pipe(map( (res:any) => res));
+    }
+
     getProject(id: any) {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+id, this.jt()).pipe(map( (res:any) => res));
     }

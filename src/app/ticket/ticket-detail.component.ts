@@ -41,6 +41,9 @@ export class TicketDetailComponent implements OnInit {
     uploadImages:any = [];
     pdfImages = '../assets/pdf-file-preview.png';
     members:any[] =[];
+    assigned_user:any =  [];
+    assignableMembers:any = [];
+    assignableMembersFiltered:boolean;
     settings:any[] = [];
     memberList = [];
     items: any[] =[];
@@ -94,31 +97,34 @@ export class TicketDetailComponent implements OnInit {
       }
       return this.sanitizer.bypassSecurityTrustUrl(url);
     }
-    
+
     ngOnInit() {
+      this.assignableMembersFiltered = false;
       // Settings
       this.settingService.settings.subscribe( (res:any) => {
         this.settings = res;
-        console.log(res);
       });
         this.replayText = "";
         this.route.params.subscribe(params => {
             if (params['ticket_id'] !== undefined) {
                 this.project_name = params['project_name'];
-                this.ticketService.getProjectTicket(params['project_name'],params['ticket_id']).subscribe( res => {
-                  console.log(res,'getProjectTicket');
+                this.auth = this.authService.getAuthUser();
+
+                this.ticketService.getProjectTicket(params['project_name'],params['ticket_id']).subscribe( (res:any) => {
                   if(res){
                       this.ticket = res;
+                       this.assigned_user = res.assignees.map(assgn => {
+                        return assgn.user_id;
+                       });
+                  }
+                  this.loading = true;
+                  this.threadService.getAllTicketThread(res.id).subscribe( res => {
+                    if(res.data){
+                      this.thread = res.data;
                     }
-                    this.loading = true;
-                    this.threadService.getAllTicketThread(res.id).subscribe( res => {
-                      if(res.data){
-                        this.thread = res.data;
-                      }
-                      this.loading = false;
-                    });
-                    this.auth = this.authService.getAuthUser();
-                    console.log(this.auth,'auth');
+                    this.loading = false;
+                  });
+
                 });
             } else {
 
@@ -135,10 +141,12 @@ export class TicketDetailComponent implements OnInit {
             }
           ]
         };
+
         // Get all member
-        this.projectService.getAllMember(this.project_name).subscribe( res => {
-          if(res.data){
-            this.members = res.data;
+        this.projectService.getAllMemberFullList(this.project_name).subscribe( (res:any) => {
+          if(res){
+
+            this.members = res;
             for(var i = 0; i < this.members.length; i++){
               memberListArray.push(this.members[i].user);
             }
@@ -148,37 +156,59 @@ export class TicketDetailComponent implements OnInit {
             }
           }
         });
+
+    }
+    searchMemberToAssign(keyword:string){
+      this.projectService.getAllMemberFullList(this.project_name,keyword).subscribe( (res:any) => {
+        this.filterAssignableMember(res);
+        this.assignableMembersFiltered = true;
+      });
+    }
+
+    filterAssignableMember(members:any){
+      this.members = members;
+      this.assignableMembers = members.filter((member:any) =>{
+        return !this.assigned_user.includes(member.user_id)
+      });
+    }
+
+    ticketAssigned(user_id:number){
+      return (user_id == this.auth.id ? true: false);
+    }
+
+    additionalAssignee(assignee):void{
+      if(!this.assigned_user.includes(assignee.user_id)){
+        let assigneeObj = [{
+          ticket_id:this.ticket.id,
+          user_id:assignee.user_id,
+          project_id:assignee.project_id
+        }];
+
+        this.assigned_user.push(assignee.user_id);
+        this.ticket.assignees.push(assignee);
+        this.filterAssignableMember(this.members);
+        // Call add assignee service
+        this.ticketService.addAssignees(assigneeObj).subscribe( (res)=>{
+          if(res.length){
+            this.snackBar.open('Assignee has been updated', 'X', {
+              duration: 5000,
+              direction: "ltr",
+              verticalPosition:"top",
+              horizontalPosition: "right",
+              panelClass: "success-snack"
+            }
+        );
+          }
+        }, (err)=> {
+          console.log('ERROR:',err);
+        });
+      } else {
+        console.log(assignee,'member already assigned');
+      }
+      // this.filterAssignableMember(this.members);
     }
 
     apiEndpoint = this.globalRoutesService.apiEndPoint();
-    processFile(imageInput: any) {
-      // const file: File = imageInput.files[0];
-      // const reader = new FileReader();
-
-      // reader.addEventListener('load', (event: any) => {
-
-      //   this.selectedFile = new ImageSnippet(event.target.result, file);
-      //   const formData = new FormData();
-
-      //   formData.append('uploaded_files', this.selectedFile.file);
-      //   this.http.post('https://homestead.test/api/v1/thread/image/upload', formData, this.fileHeader())
-      //       .subscribe(data => {
-      //         // Sanitized logo returned from backend
-      //         console.log(data, 'data');
-      //       })
-        // this.imageService.uploadImage(this.selectedFile.file).subscribe(
-        //   (res) => {
-          
-        //   },
-        //   (err) => {
-          
-        //   })
-      // });
-      // console.log(file);
-      // reader.readAsDataURL(file);
-    }
-
-
 
     viewTicket(ticket){
         this.ticket = ticket;
@@ -327,7 +357,6 @@ export class TicketDetailComponent implements OnInit {
       this.ticketService.update(this.ticket,'status').subscribe( res => {
 
         if(res && res.status_id == status){
-          console.log(res,'updated');
           this.snackBar.open('Data has been updated', 'X', {
                   duration: 5000,
                   direction: "ltr",
@@ -345,11 +374,8 @@ export class TicketDetailComponent implements OnInit {
 
     updateTicketPriority(priority_id:any){
       let priorityObj = this.settings.find( (res) =>  res.id == priority_id);
-     
       this.ticketService.update(this.ticket, 'priority', priorityObj).subscribe( res => {
-
         if(res && res.priority_id == status){
-          console.log(res,'updated');
           this.ticket.priority = res;
           this.snackBar.open('Priority has been updated', 'X', {
                   duration: 5000,

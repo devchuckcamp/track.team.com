@@ -23,3 +23,16 @@
 .drop-file-over{
   background: #333;
 }
+.search-result-container{
+    background-color: lightgrey;
+    margin-left: -4px;
+    min-width: 235px!important;
+}
+div.search-member-row-result-container:nth-child(1){
+    margin-top: 30px!important;
+}
+.close-search-result-btn{
+    right: 0;
+    color: #fafafa!important;
+    padding: 5px 10px;
+}
