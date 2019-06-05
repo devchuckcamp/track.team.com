@@ -12,7 +12,7 @@ import { trigger, style, animate, transition } from '@angular/animations';
 import { MustMatch } from '../component/validator/must-match.validator';
 import { PasswordValidator } from '../component/validator/password-strong.validator';
 import {ErrorStateMatcher} from '@angular/material';
-
+import { Observable, Subscription  } from 'rxjs';
 import { ConfirmDeleteDialog } from '../share/alert/confirm-delete-dialog.component';
 
 interface createdAccount {
@@ -54,8 +54,11 @@ export class MemberComponent implements OnInit {
   project_id: number;
   users : User[];
   auth:User;
+  auth_client:any;
+  auth_client_info:any;
   memberSearchResult:any;
   displayedColumns: string[] = ['avatar', 'username', 'first_name', 'last_name', 'email', 'action'];
+  subscription:Subscription;
   // MatPaginator Inputs
   length = 5;
   pageSize = 5;
@@ -92,7 +95,7 @@ export class MemberComponent implements OnInit {
       data: {member_info: member_info}
     });
 
-    dialogRef.componentInstance.confirmMessage = "Are you sure you want to remove "+member_info.project_member_info.first_name+" "+ member_info.project_member_info.last_name +"'s account from this project.";
+    dialogRef.componentInstance.confirmMessage = "Are you sure you want to remove "+member_info.user.user_details.first_name+" "+ member_info.user.user_details.last_name +"'s account from this project.";
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(result,'closed dialog');
@@ -104,8 +107,7 @@ export class MemberComponent implements OnInit {
   }
   ngOnInit() {
     this.auth = this.authService.getAuthUser();
-    console.log(this.auth);
-    console.log(this.auth, 'logged in user');
+    this.setClient();
     this.memberFormShow = false;
     this.showMemberSearchForm = false;
 
@@ -139,6 +141,9 @@ export class MemberComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
 
+  setClient():void{
+    this.subscription = this.userService.currentClientInfo.subscribe(client => {this.auth_client_info =  JSON.parse(client);  });
+  }
   // convenience getter for easy access to form fields
   get f() { return this.memberForm.controls; }
 
@@ -316,7 +321,7 @@ export class MemberComponent implements OnInit {
     this.memberService.delete(user_id).subscribe( (res:any) =>{
       if(res == null){
         this.dataSource.data = this.dataSource.data.filter( (user:any) => user.user_id !== user_id);
-        this.snackBar.open('User has been deleted!', 'X', {
+        this.snackBar.open('User has been removed!', 'X', {
                 duration: 5000,
                 direction: "ltr",
                 verticalPosition:"top",
@@ -332,7 +337,7 @@ export class MemberComponent implements OnInit {
     this.memberService.removeUserFromProject(member.id).subscribe( (res:any) =>{
       if(res == null){
         this.dataSource.data = this.dataSource.data.filter( (user:any) => user.user_id !== member.user_id);
-        this.snackBar.open('User has been deleted!', 'X', {
+        this.snackBar.open('User has been removed!', 'X', {
                 duration: 5000,
                 direction: "ltr",
                 verticalPosition:"top",

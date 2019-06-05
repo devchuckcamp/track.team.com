@@ -40,6 +40,9 @@ export class LoginComponent implements OnInit {
 
             this.clientService.validate(this.auth_client).subscribe( (res:any) => {
                 this.client = res;
+                localStorage.setItem('client_info',JSON.stringify(res));
+
+                this.userService.setClientInfo(this.client);
                 this.clientService.setClient(res);
                 this.auth_client = this.client.slug;
             }, error=>{

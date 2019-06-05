@@ -17,6 +17,8 @@ import { GlobalRoutesService } from './config/config';
 import { ClientGlobalRoutesService } from './config/client';
 import { ClientService } from './service/client.service';
 
+import { CreateAccountComponent } from './external-page/account/create-account.component';
+
 // Material
 import {
   MatAutocompleteModule,
@@ -62,6 +64,7 @@ import {
     HomeComponent,
     LoginComponent,
     RegisterComponent,
+    CreateAccountComponent,
   ],
   imports: [
     BrowserAnimationsModule,

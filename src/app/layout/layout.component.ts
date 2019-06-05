@@ -48,6 +48,7 @@ export class LayoutComponent implements OnInit {
       this.admin_project_sub = "";
       this.router.events.subscribe(path =>{
       this.profile = this.authService.getAuthUser();
+      console.log(this.profile,'12321');
         if(path instanceof NavigationEnd ){
           //Get Url
           let currentURL = path.url;

@@ -1,0 +1,104 @@
+<div class="col-lg-12">
+    <div *ngIf="loadedToken && token_info" class="container">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-lg-12 text-center pad-15">
+                    <h2>{{ token_info.client.name }}</h2>
+                </div>
+                <div class="text-center col-lg-12 pad-15">
+                    <h2>Create your Account</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="text-center col-lg-12 pad-15">
+                    <form class="row" [formGroup]="memberForm" id="memberForm"  [attr.data-token]="account_token" (submit)="activateAccount()" novalidate>
+                        <div class="col-lg-6">
+                            <!-- Username -->
+                            <div class="form-group full-w">
+                                <mat-form-field class="full-w" [formGroup]="memberForm">
+                                    <input matInput formControlName="username" placeholder="Username"
+                                        [(ngModel)]="memberToAdd.username" required>
+                                </mat-form-field>
+                                <mat-error *ngIf="uniqueUsername">{{uniqueUsername.error_message}}</mat-error>
+                            </div>
+                            
+                            <!-- Password -->
+                            <div class="form-group full-w">
+                                <mat-form-field class="full-w" [formGroup]="memberForm">
+                                    <input type="password" matInput formControlName="password" [errorStateMatcher]="errorMatcher"
+                                        placeholder="Password" [(ngModel)]="memberToAdd.password" required>
+                                </mat-form-field>
+                                <mat-error *ngIf="memberForm.controls.password.dirty && memberForm.hasError('strong')">Must be
+                                    alphanumeric with atleast 1 uppercase and lowercase character.</mat-error>
+                                <mat-error
+                                    *ngIf="memberForm.controls.confirmPassword.dirty && memberForm.controls.password.dirty && memberForm.hasError('passwordsDoNotMatch')">
+                                    Password does not match.</mat-error>
+                            </div>
+                            <!-- Confirm Password -->
+                            <div class="form-group full-w">
+                                <mat-form-field class="full-w" [formGroup]="memberForm">
+                                    <input type="password" matInput formControlName="confirmPassword" placeholder="Confirm Password"
+                                        [(ngModel)]="memberToAdd.confirmPassword" required>
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <!-- User Role -->
+                            <div class="form-group full-w text-left">
+                                <!-- <mat-form-field class="full-w">
+                                                <input matInput formControlName="username" placeholder="Username" [(ngModel)]="memberToAdd.username" required>
+                                            </mat-form-field> -->
+                                <mat-form-field [formGroup]="memberForm">
+                                    <mat-label>Role </mat-label>
+                                    <select matNativeControl formControlName="role_id" [(ngModel)]="memberToAdd.role_id"
+                                        name="role_id" required>
+                                        <option value="2" selected>Project Owner</option>
+                                        <option value="3" selected>Project Manager</option>
+                                        <option value="4" selected>Developer</option>
+                                        <option value="5" selected>Tester</option>
+                                        <!-- <option *ngFor="let member of members" [value]="member.user.id">
+                                                    {{member.user_info.first_name }} {{ member.user_info.last_name }} ({{member.user.username}})
+                                                </option> -->
+                                    </select>
+                                </mat-form-field>
+                            </div>
+
+                            <!-- First Name -->
+                            <div class="form-group full-w">
+                                <mat-form-field class="full-w" [formGroup]="memberForm">
+                                    <input matInput formControlName="first_name" placeholder="First Name"
+                                        [(ngModel)]="memberToAdd.first_name" required>
+                                </mat-form-field>
+                            </div>
+
+                            <!-- Last Name -->
+                            <div class="form-group full-w">
+                                <mat-form-field class="full-w" [formGroup]="memberForm">
+                                    <input matInput formControlName="last_name" placeholder="Last Name"
+                                        [(ngModel)]="memberToAdd.last_name" required>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group full-w">
+                                <mat-action-row>
+                                    <button mat-button color="primary" [disabled]="memberForm.errors || submitting">Submit</button>
+                                </mat-action-row>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!validToken" class="container">
+         <div class="row">
+            <div class="col-lg-12 text-center">
+                <span *ngIf="tokenError" class="text-danger">{{tokenError.message}}</span>
+            </div>
+        </div>
+    </div>
+</div>

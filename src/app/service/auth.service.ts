@@ -41,7 +41,7 @@ export class AuthService {
 
             return this.http.post<any>(this.apiEndpoint+'/api/v1/oauth/token', body, this.jt())
               .pipe(
-                retry(2),
+                // retry(2),
                 catchError(this.config.handleError)
               );
           }

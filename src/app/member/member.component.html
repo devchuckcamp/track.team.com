@@ -20,19 +20,19 @@
         <!-- Username Column -->
         <ng-container matColumnDef="username">
           <th mat-header-cell *matHeaderCellDef> Username </th>
-          <td mat-cell *matCellDef="let element"> {{element.user.name}} {{element.user.id == auth.id? ' (You)':''}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.user.username}} {{element.user.id == auth.id? ' (You)':''}} </td>
         </ng-container>
   
         <!-- First Name Column -->
         <ng-container matColumnDef="first_name">
           <th mat-header-cell *matHeaderCellDef> First Name </th>
-          <td mat-cell *matCellDef="let element"> {{element.user.user_details.first_name}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.user.user_details ? element.user.user_details.first_name : ''}} </td>
         </ng-container>
   
         <!-- Last Name Column -->
         <ng-container matColumnDef="last_name">
           <th mat-header-cell *matHeaderCellDef> Last Name </th>
-          <td mat-cell *matCellDef="let element"> {{element.user.user_details.last_name}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.user.user_details ? element.user.user_details.last_name : ''}} </td>
         </ng-container>
   
         <!-- Email Column -->

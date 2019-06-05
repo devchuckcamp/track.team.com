@@ -251,6 +251,7 @@ li.active{
 .cdk-overlay-pane{
   margin: 0 auto!important;
 }
+/* Position */
 .pos-rel{
   position: relative;
 }
@@ -259,4 +260,11 @@ li.active{
 }
 .z-index-10{
   z-index: 9!important;
+}
+.z-index-15{
+  z-index: 15!important;
+}
+/* Background */
+.bg-lightgray{
+  background-color: lightgray!important;
 }

@@ -28,9 +28,9 @@ export class ActivityLogComponent implements OnInit {
     loadingProgress:boolean;
     displayedColumns: string[] = ['module',  'user', 'description', 'project', 'updated_at'];
     // MatPaginator Inputs
-    length = 15;
-    pageSize = 15;
-    pageSizeOptions: number[] = [15, 25, 100];
+    length = 25;
+    pageSize = 25;
+    pageSizeOptions: number[] = [25, 50, 100];
     @ViewChild(MatPaginator) paginator: MatPaginator;
     dataSource = new MatTableDataSource<any>(ELEMENT_DATA);
     project_name:any;
@@ -43,32 +43,39 @@ export class ActivityLogComponent implements OnInit {
         this.loadingProgress= true;
     }
 
-  ngOnInit() {
-    this.route.params.subscribe(params => {
-        if ( (params['project_name'] !== 'add' ) && params['project_name'] !== undefined) {
-            let project_name = this.project_name ? this.project_name : params['project_name'];
-            this.getAllProjectActivity(project_name);
-        } else {
-            this.getAllActivity();
-        }
-        this.router.events.subscribe(path =>{
-            if(path instanceof NavigationEnd ){
-
+    ngOnInit() {
+        this.route.params.subscribe(params => {
+            if ( (params['project_name'] !== 'add' ) && params['project_name'] !== undefined) {
+                let project_name = this.project_name ? this.project_name : params['project_name'];
+                this.getAllProjectActivity(project_name);
+            } else {
+                this.getAllActivity();
             }
-        });
-    });
-  }
+            this.router.events.subscribe(path =>{
+                if(path instanceof NavigationEnd ){
 
-    getAllProjectActivity(project_name:string){
+                }
+            });
+        });
+    }
+
+    getAllProjectActivity(project_name:string, page_number:number =1){
         console.log(project_name);
         this.loadingProgress = false;
     }
-    getAllActivity(){
-        this.activityService.getAll().subscribe( (res:any) => {
-            this.loadingProgress = false;
+    getAllActivity(page_number:number = 1){
+        this.loadingProgress= true;
+        this.activityService.getAll(page_number).subscribe( (res:any) => {
             this.dataSource = new MatTableDataSource(res.data);
-                this.logs = res.data;
-                this.length = res.total;
+            this.logs = res.data;
+            this.length = res.total;
+            this.loadingProgress = false;
         });
+    }
+
+    onPageChange(event){
+        let page_number = event.pageIndex <= 0 ? 1 : event.pageIndex+1;
+        console.log(page_number);
+        this.getAllActivity(page_number);
     }
 }

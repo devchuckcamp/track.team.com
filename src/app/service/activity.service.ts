@@ -22,8 +22,12 @@ export class ActivityService {
             }
         }
 
-    getAll() {
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/activity', this.jt()).pipe(map( (res:any) => res));
+    getAll(page_number:number =1) {
+        let page =  '';
+        if(page_number !== 1){
+            page = 'page='+page_number;
+        }
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/activity?'+page, this.jt()).pipe(map( (res:any) => res));
     }
     getProjectAllActivity(project_name: string){
         return this.http.get(this.config.apiEndPoint()+'/api/v1/activity?project='+project_name, this.jt()).pipe(map( (res:any) => res));

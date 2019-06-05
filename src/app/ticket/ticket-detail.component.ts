@@ -184,20 +184,20 @@ export class TicketDetailComponent implements OnInit {
           project_id:assignee.project_id
         }];
 
-        this.assigned_user.push(assignee.user_id);
-        this.ticket.assignees.push(assignee);
-        this.filterAssignableMember(this.members);
         // Call add assignee service
         this.ticketService.addAssignees(assigneeObj).subscribe( (res)=>{
           if(res.length){
+            this.assigned_user.push(assignee.user_id);
+            this.ticket.assignees.push(assignee);
+            this.filterAssignableMember(this.members);
             this.snackBar.open('Assignee has been updated', 'X', {
               duration: 5000,
               direction: "ltr",
               verticalPosition:"top",
               horizontalPosition: "right",
               panelClass: "success-snack"
-            }
-        );
+                }
+            );
           }
         }, (err)=> {
           console.log('ERROR:',err);
@@ -205,7 +205,11 @@ export class TicketDetailComponent implements OnInit {
       } else {
         console.log(assignee,'member already assigned');
       }
-      // this.filterAssignableMember(this.members);
+    }
+
+    closeAssigneeSearchResults(){
+      this.assignableMembersFiltered = false;
+      return false;
     }
 
     apiEndpoint = this.globalRoutesService.apiEndPoint();

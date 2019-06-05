@@ -15,6 +15,8 @@ export class UserService {
     currentAvatar = this.Avatar.asObservable();
     client_slug =  new BehaviorSubject(localStorage.getItem("client"));
     currentClient = this.client_slug.asObservable();
+    client_info =  new BehaviorSubject(localStorage.getItem("client_info"));
+    currentClientInfo = this.client_info.asObservable();
     constructor(
         private config: GlobalRoutesService,
         private http: HttpClient,
@@ -23,11 +25,17 @@ export class UserService {
             if(localStorage.getItem("currentUser")){
                 this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
             }
-            // if (!localStorage.getItem('client')) {
-            //     localStorage.setItem('client','sos');
-            // }
+            if(localStorage.getItem("client_info")){
+                this.client_info = JSON.parse(localStorage.getItem("client_info"));
+            }
+    }
+    setClientInfo(client:string){
+        this.client_info.next(client);
     }
 
+    clearClientInfo(){
+        this.client_info.complete();
+    }
     setClient(client:string){
         this.client_slug.next(client);
     }
@@ -43,7 +51,9 @@ export class UserService {
     clearAvatar(){
         this.Avatar.complete();
     }
-
+    validateAccountToken(token:string){
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/validate/account/token?token='+token);
+    }
     loginAuth (username:string,password:string): Observable<any> {
             var body = JSON.stringify({
                 username:username,
@@ -97,7 +107,9 @@ export class UserService {
         this.currentAvatar = data;
         return this.http.put(this.config.apiEndPoint()+'/api/v1/users/avatar/'+id, avatar, this.jt());
     }
-
+    verifyUniqueUsername(username:string){
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/validate/user/unique/username?username='+username );
+    }
     private jt() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer '+this.Bearer,

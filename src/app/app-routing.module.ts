@@ -6,6 +6,9 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ClientGuard } from './guard/client';
+// External Pages
+import { CreateAccountComponent } from './external-page/account/create-account.component';
+
 const routes:   Routes = [
     { path: 'investor', loadChildren:'./investor/investor.module#InvestorModule'},
     {
@@ -15,6 +18,14 @@ const routes:   Routes = [
                 path: 'home', component: HomeComponent,
             },
         ]
+    },
+    {
+        path: 'account/activation',
+        redirectTo:'account/token',
+        pathMatch:'full',
+    },
+    {
+        path: 'account/activation/token/:account_token', component:CreateAccountComponent,
     },
     {
         path: 'login', component: LoginComponent,

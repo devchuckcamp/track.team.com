@@ -55,7 +55,7 @@
                             </div>
                             <div class="col-lg-4 pos-rel">
                                 <div *ngIf="assignableMembers && assignableMembersFiltered" class="search-result-container row pos-abs z-index-10 bg-lightgray">
-                                    <a href="#" *ngIf="assignableMembers.length" class="pos-abs close-search-result-btn bg-danger"><i class="fa fa-close"></i></a>
+                                    <a href="#" (click)="closeAssigneeSearchResults()" *ngIf="assignableMembers.length" class="pos-abs z-index-15 close-search-result-btn bg-danger"><i class="fa fa-close"></i></a>
                                     <div class="col-lg-12">
                                         <div *ngFor="let member of assignableMembers" (click)="additionalAssignee(member)" class="clickable search-member-row-result-container row border-rad-5 text-center bg-success font-white pad-5 mar-10">
                                             <strong>{{ member.user.user_details.first_name }} {{ member.user.user_details.last_name }} ({{ member.user.username }})</strong>
