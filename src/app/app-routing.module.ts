@@ -25,7 +25,7 @@ const routes:   Routes = [
         pathMatch:'full',
     },
     {
-        path: 'account/activation/token/:account_token', component:CreateAccountComponent,
+        path: 'account/activation/token/:account_token', loadChildren:'./external-page/account/create-account.module#CreateAccountModule'
     },
     {
         path: 'login', component: LoginComponent,
