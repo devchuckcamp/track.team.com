@@ -1,6 +1,7 @@
 import * as tslib_1 from "tslib";
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
 import { TicketService } from '../service/ticket.service';
 import { ThreadService } from '../service/thread.service';
 import { AuthService } from '../service/auth.service';
@@ -21,7 +22,7 @@ var ImageSnippet = /** @class */ (function () {
 var mentionedMember = [];
 var memberListArray = [];
 var TicketDetailComponent = /** @class */ (function () {
-    function TicketDetailComponent(ticketService, threadService, authService, projectService, settingService, router, route, snackBar, dialog, http, globalRoutesService) {
+    function TicketDetailComponent(ticketService, threadService, authService, projectService, settingService, router, route, snackBar, dialog, http, globalRoutesService, sanitizer) {
         this.ticketService = ticketService;
         this.threadService = threadService;
         this.authService = authService;
@@ -33,9 +34,13 @@ var TicketDetailComponent = /** @class */ (function () {
         this.dialog = dialog;
         this.http = http;
         this.globalRoutesService = globalRoutesService;
+        this.sanitizer = sanitizer;
         this.tickets = [];
         this.uploadImages = [];
+        this.pdfImages = '../assets/pdf-file-preview.png';
         this.members = [];
+        this.assigned_user = [];
+        this.assignableMembers = [];
         this.settings = [];
         this.memberList = [];
         this.items = [];
@@ -44,6 +49,7 @@ var TicketDetailComponent = /** @class */ (function () {
         this.apiEndpoint = this.globalRoutesService.apiEndPoint();
         // File Upload
         this.files = [];
+        this.pdf = '';
         this.requests = [];
         this.auth = this.authService.getAuthUser();
         this.loggedin_user = "";
@@ -55,27 +61,37 @@ var TicketDetailComponent = /** @class */ (function () {
         var _this = this;
         var dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
             width: '100%',
+            height: '100%',
             data: { uploads: uploads }
         });
         dialogRef.afterClosed().subscribe(function (result) {
             _this.animal = result;
         });
     };
+    TicketDetailComponent.prototype.getSantizeUrl = function (url) {
+        if (url.includes("application/pdf")) {
+            url = this.pdfImages;
+        }
+        return this.sanitizer.bypassSecurityTrustUrl(url);
+    };
     TicketDetailComponent.prototype.ngOnInit = function () {
         var _this = this;
+        this.assignableMembersFiltered = false;
         // Settings
         this.settingService.settings.subscribe(function (res) {
             _this.settings = res;
-            console.log(res);
         });
         this.replayText = "";
         this.route.params.subscribe(function (params) {
             if (params['ticket_id'] !== undefined) {
                 _this.project_name = params['project_name'];
+                _this.auth = _this.authService.getAuthUser();
                 _this.ticketService.getProjectTicket(params['project_name'], params['ticket_id']).subscribe(function (res) {
-                    console.log(res, 'getProjectTicket');
                     if (res) {
                         _this.ticket = res;
+                        _this.assigned_user = res.assignees.map(function (assgn) {
+                            return assgn.user_id;
+                        });
                     }
                     _this.loading = true;
                     _this.threadService.getAllTicketThread(res.id).subscribe(function (res) {
@@ -84,8 +100,6 @@ var TicketDetailComponent = /** @class */ (function () {
                         }
                         _this.loading = false;
                     });
-                    _this.auth = _this.authService.getAuthUser();
-                    console.log(_this.auth, 'auth');
                 });
             }
             else {
@@ -102,39 +116,70 @@ var TicketDetailComponent = /** @class */ (function () {
             ]
         };
         // Get all member
-        this.projectService.getAllMember(this.project_name).subscribe(function (res) {
-            if (res.data) {
-                _this.members = res.data;
+        this.projectService.getAllMemberFullList(this.project_name).subscribe(function (res) {
+            if (res) {
+                console.log(res, 'members');
+                _this.members = res;
                 for (var i = 0; i < _this.members.length; i++) {
                     memberListArray.push(_this.members[i].user);
                 }
                 _this.memberList = _this.members;
                 for (var i = 0; i < _this.members.length; i++) {
-                    _this.items.push(_this.members[i].project_member_info);
+                    _this.items.push(_this.members[i].user.user_details);
                 }
             }
         });
     };
-    TicketDetailComponent.prototype.processFile = function (imageInput) {
-        // const file: File = imageInput.files[0];
-        // const reader = new FileReader();
-        // reader.addEventListener('load', (event: any) => {
-        //   this.selectedFile = new ImageSnippet(event.target.result, file);
-        //   const formData = new FormData();
-        //   formData.append('uploaded_files', this.selectedFile.file);
-        //   this.http.post('https://homestead.test/api/v1/thread/image/upload', formData, this.fileHeader())
-        //       .subscribe(data => {
-        //         // Sanitized logo returned from backend
-        //         console.log(data, 'data');
-        //       })
-        // this.imageService.uploadImage(this.selectedFile.file).subscribe(
-        //   (res) => {
-        //   },
-        //   (err) => {
-        //   })
-        // });
-        // console.log(file);
-        // reader.readAsDataURL(file);
+    TicketDetailComponent.prototype.searchMemberToAssign = function (keyword) {
+        var _this = this;
+        this.projectService.getAllMemberFullList(this.project_name, keyword).subscribe(function (res) {
+            _this.filterAssignableMember(res);
+            _this.assignableMembersFiltered = true;
+        });
+    };
+    TicketDetailComponent.prototype.filterAssignableMember = function (members) {
+        var _this = this;
+        this.members = members;
+        this.assignableMembers = members.filter(function (member) {
+            return !_this.assigned_user.includes(member.user_id);
+        });
+    };
+    TicketDetailComponent.prototype.ticketAssigned = function (user_id) {
+        return (user_id == this.auth.id ? true : false);
+    };
+    TicketDetailComponent.prototype.additionalAssignee = function (assignee) {
+        var _this = this;
+        if (!this.assigned_user.includes(assignee.user_id)) {
+            var assigneeObj = [{
+                    ticket_id: this.ticket.id,
+                    user_id: assignee.user_id,
+                    project_id: assignee.project_id
+                }];
+            // Call add assignee service
+            this.ticketService.addAssignees(assigneeObj).subscribe(function (res) {
+                if (res.length) {
+                    _this.assigned_user.push(assignee.user_id);
+                    _this.ticket.assignees.push(assignee);
+                    _this.filterAssignableMember(_this.members);
+                    _this.snackBar.open('Assignee has been updated', 'X', {
+                        duration: 5000,
+                        direction: "ltr",
+                        verticalPosition: "top",
+                        horizontalPosition: "right",
+                        panelClass: "success-snack"
+                    });
+                }
+            }, function (err) {
+                console.log('ERROR:', err);
+            });
+        }
+        else {
+            console.log(assignee, 'member already assigned');
+        }
+    };
+    TicketDetailComponent.prototype.closeAssigneeSearchResults = function () {
+        this.assignableMembersFiltered = false;
+        return false;
     };
     TicketDetailComponent.prototype.viewTicket = function (ticket) {
         this.ticket = ticket;
@@ -143,6 +188,13 @@ var TicketDetailComponent = /** @class */ (function () {
     TicketDetailComponent.prototype.onReplayKey = function (text) {
         this.replayText = text;
         return false;
+    };
+    TicketDetailComponent.prototype.auto_grow = function (element) {
+        //console.log(element);
+        // element.style.height = "5px";
+        // element.style.height = (element.scrollHeight)+"px";
+        var style = { 'min-height': '200px', 'max-height': '300px' };
+        return style;
     };
     TicketDetailComponent.prototype.submitReplyBox = function () {
         var _this = this;
@@ -177,11 +229,21 @@ var TicketDetailComponent = /** @class */ (function () {
     TicketDetailComponent.prototype.getFileType = function () {
         return this.fileType;
     };
+    TicketDetailComponent.prototype.showPdf = function () {
+        var linkSource = 'data:application/pdf;base64,' + this.pdf;
+        var downloadLink = document.createElement("a");
+        var fileName = "sample.pdf";
+        downloadLink.href = linkSource;
+        downloadLink.download = fileName;
+        downloadLink.click();
+    };
     TicketDetailComponent.prototype._handleReaderLoaded = function (readerEvt) {
         var binaryString = readerEvt.target.result;
         var base64textString = '';
         base64textString = btoa(binaryString);
+        this.pdf = base64textString;
         this.uploadImages.push('data:' + this.getFileType() + ';base64,' + btoa(binaryString));
+        console.log(this.uploadImages, 'uploadImages');
         return base64textString;
     };
     TicketDetailComponent.prototype.dropped = function (event) {
@@ -194,16 +256,11 @@ var TicketDetailComponent = /** @class */ (function () {
             if (droppedFile.fileEntry.isFile) {
                 var fileEntry = droppedFile.fileEntry;
                 fileEntry.file(function (file) {
-                    // var files = evt.target.files;
-                    //this.files= file;
                     _this.fileType = file.type;
-                    console.log(_this.fileType, 'filetype');
                     if (file) {
                         var reader = new FileReader();
-                        console.log(file, 'file droppped');
                         reader.onload = _this._handleReaderLoaded.bind(_this);
                         var binary = _this._handleReaderLoaded.bind(_this);
-                        // console.log(ss);
                         reader.readAsBinaryString(file);
                     }
                 });
@@ -237,8 +294,9 @@ var TicketDetailComponent = /** @class */ (function () {
         });
     };
     TicketDetailComponent.prototype.fileHeader = function () {
+        var token = this.authService.Bearer;
         var headers = new HttpHeaders({
-            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImJmNGE5YWU0OWUyZjQ2ZWY1Yjk5NmIxMGMzYjY3MjUxMDZkZjJmMGIwMWU4MTUzYTI4NDdjNTAzMWYzMDUzMmZhN2M0ZjQ4MzQ3NjdmM2YwIn0.eyJhdWQiOiIyIiwianRpIjoiYmY0YTlhZTQ5ZTJmNDZlZjViOTk2YjEwYzNiNjcyNTEwNmRmMmYwYjAxZTgxNTNhMjg0N2M1MDMxZjMwNTMyZmE3YzRmNDgzNDc2N2YzZjAiLCJpYXQiOjE1NTY4MTI1MzcsIm5iZiI6MTU1NjgxMjUzNywiZXhwIjoxNTg4NDM0OTM3LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.UK8-CmYniyfQghFl-y1uoRO5CC9mqggndoFv3gRyqX3QL7bdMYJURoXHriAM8lgs681sTthbppDgRM0UuutjEZIfTfSwi1kHXCN5Y1jUX4hiAq-WwlWLlIHajBki_akFFq-IH9cSFuJr6tzRv3p2nNm2dk6RM0aiGmgpSAziXAeMx41eX_KAXIEZYUBeITv-eCZpJf-KnhU7stqQ95zxly9ULEGJCYUNbGdt7VxK95QwaOf6xs90_NF6goVqrqhAOixctlEbw9i0p_vp5HjXUcyaHvYfp20ril0Xg6UyUrhm7QGkLP7cmQCJGL_vlU2WQcYb233xJA3OdPnfGjYAHb91hWA1wjHXtd6eotDIbqRu22iVehRT72RWcsI74wVb3YjbJBZ4vssLLVC3qj4zRKWgXC8L6QKgGE4zR59PD5UPXfMyXaMRV1oyqi-1wI5bMV_gyyi_c5yvuAuyckN0K1V0LuKBTzaKFzIo7bcGc4SL81nH9flkK5TjP07aEDGoOh4cKZuer_T6gAnyrs9gjW87Tgp88CBn_x86BjL1CofySDDjU3AKkzPkg98BRlB4aPvehyCmVgsG5KsBgwgIgjCbP3FAlyugZmA3JiyWbSGGP4P_VzpTXwJj3Enm2ChcBmKzZH45lcG-qRSVHIGhJIEMoI-rL_wA8q9klz_iCKw',
+            'Authorization': 'Bearer' + token,
             'Content-Type': 'multipart/form-data;',
             'enctype': 'multipart/form-data',
             'Accept': 'application/json',
@@ -261,7 +319,6 @@ var TicketDetailComponent = /** @class */ (function () {
         };
         this.ticketService.update(this.ticket, 'status').subscribe(function (res) {
             if (res && res.status_id == status) {
-                console.log(res, 'updated');
                 _this.snackBar.open('Data has been updated', 'X', {
                     duration: 5000,
                     direction: "ltr",
@@ -279,7 +336,6 @@ var TicketDetailComponent = /** @class */ (function () {
         var priorityObj = this.settings.find(function (res) { return res.id == priority_id; });
         this.ticketService.update(this.ticket, 'priority', priorityObj).subscribe(function (res) {
             if (res && res.priority_id == status) {
-                console.log(res, 'updated');
                 _this.ticket.priority = res;
                 _this.snackBar.open('Priority has been updated', 'X', {
                     duration: 5000,
@@ -333,7 +389,8 @@ var TicketDetailComponent = /** @class */ (function () {
             MatSnackBar,
             MatDialog,
             HttpClient,
-            GlobalRoutesService])
+            GlobalRoutesService,
+            DomSanitizer])
     ], TicketDetailComponent);
     return TicketDetailComponent;
 }());

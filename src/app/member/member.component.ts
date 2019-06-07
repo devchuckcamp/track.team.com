@@ -4,6 +4,7 @@ import { HttpClient,HttpClientModule, HttpHeaders, HttpRequest, HttpResponse } f
 import { User } from '../model/user';
 import { UserService } from '../service/user.service';
 import { AuthService } from '../service/auth.service';
+import { ClientService } from '../service/client.service';
 import { ProjectService } from '../service/project.service';
 import { MemberService } from '../service/member.service';
 import {MatPaginator, MatSnackBar, MatTableDataSource, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
@@ -22,6 +23,8 @@ interface createdAccount {
   role_id: number
 }
 const ELEMENT_DATA: User[] = [];
+const projectsInvitationList: Array<number> = [];
+
 
 /** Error when the parent is invalid */
 class CrossFieldErrorMatcher implements ErrorStateMatcher {
@@ -29,6 +32,9 @@ class CrossFieldErrorMatcher implements ErrorStateMatcher {
     return control.dirty && form.invalid;
   }
 }
+
+
+
 
 @Component({
   selector: 'app-member',
@@ -52,6 +58,7 @@ class CrossFieldErrorMatcher implements ErrorStateMatcher {
 export class MemberComponent implements OnInit {
   project_name: string;
   project_id: number;
+  project:any;
   users : User[];
   auth:User;
   auth_client:any;
@@ -60,20 +67,29 @@ export class MemberComponent implements OnInit {
   displayedColumns: string[] = ['avatar', 'username', 'first_name', 'last_name', 'email', 'action'];
   subscription:Subscription;
   // MatPaginator Inputs
-  length = 5;
-  pageSize = 5;
-  pageSizeOptions: number[] = [1, 5, 10, 15, 25, 100];
+  length = 0;
+  pageSize = 25;
+  pageSizeOptions: number[] = [25, 50, 100];
   // Form
   errorMatcher = new CrossFieldErrorMatcher();
   memberFormShow:boolean;
+  memberInviteFormShow:boolean = false;
   showMemberSearchForm:boolean;
   memberForm: FormGroup;
+  memberInviteForm: FormGroup;
   memberToAdd:any =  {};
+  memberToInvite:any =  {};
   dialogRef: MatDialogRef<ConfirmDeleteDialog>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   dataSource = new MatTableDataSource<User>(ELEMENT_DATA);
   default_avatar = '../assets/default-profile.png';
   loading = '../../assets/icon/loading.gif';
+  submitting:boolean = false;
+  submittingInvitation:boolean = false;
+  submittedInvitation:boolean = false;
+  projects:any[]= [];
+  projectsSearchable:any[]= [];
+  // projectsInvitationList = [];
 
   constructor(
     private router: Router,
@@ -81,6 +97,7 @@ export class MemberComponent implements OnInit {
     private route: ActivatedRoute,
     private userService:UserService,
     private authService:AuthService,
+    private clientService:ClientService,
     private projectService:ProjectService,
     private memberService:MemberService,
     private formBuilder: FormBuilder,
@@ -108,6 +125,12 @@ export class MemberComponent implements OnInit {
   ngOnInit() {
     this.auth = this.authService.getAuthUser();
     this.setClient();
+
+    this.projectService.loadAll();
+    this.projectService.projects.subscribe( (res:any) => {
+      this.projects = res;
+    });
+
     this.memberFormShow = false;
     this.showMemberSearchForm = false;
 
@@ -115,8 +138,10 @@ export class MemberComponent implements OnInit {
     this.memberToAdd.description = '';
     this.memberToAdd.assigned_to = null;
     this.memberToAdd.status_id = null;
+    // invites
+    this.memberToInvite.email = null;
+    this.memberToInvite.projects = [];
     this.length = 0;
-
     this.memberForm = this.formBuilder.group({
       'username': new FormControl('', [Validators.required]),
       'email': new FormControl('', [Validators.required,Validators.email]),
@@ -133,12 +158,41 @@ export class MemberComponent implements OnInit {
       if (params['project_name'] !== undefined) {
           this.project_name = params['project_name'];
           this.projectService.getProject(params['project_name']).subscribe( res=>{
-            if(res) this.project_id = res.id;
+            if(res.id) {
+              let pid = res.id;
+              this.project_id = pid;
+              this.memberInviteForm = this.formBuilder.group({
+                'email': new FormControl('', [Validators.required,Validators.email]),
+                'projects': new FormControl([pid], [Validators.required]),
+              });
+              this.project = res;
+              projectsInvitationList.push(pid);
+              this.projectsSearchable = this.filterProjectInvite();
+            }
           });
           this.getMember();
       }
+      console.log(this.projects, 'complete projects list');
+      console.log(this.projectsSearchable, 'projectsSearchable list');
+      console.log(projectsInvitationList,'projectsInvitationList list');
     });
     this.dataSource.paginator = this.paginator;
+  }
+  onlyUniqueProjectID(value, index, self) { 
+    return self.indexOf(value) === index;
+  }
+
+
+  filterProjectInvite(){
+    return this.projects.filter((project:any) =>{
+      return !projectsInvitationList.includes(project.id)
+    });
+  }
+  isProjectSelected(project_id:number){
+    return projectsInvitationList.includes(project_id) ? true : false;
+  }
+  includeProjectInvitation(project:any):void{
+    projectsInvitationList.push(project.id);
   }
 
   setClient():void{
@@ -146,7 +200,7 @@ export class MemberComponent implements OnInit {
   }
   // convenience getter for easy access to form fields
   get f() { return this.memberForm.controls; }
-
+  get invite() { return this.memberInviteForm.controls; }
 
   setPageSizeOptions(setPageSizeOptionsInput: string) {
     console.log(setPageSizeOptionsInput);
@@ -213,7 +267,19 @@ export class MemberComponent implements OnInit {
 
     return false;
   }
-
+  toggleAccountInviteForm(){
+    // Member List Form
+    if(!this.memberInviteFormShow ) {
+      this.memberFormShow = false;
+      this.showMemberSearchForm = false;
+      this.memberInviteFormShow = true;
+    } else {
+      this.memberFormShow = false;
+      this.showMemberSearchForm = false;
+      this.memberInviteFormShow = false;
+    }
+    return false;
+  }
   memberSearch(term:string){
     this.memberService.searchMember(term).subscribe(res=>{
       if(res.length){
@@ -244,7 +310,31 @@ export class MemberComponent implements OnInit {
     });
     return false;
   }
+  inviteAccountToProjects(){
+    if(this.memberInviteForm.valid){
+      let distinct_project_id = projectsInvitationList.filter( this.onlyUniqueProjectID );
+      let inviteObj = {
+        email:this.memberInviteForm.value.email,
+        projects: distinct_project_id.concat(this.memberInviteForm.value.projects).filter(this.onlyUniqueProjectID)
+      };
 
+      this.clientService.createActivationToken(inviteObj).subscribe( (res:any) => {
+        if(res.token){
+          console.log(res);
+          this.snackBar.open('Invite has been sent.', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "success-snack"
+              }
+          );
+          this.memberInviteForm.reset();
+        }
+      });
+    }
+    return false;
+  }
   addNewAccountToProject(){
     if(this.memberForm.valid){
       let username = this.memberForm.value.username;

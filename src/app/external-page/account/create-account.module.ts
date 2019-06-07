@@ -92,7 +92,6 @@ import {
     CreateAccountRoutingModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     FormsModule,
-
   ],
 //   exports: [ConfirmDeleteDialog],
 //   entryComponents: [

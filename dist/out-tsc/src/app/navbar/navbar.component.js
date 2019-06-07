@@ -75,6 +75,10 @@ var NavbarComponent = /** @class */ (function () {
         this.userService.clearAvatar();
         this.userService.clearClient();
     };
+    NavbarComponent.prototype.setClientInfo = function () {
+        var _this = this;
+        this.subscription = this.userService.currentClientInfo.subscribe(function (client_info) { _this.auth_client_info = client_info; });
+    };
     NavbarComponent.prototype.setClient = function () {
         var _this = this;
         this.subscription = this.userService.currentClient.subscribe(function (client) { _this.auth_client = client; });
@@ -92,7 +96,7 @@ var NavbarComponent = /** @class */ (function () {
         this.ticketService.Bearer = '';
         this.memberService.Bearer = '';
         // this.router.navigate(['/login'] );
-        window.location.href = '/login';
+        window.location.href = '/';
         return false;
     };
     NavbarComponent = tslib_1.__decorate([

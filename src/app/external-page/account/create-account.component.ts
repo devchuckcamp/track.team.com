@@ -6,6 +6,7 @@ import { UserService } from '../../service/user.service';
 import { AuthService } from '../../service/auth.service';
 import { ProjectService } from '../../service/project.service';
 import { MemberService } from '../../service/member.service';
+import { ClientService } from '../../service/client.service';
 import {MatPaginator, MatSnackBar, MatTableDataSource, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { FormGroup, FormBuilder, FormControl, Validators, FormGroupDirective, NgForm, EmailValidator } from '@angular/forms';
 import { trigger, style, animate, transition } from '@angular/animations';
@@ -72,6 +73,7 @@ export class CreateAccountComponent implements OnInit {
   memberForm: FormGroup;
   memberToAdd:any =  {};
   validToken:boolean;
+  account_activated:boolean = false;
   tokenError:any = {};
   loadedToken:boolean;
   uniqueUsername:any = {};
@@ -89,6 +91,7 @@ export class CreateAccountComponent implements OnInit {
     private authService:AuthService,
     private projectService:ProjectService,
     private memberService:MemberService,
+    private clientService:ClientService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
@@ -104,12 +107,14 @@ export class CreateAccountComponent implements OnInit {
 
             this.userService.validateAccountToken(params['account_token']).subscribe( (res:any) => {
               console.log(res,'token info');
-              if(res.id){
+              if(res.valid){
                 let added_at =  Date.parse(res.created_at)/1000;
+                console.log(added_at,'added_at');
                 let remaining = added_at+86400;
                 let currentDate = Math.floor(Date.now() / 1000);
-
-                if(remaining>=currentDate){
+                console.log(remaining,'remaining');
+                
+                if(!res.expired){
                   this.validToken = true;
                   this.token_info = res;
                   // this.tokenError.message = 'Token has expired!';
@@ -427,7 +432,7 @@ export class CreateAccountComponent implements OnInit {
         password: password,
         role_id: role_id
       };
-      console.log(account);
+
       this.userService.verifyUniqueUsername(username).subscribe( (res:any) => {
         if(res.result){
 
@@ -441,23 +446,43 @@ export class CreateAccountComponent implements OnInit {
                     last_name: this.memberForm.value.last_name,
                     user_id: save_account.id,
                   };
+                  let processed_membeship = 0;
+                  let account_activated = false;
                   // Save additional information
                   this.userService.saveinfo(account_info).subscribe((res) => {
                     if (res) {
+                      let to_process_membeship = this.token_info.membership.length;
                       this.token_info.membership.forEach( (mem:any) => {
                         let memberObj = {
                           user_id: save_account.id,
                           project_id: mem.project_id,
+                          client_id:this.token_info.client_id
                         };
                         // Save Membership information
-                        this.memberService.save(memberObj).subscribe(res => {
-                          // this.getMember();
-                          // this.memberForm.reset();
-                          // this.toggleMemberForm();
+                        this.memberService.save(memberObj).subscribe( (res:any) => {
+                          if(res.id){
+                            processed_membeship++;
+                            if(processed_membeship == to_process_membeship){
+                              account_activated = true;
+                            }
+                            if(account_activated){
+                              // Delete the token after activation
+                              this.clientService.deleteToken(this.token_info.token).subscribe( (res:any) => {
+                                this.snackBar.open('Account has been activated', 'X', {
+                                  duration: 5000,
+                                  direction: "ltr",
+                                  verticalPosition: "top",
+                                  horizontalPosition: "right",
+                                  panelClass: "success-snack"
+                                });
+                                this.account_activated = true;
+                              });
+                            }
+                          } else {
+
+                          }
                         });
-                      });
-
-
+                      }); // Foreach ends
                     }
                   });
                 }

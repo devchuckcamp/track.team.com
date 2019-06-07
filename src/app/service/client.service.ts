@@ -92,7 +92,15 @@ export class ClientService {
     }
 
     delete(id: number) {
-        return this.http.delete(this.config.apiEndPoint()+'/projects/id');
+        return this.http.delete(this.config.apiEndPoint()+'/api/v1/projects/id');
+    }
+
+    createActivationToken(obj: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/user/account/activation', obj, this.jt());
+    }
+
+    deleteToken(token: string) {
+        return this.http.delete(this.config.apiEndPoint()+'/api/v1/activated/account/token?token='+token);
     }
 
     private jt() {

@@ -11,6 +11,7 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AuthGuard } from './guard/auth';
+import { ClientGuard } from './guard/client';
 import { GlobalRoutesService } from './config/config';
 import { ClientGlobalRoutesService } from './config/client';
 import { ClientService } from './service/client.service';
@@ -74,6 +75,7 @@ var AppModule = /** @class */ (function () {
             exports: [],
             providers: [
                 AuthGuard,
+                ClientGuard,
                 GlobalRoutesService,
                 ClientGlobalRoutesService,
                 ClientService,

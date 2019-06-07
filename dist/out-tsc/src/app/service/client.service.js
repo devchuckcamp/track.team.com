@@ -67,7 +67,10 @@ var ClientService = /** @class */ (function () {
         return this.http.put(this.config.apiEndPoint() + '/api/v1/projects/project.id', project);
     };
     ClientService.prototype.delete = function (id) {
-        return this.http.delete(this.config.apiEndPoint() + '/projects/id');
+        return this.http.delete(this.config.apiEndPoint() + '/api/v1/projects/id');
+    };
+    ClientService.prototype.deleteToken = function (token) {
+        return this.http.delete(this.config.apiEndPoint() + '/api/v1/activated/account/token?token=' + token);
     };
     ClientService.prototype.jt = function () {
         var headers = new HttpHeaders({

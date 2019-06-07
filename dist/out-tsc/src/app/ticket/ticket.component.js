@@ -25,6 +25,7 @@ var TicketComponent = /** @class */ (function () {
         this.tag_users = [];
         this.ticketPriorities = [];
         this.tagged_members = new FormControl();
+        this.assignees = new FormControl();
         this.ticketToAdd = new Object();
         // File Upload
         this.files = [];
@@ -47,6 +48,7 @@ var TicketComponent = /** @class */ (function () {
         this.ticketToAdd.title = '';
         this.ticketToAdd.description = '';
         this.ticketToAdd.assigned_to = null;
+        this.ticketToAdd.assignees = null;
         this.ticketToAdd.status_id = null;
         this.replayText = "";
         this.ticketFormShow = false;
@@ -54,13 +56,14 @@ var TicketComponent = /** @class */ (function () {
             'title': new FormControl('', [Validators.required,]),
             'description': new FormControl('', [Validators.required,]),
             'priority': new FormControl('', [Validators.required,]),
-            'assigned_to': new FormControl('', [Validators.required,]),
+            'assigned_to': new FormControl('', []),
+            'assignees': new FormControl('', []),
         });
-        this.projectService.getAllMember(this.project_name).subscribe(function (res) {
-            // console.log(res.data);
-            if (res.data) {
-                _this.members = res.data;
-                _this.taggable_members = res.data;
+        this.projectService.getAllMemberFullList(this.project_name).subscribe(function (res) {
+            console.log(res);
+            if (res) {
+                _this.members = res;
+                _this.taggable_members = res;
                 // console.log(this.taggable_members, 'taggable_members');
             }
             // this.length = res.total;
@@ -91,9 +94,9 @@ var TicketComponent = /** @class */ (function () {
     TicketComponent.prototype.ngOnDestroy = function () {
     };
     TicketComponent.prototype.assignTo = function (id) {
-        this.taggable_members = this.members;
-        var new_taggable_members = this.taggable_members.filter(function (member) { return member.user_id != id; });
-        this.taggable_members = new_taggable_members;
+        // this.taggable_members = this.members;
+        // let new_taggable_members = this.taggable_members.filter( member => member.user_id != id);
+        // this.taggable_members = new_taggable_members;
     };
     TicketComponent.prototype.tagTo = function (member) {
     };
@@ -213,6 +216,22 @@ var TicketComponent = /** @class */ (function () {
         }
         return membersTagged;
     };
+    TicketComponent.prototype.getAssignedMembers = function (ticket_id) {
+        var _this = this;
+        if (ticket_id === void 0) { ticket_id = null; }
+        var membersAssigned = [];
+        if (this.ticketToAdd.assignees.length) {
+            this.ticketToAdd.assignees.forEach(function (obj) {
+                var member = {
+                    ticket_id: ticket_id,
+                    project_id: _this.project_id,
+                    user_id: obj.id
+                };
+                membersAssigned.push(member);
+            });
+        }
+        return membersAssigned;
+    };
     TicketComponent.prototype.addNewTicket = function () {
         var _this = this;
         if (this.ticketForm.valid) {
@@ -222,9 +241,9 @@ var TicketComponent = /** @class */ (function () {
             var ticket = {
                 title: title,
                 description: description,
-                assigned_to: parseInt(assigned_to),
+                assigned_to: null,
                 project_id: this.project_id,
-                priority_id: this.ticketToAdd.priority
+                priority_id: this.ticketToAdd.priority,
             };
             console.log(this.ticketToAdd, 'ticketToAdd');
             this.submitting = true;
@@ -236,20 +255,29 @@ var TicketComponent = /** @class */ (function () {
                         _this.ticketService.addTaggedUser(tagged).subscribe(function (res) {
                         });
                     }
-                    console.log(tagged, 'tagged');
-                    _this.tickets = [];
-                    _this.loading = true;
-                    _this.ticketFormShow = false;
-                    _this.ticketForm.reset();
-                    _this.snackBar.open('Data has been updated', 'X', {
-                        duration: 5000,
-                        direction: "ltr",
-                        verticalPosition: "top",
-                        horizontalPosition: "right",
-                        panelClass: "success-snack"
-                    });
-                    // Refresh ticket table
-                    _this.getTicket(_this.project_name);
+                    if (_this.ticketToAdd.assignees.length) {
+                        var assigned_members = _this.getAssignedMembers(added_ticket.id);
+                        console.log(assigned_members, 'assigned_members');
+                        _this.addAssignees(assigned_members);
+                        _this.submitting = false;
+                    }
+                    if (!_this.submitting) {
+                        console.log(tagged, 'tagged');
+                        _this.tickets = [];
+                        _this.loading = true;
+                        _this.ticketFormShow = false;
+                        _this.ticketForm.reset();
+                        _this.snackBar.open('Data has been updated', 'X', {
+                            duration: 5000,
+                            direction: "ltr",
+                            verticalPosition: "top",
+                            horizontalPosition: "right",
+                            panelClass: "success-snack"
+                        });
+                        _this.ticketToAdd = {};
+                        // Refresh ticket table
+                        _this.getTicket(_this.project_name);
+                    }
                 }
                 else {
                     _this.snackBar.open('Data entered is not valid!', 'X', {
@@ -274,6 +302,11 @@ var TicketComponent = /** @class */ (function () {
             });
         }
         return false;
+    };
+    TicketComponent.prototype.addAssignees = function (assignees) {
+        this.ticketService.addAssignees(assignees).subscribe(function (res) {
+            console.log(res, 'saved assinees');
+        });
     };
     TicketComponent.prototype.deleteTicket = function (ticket_id) {
         var _this = this;

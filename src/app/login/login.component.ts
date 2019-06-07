@@ -32,9 +32,7 @@ export class LoginComponent implements OnInit {
         //redirect to home if already logged in
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-        if(localStorage.getItem('currentUser') && this.authenticationService.Bearer !== ''){
-            this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin'] );
-        }
+       
         if (localStorage.getItem('client')) {
             this.auth_client = localStorage.getItem('client');
 
@@ -42,19 +40,21 @@ export class LoginComponent implements OnInit {
                 this.client = res;
                 localStorage.setItem('client_info',JSON.stringify(res));
 
-                this.userService.setClientInfo(this.client);
-                this.clientService.setClient(res);
+                // this.userService.setClientInfo(this.client);
+                // this.clientService.setClient(res);
                 this.auth_client = this.client.slug;
             }, error=>{
                 console.log('error:'+error);
 
             });
         }
-        
+        if(localStorage.getItem('currentUser') && this.authenticationService.Bearer !== ''){
+            this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? this.auth_client+'/admin': '/' : this.auth_client+'/admin'] );
+        }
     }
 
     ngOnInit() {
-        
+
         this.loginForm = this.formBuilder.group({
             username: ['', Validators.required],
             password: ['', Validators.required]

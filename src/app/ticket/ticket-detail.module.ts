@@ -58,7 +58,7 @@ import {
   declarations: [
     TicketDetailComponent,
     DialogOverviewExampleDialog,
-    SafeHtml
+    SafeHtml,
   ],
   imports: [
     MatAutocompleteModule,

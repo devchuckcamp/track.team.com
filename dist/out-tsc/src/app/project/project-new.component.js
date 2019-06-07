@@ -1,13 +1,15 @@
 import * as tslib_1 from "tslib";
 import { Component, Input } from '@angular/core';
 import { ProjectService } from '../service/project.service';
+import { UserService } from '../service/user.service';
 import { MatSnackBar } from '@angular/material';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 var ProjectNewComponent = /** @class */ (function () {
-    function ProjectNewComponent(projectService, formBuilder, snackBar) {
+    function ProjectNewComponent(projectService, formBuilder, snackBar, userService) {
         this.projectService = projectService;
         this.formBuilder = formBuilder;
         this.snackBar = snackBar;
+        this.userService = userService;
         //projectsList:any;
         this.projects = [];
         this.projectsList = [];
@@ -17,29 +19,30 @@ var ProjectNewComponent = /** @class */ (function () {
     };
     ProjectNewComponent.prototype.ngOnInit = function () {
         var _this = this;
+        this.subscription = this.userService.currentClientInfo.subscribe(function (client) { _this.auth_client_info = JSON.parse(client); });
         this.initForm();
         this.projectService.loadAll();
         this.projectService.projects.subscribe(function (res) {
             _this.projectsList = res;
         });
     };
-    ProjectNewComponent.prototype.ngAfterViewInit = function () {
-    };
+    ProjectNewComponent.prototype.ngAfterViewInit = function () { };
     ProjectNewComponent.prototype.addNewProject = function () {
         var _this = this;
         if (this.projectForm.valid) {
             var exist = this.projectsList.some(function (proj) { return proj.name.toLowerCase() == _this.projectForm.value.name.toLowerCase(); });
             console.log(exist, 'exist');
             if (!exist) {
+                this.projectToAdd.client_id = this.auth_client_info.id;
                 this.projectService.save(this.projectToAdd).subscribe(function (res) {
-                    _this.projectService.loadAll();
-                    _this.snackBar.open('Project ' + _this.projectToAdd + ' has been added', 'X', {
+                    _this.snackBar.open('Project ' + _this.projectForm.value.name + ' has been added', 'X', {
                         duration: 5000,
                         direction: "ltr",
                         verticalPosition: "top",
                         horizontalPosition: "right",
                         panelClass: "success-fail"
                     });
+                    _this.projectService.loadAll();
                 });
                 console.log(this.projectToAdd, 'projectToAdd');
             }
@@ -83,7 +86,8 @@ var ProjectNewComponent = /** @class */ (function () {
         }),
         tslib_1.__metadata("design:paramtypes", [ProjectService,
             FormBuilder,
-            MatSnackBar])
+            MatSnackBar,
+            UserService])
     ], ProjectNewComponent);
     return ProjectNewComponent;
 }());

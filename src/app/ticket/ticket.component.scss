@@ -36,3 +36,10 @@ div.search-member-row-result-container:nth-child(1){
     color: #fafafa!important;
     padding: 5px 10px;
 }
+
+.ticket-description-info{
+    resize: none;
+    overflow: hidden;
+    min-height: 50px;
+    max-height: 100px;
+}

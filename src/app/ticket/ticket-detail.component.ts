@@ -145,14 +145,14 @@ export class TicketDetailComponent implements OnInit {
         // Get all member
         this.projectService.getAllMemberFullList(this.project_name).subscribe( (res:any) => {
           if(res){
-
+            console.log(res,'members');
             this.members = res;
             for(var i = 0; i < this.members.length; i++){
               memberListArray.push(this.members[i].user);
             }
             this.memberList = this.members;
             for(var i =0;i < this.members.length;i++){
-              this.items.push(this.members[i].project_member_info);
+              this.items.push(this.members[i].user.user_details);
             }
           }
         });
@@ -223,7 +223,14 @@ export class TicketDetailComponent implements OnInit {
         this.replayText = text;
         return false;
     }
-
+    auto_grow(element) {
+      //console.log(element);
+      // element.style.height = "5px";
+      // element.style.height = (element.scrollHeight)+"px";
+      let style = {'min-height': '200px','max-height':'300px'};
+      return style;
+    
+    }
     submitReplyBox(){
         if(this.replyView){
             // Check replay
@@ -333,8 +340,9 @@ export class TicketDetailComponent implements OnInit {
       })
     }
     private fileHeader() {
+      let token = this.authService.Bearer;
       let headers = new HttpHeaders({
-          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImJmNGE5YWU0OWUyZjQ2ZWY1Yjk5NmIxMGMzYjY3MjUxMDZkZjJmMGIwMWU4MTUzYTI4NDdjNTAzMWYzMDUzMmZhN2M0ZjQ4MzQ3NjdmM2YwIn0.eyJhdWQiOiIyIiwianRpIjoiYmY0YTlhZTQ5ZTJmNDZlZjViOTk2YjEwYzNiNjcyNTEwNmRmMmYwYjAxZTgxNTNhMjg0N2M1MDMxZjMwNTMyZmE3YzRmNDgzNDc2N2YzZjAiLCJpYXQiOjE1NTY4MTI1MzcsIm5iZiI6MTU1NjgxMjUzNywiZXhwIjoxNTg4NDM0OTM3LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.UK8-CmYniyfQghFl-y1uoRO5CC9mqggndoFv3gRyqX3QL7bdMYJURoXHriAM8lgs681sTthbppDgRM0UuutjEZIfTfSwi1kHXCN5Y1jUX4hiAq-WwlWLlIHajBki_akFFq-IH9cSFuJr6tzRv3p2nNm2dk6RM0aiGmgpSAziXAeMx41eX_KAXIEZYUBeITv-eCZpJf-KnhU7stqQ95zxly9ULEGJCYUNbGdt7VxK95QwaOf6xs90_NF6goVqrqhAOixctlEbw9i0p_vp5HjXUcyaHvYfp20ril0Xg6UyUrhm7QGkLP7cmQCJGL_vlU2WQcYb233xJA3OdPnfGjYAHb91hWA1wjHXtd6eotDIbqRu22iVehRT72RWcsI74wVb3YjbJBZ4vssLLVC3qj4zRKWgXC8L6QKgGE4zR59PD5UPXfMyXaMRV1oyqi-1wI5bMV_gyyi_c5yvuAuyckN0K1V0LuKBTzaKFzIo7bcGc4SL81nH9flkK5TjP07aEDGoOh4cKZuer_T6gAnyrs9gjW87Tgp88CBn_x86BjL1CofySDDjU3AKkzPkg98BRlB4aPvehyCmVgsG5KsBgwgIgjCbP3FAlyugZmA3JiyWbSGGP4P_VzpTXwJj3Enm2ChcBmKzZH45lcG-qRSVHIGhJIEMoI-rL_wA8q9klz_iCKw',
+          'Authorization': 'Bearer'+token,
           'Content-Type':  'multipart/form-data;',
           'enctype': 'multipart/form-data',
           'Accept':'application/json',

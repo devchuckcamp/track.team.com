@@ -47,7 +47,7 @@ export class ThreadService {
     }
 
     send(thread: any) {
-        return this.http.post(this.config.apiEndPoint()+'/api/v1/thread/', thread, this.jt());
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/thread', thread, this.jt());
     }
 
     update(ticket: Thread) {

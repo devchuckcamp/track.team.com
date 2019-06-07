@@ -25,9 +25,11 @@ var LoginComponent = /** @class */ (function () {
             this.router.navigate([this.returnUrl ? this.returnUrl == '/' ? 'admin' : '/' : '/admin']);
         }
         if (localStorage.getItem('client')) {
-            this.auth_client = localStorage.setItem('client', 'sos');
+            this.auth_client = localStorage.getItem('client');
             this.clientService.validate(this.auth_client).subscribe(function (res) {
                 _this.client = res;
+                localStorage.setItem('client_info', JSON.stringify(res));
+                _this.userService.setClientInfo(_this.client);
                 _this.clientService.setClient(res);
                 _this.auth_client = _this.client.slug;
             }, function (error) {
@@ -74,9 +76,10 @@ var LoginComponent = /** @class */ (function () {
                     if (!_this.auth_client) {
                         auth_client = localStorage.getItem('client');
                     }
-                    if (data.access_token && !_this.loading) {
+                    console.log(localStorage.getItem('client'), 'auth_client');
+                    if (localStorage.getItem('client') && data.access_token && !_this.loading) {
                         // this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);
-                        window.location.href = auth_client + '/admin';
+                        window.location.href = localStorage.getItem('client') + '/admin';
                     }
                 });
             });

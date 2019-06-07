@@ -45,6 +45,14 @@ var ProjectService = /** @class */ (function () {
     ProjectService.prototype.getAllMemberObs = function (project_name) {
         return this.http.get(this.config.apiEndPoint() + '/api/v1/projects/' + project_name + '?' + 'members=all', this.jt()).pipe(map(function (res) { return res.data; }));
     };
+    ProjectService.prototype.getAllMemberFullList = function (project_name, filter_keyword) {
+        if (filter_keyword === void 0) { filter_keyword = null; }
+        var filter = '';
+        if (filter_keyword) {
+            filter = '&filter=' + filter_keyword;
+        }
+        return this.http.get(this.config.apiEndPoint() + '/api/v1/projects/' + project_name + '?' + 'members=all&full=1' + filter, this.jt()).pipe(map(function (res) { return res; }));
+    };
     ProjectService.prototype.getProject = function (id) {
         return this.http.get(this.config.apiEndPoint() + '/api/v1/projects/' + id, this.jt()).pipe(map(function (res) { return res; }));
     };

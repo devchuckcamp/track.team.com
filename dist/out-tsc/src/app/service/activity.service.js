@@ -12,8 +12,13 @@ var ActivityService = /** @class */ (function () {
             this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
         }
     }
-    ActivityService.prototype.getAll = function () {
-        return this.http.get(this.config.apiEndPoint() + '/api/v1/activity', this.jt()).pipe(map(function (res) { return res; }));
+    ActivityService.prototype.getAll = function (page_number) {
+        if (page_number === void 0) { page_number = 1; }
+        var page = '';
+        if (page_number !== 1) {
+            page = 'page=' + page_number;
+        }
+        return this.http.get(this.config.apiEndPoint() + '/api/v1/activity?' + page, this.jt()).pipe(map(function (res) { return res; }));
     };
     ActivityService.prototype.getProjectAllActivity = function (project_name) {
         return this.http.get(this.config.apiEndPoint() + '/api/v1/activity?project=' + project_name, this.jt()).pipe(map(function (res) { return res; }));

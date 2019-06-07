@@ -71,17 +71,32 @@ var TicketService = /** @class */ (function () {
         });
         return forkJoin(mentions);
     };
-    TicketService.prototype.addTaggedUser = function (tagged_member) {
+    TicketService.prototype.addTaggedUser = function (assigned_members) {
         var _this = this;
         var tag;
         var https = [];
-        tagged_member.forEach(function (obj) {
+        assigned_members.forEach(function (obj) {
+            console.log(obj, 'assigned members from service.');
+            tag = {
+                ticket_id: obj.ticket_id,
+                user_id: obj.user_id,
+            };
+            https.push(_this.http.post(_this.config.apiEndPoint() + '/api/v1/tickets-tag-users', tag, _this.jt()));
+        });
+        return forkJoin(https);
+    };
+    TicketService.prototype.addAssignees = function (assignees) {
+        var _this = this;
+        var tag;
+        var https = [];
+        assignees.forEach(function (obj) {
             console.log(obj, 'member to be tagged from service.');
             tag = {
                 ticket_id: obj.ticket_id,
-                user_id: obj.user_id
+                user_id: obj.user_id,
+                project_id: obj.project_id
             };
-            https.push(_this.http.post(_this.config.apiEndPoint() + '/api/v1/tickets-tag-users', tag, _this.jt()));
+            https.push(_this.http.post(_this.config.apiEndPoint() + '/api/v1/tickets-assign-users', tag, _this.jt()));
         });
         return forkJoin(https);
     };

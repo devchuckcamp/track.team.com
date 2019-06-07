@@ -21,10 +21,11 @@ var ActivityLogComponent = /** @class */ (function () {
         this.logs = [];
         this.displayedColumns = ['module', 'user', 'description', 'project', 'updated_at'];
         // MatPaginator Inputs
-        this.length = 15;
-        this.pageSize = 15;
-        this.pageSizeOptions = [15, 25, 100];
+        this.length = 25;
+        this.pageSize = 25;
+        this.pageSizeOptions = [25, 50, 100];
         this.dataSource = new MatTableDataSource(ELEMENT_DATA);
+        this.loadingProgress = true;
     }
     ActivityLogComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -42,17 +43,26 @@ var ActivityLogComponent = /** @class */ (function () {
             });
         });
     };
-    ActivityLogComponent.prototype.getAllProjectActivity = function (project_name) {
+    ActivityLogComponent.prototype.getAllProjectActivity = function (project_name, page_number) {
+        if (page_number === void 0) { page_number = 1; }
         console.log(project_name);
+        this.loadingProgress = false;
     };
-    ActivityLogComponent.prototype.getAllActivity = function () {
+    ActivityLogComponent.prototype.getAllActivity = function (page_number) {
         var _this = this;
-        this.activityService.getAll().subscribe(function (res) {
-            console.log(res, 'all activities');
+        if (page_number === void 0) { page_number = 1; }
+        this.loadingProgress = true;
+        this.activityService.getAll(page_number).subscribe(function (res) {
             _this.dataSource = new MatTableDataSource(res.data);
             _this.logs = res.data;
             _this.length = res.total;
+            _this.loadingProgress = false;
         });
+    };
+    ActivityLogComponent.prototype.onPageChange = function (event) {
+        var page_number = event.pageIndex <= 0 ? 1 : event.pageIndex + 1;
+        console.log(page_number);
+        this.getAllActivity(page_number);
     };
     tslib_1.__decorate([
         ViewChild(MatPaginator),

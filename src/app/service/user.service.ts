@@ -29,7 +29,7 @@ export class UserService {
                 this.client_info = JSON.parse(localStorage.getItem("client_info"));
             }
     }
-    setClientInfo(client:string){
+    setClientInfo(client:any){
         this.client_info.next(client);
     }
 

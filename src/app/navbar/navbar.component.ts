@@ -19,6 +19,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   parentUrl:string;
   user_avatar:string;
   auth_client:string;
+  auth_client_info:any;
   subscription: Subscription;
   default_avatar = '../assets/default-profile.png';
   projects: any[] = [];
@@ -87,6 +88,9 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     this.userService.clearClient();
   }
 
+  setClientInfo():void {
+    this.subscription = this.userService.currentClientInfo.subscribe(client_info => { this.auth_client_info = client_info;  });
+  }
   setClient():void {
     this.subscription = this.userService.currentClient.subscribe(client => { this.auth_client = client;  });
   }

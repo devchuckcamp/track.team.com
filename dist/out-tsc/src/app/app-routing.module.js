@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
+import { ClientGuard } from './guard/client';
 var routes = [
     { path: 'investor', loadChildren: './investor/investor.module#InvestorModule' },
     {
@@ -15,7 +16,16 @@ var routes = [
         ]
     },
     {
+        path: 'account/activation',
+        redirectTo: 'account/token',
+        pathMatch: 'full',
+    },
+    {
+        path: 'account/activation/token/:account_token', loadChildren: './external-page/account/create-account.module#CreateAccountModule'
+    },
+    {
         path: 'login', component: LoginComponent,
+        canActivate: [ClientGuard],
     },
     {
         path: 'register', component: RegisterComponent,

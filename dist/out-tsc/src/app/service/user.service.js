@@ -12,14 +12,22 @@ var UserService = /** @class */ (function () {
         this.currentAvatar = this.Avatar.asObservable();
         this.client_slug = new BehaviorSubject(localStorage.getItem("client"));
         this.currentClient = this.client_slug.asObservable();
+        this.client_info = new BehaviorSubject(localStorage.getItem("client_info"));
+        this.currentClientInfo = this.client_info.asObservable();
         this.apiEndpoint = this.config.apiEndPoint();
         if (localStorage.getItem("currentUser")) {
             this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
         }
-        // if (!localStorage.getItem('client')) {
-        //     localStorage.setItem('client','sos');
-        // }
+        if (localStorage.getItem("client_info")) {
+            this.client_info = JSON.parse(localStorage.getItem("client_info"));
+        }
     }
+    UserService.prototype.setClientInfo = function (client) {
+        this.client_info.next(client);
+    };
+    UserService.prototype.clearClientInfo = function () {
+        this.client_info.complete();
+    };
     UserService.prototype.setClient = function (client) {
         this.client_slug.next(client);
     };
@@ -31,6 +39,9 @@ var UserService = /** @class */ (function () {
     };
     UserService.prototype.clearAvatar = function () {
         this.Avatar.complete();
+    };
+    UserService.prototype.validateAccountToken = function (token) {
+        return this.http.get(this.config.apiEndPoint() + '/api/v1/validate/account/token?token=' + token);
     };
     UserService.prototype.loginAuth = function (username, password) {
         var body = JSON.stringify({
@@ -74,6 +85,9 @@ var UserService = /** @class */ (function () {
         var avatar = JSON.stringify(data);
         this.currentAvatar = data;
         return this.http.put(this.config.apiEndPoint() + '/api/v1/users/avatar/' + id, avatar, this.jt());
+    };
+    UserService.prototype.verifyUniqueUsername = function (username) {
+        return this.http.get(this.config.apiEndPoint() + '/api/v1/validate/user/unique/username?username=' + username);
     };
     UserService.prototype.jt = function () {
         var headers = new HttpHeaders({

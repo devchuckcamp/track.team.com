@@ -11,6 +11,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { ConfirmDeleteDialog } from '../share/alert/confirm-delete-dialog.component';
 var ELEMENT_DATA = [];
+var projectsInvitationList = [];
 /** Error when the parent is invalid */
 var CrossFieldErrorMatcher = /** @class */ (function () {
     function CrossFieldErrorMatcher() {
@@ -21,6 +22,7 @@ var CrossFieldErrorMatcher = /** @class */ (function () {
     return CrossFieldErrorMatcher;
 }());
 var MemberComponent = /** @class */ (function () {
+    // projectsInvitationList = [];
     function MemberComponent(router, http, route, userService, authService, projectService, memberService, formBuilder, snackBar, dialog) {
         this.router = router;
         this.http = http;
@@ -34,15 +36,22 @@ var MemberComponent = /** @class */ (function () {
         this.dialog = dialog;
         this.displayedColumns = ['avatar', 'username', 'first_name', 'last_name', 'email', 'action'];
         // MatPaginator Inputs
-        this.length = 5;
-        this.pageSize = 5;
-        this.pageSizeOptions = [1, 5, 10, 15, 25, 100];
+        this.length = 0;
+        this.pageSize = 25;
+        this.pageSizeOptions = [25, 50, 100];
         // Form
         this.errorMatcher = new CrossFieldErrorMatcher();
+        this.memberInviteFormShow = false;
         this.memberToAdd = {};
+        this.memberToInvite = {};
         this.dataSource = new MatTableDataSource(ELEMENT_DATA);
         this.default_avatar = '../assets/default-profile.png';
         this.loading = '../../assets/icon/loading.gif';
+        this.submitting = false;
+        this.submittingInvitation = false;
+        this.submittedInvitation = false;
+        this.projects = [];
+        this.projectsSearchable = [];
     }
     MemberComponent.prototype.confirmRemoveFromProject = function (member_info) {
         var _this = this;
@@ -50,7 +59,7 @@ var MemberComponent = /** @class */ (function () {
             width: '280px',
             data: { member_info: member_info }
         });
-        dialogRef.componentInstance.confirmMessage = "Are you sure you want to remove " + member_info.project_member_info.first_name + " " + member_info.project_member_info.last_name + "'s account from this project.";
+        dialogRef.componentInstance.confirmMessage = "Are you sure you want to remove " + member_info.user.user_details.first_name + " " + member_info.user.user_details.last_name + "'s account from this project.";
         dialogRef.afterClosed().subscribe(function (result) {
             console.log(result, 'closed dialog');
             if (result) {
@@ -62,15 +71,25 @@ var MemberComponent = /** @class */ (function () {
     MemberComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.auth = this.authService.getAuthUser();
-        console.log(this.auth);
-        console.log(this.auth, 'logged in user');
+        this.setClient();
+        this.projectService.loadAll();
+        this.projectService.projects.subscribe(function (res) {
+            _this.projects = res;
+        });
         this.memberFormShow = false;
         this.showMemberSearchForm = false;
         this.memberToAdd.title = '';
         this.memberToAdd.description = '';
         this.memberToAdd.assigned_to = null;
         this.memberToAdd.status_id = null;
+        // invites
+        this.memberToInvite.email = null;
+        this.memberToInvite.projects = [];
         this.length = 0;
+        this.memberInviteForm = this.formBuilder.group({
+            'email': new FormControl('', [Validators.required, Validators.email]),
+            'projects': new FormControl([], [Validators.required]),
+        });
         this.memberForm = this.formBuilder.group({
             'username': new FormControl('', [Validators.required]),
             'email': new FormControl('', [Validators.required, Validators.email]),
@@ -86,17 +105,40 @@ var MemberComponent = /** @class */ (function () {
             if (params['project_name'] !== undefined) {
                 _this.project_name = params['project_name'];
                 _this.projectService.getProject(params['project_name']).subscribe(function (res) {
-                    if (res)
+                    if (res) {
                         _this.project_id = res.id;
+                        projectsInvitationList.push(res.id);
+                    }
+                    _this.projectsSearchable = _this.filterProjectInvite();
+                    console.log(_this.projects, 'complete projects list');
+                    console.log(_this.projectsSearchable, 'projectsSearchable list');
+                    console.log(projectsInvitationList, 'projectsInvitationList list');
                 });
                 _this.getMember();
             }
         });
         this.dataSource.paginator = this.paginator;
     };
+    MemberComponent.prototype.filterProjectInvite = function () {
+        return this.projects.filter(function (project) {
+            return !projectsInvitationList.includes(project.id);
+        });
+    };
+    MemberComponent.prototype.includeProjectInvitation = function (project) {
+        projectsInvitationList.push(project.id);
+    };
+    MemberComponent.prototype.setClient = function () {
+        var _this = this;
+        this.subscription = this.userService.currentClientInfo.subscribe(function (client) { _this.auth_client_info = JSON.parse(client); });
+    };
     Object.defineProperty(MemberComponent.prototype, "f", {
         // convenience getter for easy access to form fields
         get: function () { return this.memberForm.controls; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(MemberComponent.prototype, "invite", {
+        get: function () { return this.memberInviteForm.controls; },
         enumerable: true,
         configurable: true
     });
@@ -159,6 +201,20 @@ var MemberComponent = /** @class */ (function () {
             this.showMemberSearchForm = false;
         return false;
     };
+    MemberComponent.prototype.toggleAccountInviteForm = function () {
+        // Member List Form
+        if (!this.memberInviteFormShow) {
+            this.memberFormShow = false;
+            this.showMemberSearchForm = false;
+            this.memberInviteFormShow = true;
+        }
+        else {
+            this.memberFormShow = false;
+            this.showMemberSearchForm = false;
+            this.memberInviteFormShow = false;
+        }
+        return false;
+    };
     MemberComponent.prototype.memberSearch = function (term) {
         var _this = this;
         this.memberService.searchMember(term).subscribe(function (res) {
@@ -188,6 +244,10 @@ var MemberComponent = /** @class */ (function () {
                 });
             }
         });
+        return false;
+    };
+    MemberComponent.prototype.inviteAccountToProjects = function () {
+        console.log(this.memberInviteForm.value);
         return false;
     };
     MemberComponent.prototype.addNewAccountToProject = function () {
@@ -264,7 +324,7 @@ var MemberComponent = /** @class */ (function () {
         this.memberService.delete(user_id).subscribe(function (res) {
             if (res == null) {
                 _this.dataSource.data = _this.dataSource.data.filter(function (user) { return user.user_id !== user_id; });
-                _this.snackBar.open('User has been deleted!', 'X', {
+                _this.snackBar.open('User has been removed!', 'X', {
                     duration: 5000,
                     direction: "ltr",
                     verticalPosition: "top",
@@ -279,7 +339,7 @@ var MemberComponent = /** @class */ (function () {
         this.memberService.removeUserFromProject(member.id).subscribe(function (res) {
             if (res == null) {
                 _this.dataSource.data = _this.dataSource.data.filter(function (user) { return user.user_id !== member.user_id; });
-                _this.snackBar.open('User has been deleted!', 'X', {
+                _this.snackBar.open('User has been removed!', 'X', {
                     duration: 5000,
                     direction: "ltr",
                     verticalPosition: "top",

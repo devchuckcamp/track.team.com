@@ -1,7 +1,7 @@
 import * as tslib_1 from "tslib";
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, retry } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { GlobalRoutesService } from '../config/config';
 import { ClientGlobalRoutesService } from '../config/client';
 var AuthService = /** @class */ (function () {
@@ -30,7 +30,9 @@ var AuthService = /** @class */ (function () {
             "grant_type": "password",
         });
         return this.http.post(this.apiEndpoint + '/api/v1/oauth/token', body, this.jt())
-            .pipe(retry(2), catchError(this.config.handleError));
+            .pipe(
+        // retry(2),
+        catchError(this.config.handleError));
     };
     AuthService.prototype.getAll = function () {
         return this.http.get(this.config.apiEndPoint() + '/users');

@@ -25,7 +25,7 @@ var ThreadService = /** @class */ (function () {
         return this.http.get(this.config.apiEndPoint() + '/api/v1/thread?ticket=' + ticket_id, this.jt()).pipe(map(function (res) { return res; }));
     };
     ThreadService.prototype.send = function (thread) {
-        return this.http.post(this.config.apiEndPoint() + '/api/v1/thread/', thread, this.jt());
+        return this.http.post(this.config.apiEndPoint() + '/api/v1/thread', thread, this.jt());
     };
     ThreadService.prototype.update = function (ticket) {
         return this.http.put(this.config.apiEndPoint() + '/api/v1/tickets/ticket.id', ticket);
