@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../service/user.service';
 import { AuthService } from '../service/auth.service';
+import { ClientService } from '../service/client.service';
 import { ProjectService } from '../service/project.service';
 import { MemberService } from '../service/member.service';
 import { MatPaginator, MatSnackBar, MatTableDataSource, MatDialog } from '@angular/material';
@@ -23,12 +24,13 @@ var CrossFieldErrorMatcher = /** @class */ (function () {
 }());
 var MemberComponent = /** @class */ (function () {
     // projectsInvitationList = [];
-    function MemberComponent(router, http, route, userService, authService, projectService, memberService, formBuilder, snackBar, dialog) {
+    function MemberComponent(router, http, route, userService, authService, clientService, projectService, memberService, formBuilder, snackBar, dialog) {
         this.router = router;
         this.http = http;
         this.route = route;
         this.userService = userService;
         this.authService = authService;
+        this.clientService = clientService;
         this.projectService = projectService;
         this.memberService = memberService;
         this.formBuilder = formBuilder;
@@ -86,10 +88,6 @@ var MemberComponent = /** @class */ (function () {
         this.memberToInvite.email = null;
         this.memberToInvite.projects = [];
         this.length = 0;
-        this.memberInviteForm = this.formBuilder.group({
-            'email': new FormControl('', [Validators.required, Validators.email]),
-            'projects': new FormControl([], [Validators.required]),
-        });
         this.memberForm = this.formBuilder.group({
             'username': new FormControl('', [Validators.required]),
             'email': new FormControl('', [Validators.required, Validators.email]),
@@ -105,24 +103,36 @@ var MemberComponent = /** @class */ (function () {
             if (params['project_name'] !== undefined) {
                 _this.project_name = params['project_name'];
                 _this.projectService.getProject(params['project_name']).subscribe(function (res) {
-                    if (res) {
-                        _this.project_id = res.id;
-                        projectsInvitationList.push(res.id);
+                    if (res.id) {
+                        var pid = res.id;
+                        _this.project_id = pid;
+                        _this.memberInviteForm = _this.formBuilder.group({
+                            'email': new FormControl('', [Validators.required, Validators.email]),
+                            'projects': new FormControl([pid], [Validators.required]),
+                        });
+                        _this.project = res;
+                        projectsInvitationList.push(pid);
+                        _this.projectsSearchable = _this.filterProjectInvite();
                     }
-                    _this.projectsSearchable = _this.filterProjectInvite();
-                    console.log(_this.projects, 'complete projects list');
-                    console.log(_this.projectsSearchable, 'projectsSearchable list');
-                    console.log(projectsInvitationList, 'projectsInvitationList list');
                 });
                 _this.getMember();
             }
+            console.log(_this.projects, 'complete projects list');
+            console.log(_this.projectsSearchable, 'projectsSearchable list');
+            console.log(projectsInvitationList, 'projectsInvitationList list');
         });
         this.dataSource.paginator = this.paginator;
+    };
+    MemberComponent.prototype.onlyUniqueProjectID = function (value, index, self) {
+        return self.indexOf(value) === index;
     };
     MemberComponent.prototype.filterProjectInvite = function () {
         return this.projects.filter(function (project) {
             return !projectsInvitationList.includes(project.id);
         });
+    };
+    MemberComponent.prototype.isProjectSelected = function (project_id) {
+        return projectsInvitationList.includes(project_id) ? true : false;
     };
     MemberComponent.prototype.includeProjectInvitation = function (project) {
         projectsInvitationList.push(project.id);
@@ -247,7 +257,27 @@ var MemberComponent = /** @class */ (function () {
         return false;
     };
     MemberComponent.prototype.inviteAccountToProjects = function () {
-        console.log(this.memberInviteForm.value);
+        var _this = this;
+        if (this.memberInviteForm.valid) {
+            var distinct_project_id = projectsInvitationList.filter(this.onlyUniqueProjectID);
+            var inviteObj = {
+                email: this.memberInviteForm.value.email,
+                projects: distinct_project_id.concat(this.memberInviteForm.value.projects).filter(this.onlyUniqueProjectID)
+            };
+            this.clientService.createActivationToken(inviteObj).subscribe(function (res) {
+                if (res.token) {
+                    console.log(res);
+                    _this.snackBar.open('Invite has been sent.', 'X', {
+                        duration: 5000,
+                        direction: "ltr",
+                        verticalPosition: "top",
+                        horizontalPosition: "right",
+                        panelClass: "success-snack"
+                    });
+                    _this.memberInviteForm.reset();
+                }
+            });
+        }
         return false;
     };
     MemberComponent.prototype.addNewAccountToProject = function () {
@@ -376,6 +406,7 @@ var MemberComponent = /** @class */ (function () {
             ActivatedRoute,
             UserService,
             AuthService,
+            ClientService,
             ProjectService,
             MemberService,
             FormBuilder,

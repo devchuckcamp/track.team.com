@@ -21,20 +21,20 @@ var LoginComponent = /** @class */ (function () {
         //redirect to home if already logged in
         // get return url from route parameters or default to '/'
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-        if (localStorage.getItem('currentUser') && this.authenticationService.Bearer !== '') {
-            this.router.navigate([this.returnUrl ? this.returnUrl == '/' ? 'admin' : '/' : '/admin']);
-        }
         if (localStorage.getItem('client')) {
             this.auth_client = localStorage.getItem('client');
             this.clientService.validate(this.auth_client).subscribe(function (res) {
                 _this.client = res;
                 localStorage.setItem('client_info', JSON.stringify(res));
-                _this.userService.setClientInfo(_this.client);
-                _this.clientService.setClient(res);
+                // this.userService.setClientInfo(this.client);
+                // this.clientService.setClient(res);
                 _this.auth_client = _this.client.slug;
             }, function (error) {
                 console.log('error:' + error);
             });
+        }
+        if (localStorage.getItem('currentUser') && this.authenticationService.Bearer !== '') {
+            this.router.navigate([this.returnUrl ? this.returnUrl == '/' ? this.auth_client + '/admin' : '/' : this.auth_client + '/admin']);
         }
     }
     LoginComponent.prototype.ngOnInit = function () {

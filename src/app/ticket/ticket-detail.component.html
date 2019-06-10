@@ -12,7 +12,7 @@
                 <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
                 </div> -->
             <!-- Status -->
-            <div class="form-group"  *ngIf="ticket.assigned_to && ticket.assigned_to.id == auth.id || ticket.created_by == auth.username">
+            <div class="form-group"  *ngIf="isAssignee() || ticket.created_by == auth.username">
                 <label class="mar-r-10" for="ticket-status">Status  </label>
                 <select #ticketStatus (change)="updateTicketStatus(ticketStatus.value)">
                     <option value="1" [selected]="ticket.status_id == 1">Open</option>
@@ -21,14 +21,15 @@
                     <option value="4" [selected]="ticket.status_id == 4">On QA</option>
                     <option value="5" [selected]="ticket.status_id == 5">Complete</option>
                 </select>
+                <span class="pad-l-10"><img *ngIf="updating_status" src="../../assets/icon/loading.gif" width="20" height="20"></span>
             </div>
             <!-- Priority -->
-            <div class="form-group" >
+            <div class="form-group" *ngIf="isAssignee() || ticket.created_by == auth.username" >
                 <label class="mar-r-10" for="ticket-status">Priority</label>
                 <select  #ticketPriority (change)="updateTicketPriority(ticketPriority.value)">
                     <option  *ngFor="let setting of settings" [value]="setting.id" [selected]="setting.id == ticket.priority.id">{{setting.name}}</option>
                 </select>
-                <!-- <span *ngIf="ticket.created_by !== auth.username" class="badge font-white font-12 bg-success">{{ticket.priority.name}}</span>  -->
+                <span class="pad-l-10"><img *ngIf="updating_priority" src="../../assets/icon/loading.gif" width="20" height="20"></span>
             </div>
             <!-- Assignees -->
             <div *ngIf="ticket.assignees.length" class="row form-group">

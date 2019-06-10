@@ -42,7 +42,9 @@ export class MemberService {
     save(member: any) {
         return this.http.post(this.config.apiEndPoint()+'/api/v1/projects/members', member, this.jt());
     }
-
+    unAuthSave(member: any, token:any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/unauth/projects/members', member, this.AuthToken(token));
+    }
     update(ticket: Ticket) {
         return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets/ticket.id', ticket);
     }
@@ -58,6 +60,19 @@ export class MemberService {
     private jt() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer '+this.Bearer,
+            'Content-Type':  'application/json',
+            'Accept':'application/json',
+            'Access-Control-Allow-Origin':'*',
+            'Allow_Headers':' Allow, Access-Control-Allow-Origin, Content-type, Accept',
+            'Allow':'GET,POST,PUT,DELETE,OPTION'
+          })
+        let options = { headers: headers };
+        return options;
+    }
+
+    private AuthToken(token:any) {
+        let headers = new HttpHeaders({
+            'AuthToken': token,
             'Content-Type':  'application/json',
             'Accept':'application/json',
             'Access-Control-Allow-Origin':'*',

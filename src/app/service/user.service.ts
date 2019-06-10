@@ -77,11 +77,16 @@ export class UserService {
     save(user: any) {
         return this.http.post(this.config.apiEndPoint()+'/api/v1/users', user, this.jt());
     }
+    unAuthSave(user:any, token:any = null){
 
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/account/users', user, this.AuthToken(token));
+    }
     saveinfo(user_details: any) {
         return this.http.post(this.config.apiEndPoint()+'/api/v1/users/details', user_details, this.jt());
     }
-
+    unAuthSaveinfo(user_details: any, token:any = null) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/account/users/details', user_details, this.AuthToken(token));
+    }
     update(user: any, id:any = null) {
         let data = JSON.stringify(user);
         return this.http.put(this.config.apiEndPoint()+'/api/v1/users/details/'+id, data, this.jt());
@@ -113,6 +118,19 @@ export class UserService {
     private jt() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer '+this.Bearer,
+            'Content-Type':  'application/json',
+            'Accept':'application/json',
+            'Access-Control-Allow-Origin':'*',
+            'Allow_Headers':' Allow, Access-Control-Allow-Origin, Content-type, Accept',
+            'Allow':'GET,POST,PUT,DELETE,OPTION'
+          })
+        let options = { headers: headers };
+        return options;
+    }
+
+    private AuthToken(token:any) {
+        let headers = new HttpHeaders({
+            'AuthToken': token,
             'Content-Type':  'application/json',
             'Accept':'application/json',
             'Access-Control-Allow-Origin':'*',

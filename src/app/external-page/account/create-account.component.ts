@@ -14,7 +14,7 @@ import { MustMatch } from '../../component/validator/must-match.validator';
 import { PasswordValidator } from '../../component/validator/password-strong.validator';
 import {ErrorStateMatcher} from '@angular/material';
 import { Observable, Subscription  } from 'rxjs';
-
+import { first } from 'rxjs/operators';
 
 interface createdAccount {
   id: number,
@@ -55,6 +55,7 @@ export class CreateAccountComponent implements OnInit {
   account_token:string;
   project_id: number;
   users : User[];
+  client:any;
   auth:User;
   auth_client:any;
   auth_client_info:any;
@@ -70,7 +71,9 @@ export class CreateAccountComponent implements OnInit {
   errorMatcher = new CrossFieldErrorMatcher();
   memberFormShow:boolean;
   showMemberSearchForm:boolean;
+  loading_login:boolean = false;
   memberForm: FormGroup;
+  loginForm:FormGroup;
   memberToAdd:any =  {};
   validToken:boolean;
   account_activated:boolean = false;
@@ -82,7 +85,7 @@ export class CreateAccountComponent implements OnInit {
   dataSource = new MatTableDataSource<User>(ELEMENT_DATA);
   default_avatar = '../../assets/default-profile.png';
   loading = '../../../assets/icon/loading.gif';
-
+  avatar:any;
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -100,6 +103,10 @@ export class CreateAccountComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loginForm = this.formBuilder.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    });
     this.route.params.subscribe(params => {
         if (params['account_token'] !== undefined) {
             this.account_token = params['account_token'];
@@ -112,11 +119,11 @@ export class CreateAccountComponent implements OnInit {
                 console.log(added_at,'added_at');
                 let remaining = added_at+86400;
                 let currentDate = Math.floor(Date.now() / 1000);
-                console.log(remaining,'remaining');
-                
+
                 if(!res.expired){
                   this.validToken = true;
                   this.token_info = res;
+                  this.client = res.client;
                   // this.tokenError.message = 'Token has expired!';
                 } else {
                   this.validToken = false;
@@ -135,7 +142,6 @@ export class CreateAccountComponent implements OnInit {
           'username': new FormControl('', [Validators.required]),
           'password': new FormControl('', [Validators.required]),
           'confirmPassword': new FormControl('', [Validators.required]),
-          'role_id': new FormControl('', [Validators.required]),
           'first_name': new FormControl('', [Validators.required]),
           'last_name': new FormControl('', [Validators.required]),
         }, {
@@ -158,279 +164,61 @@ export class CreateAccountComponent implements OnInit {
     return !valid ? { strong: true } : null;
   }
 
+  get f() { return this.loginForm.controls; }
+  onSubmit() {
+    this.loading_login = true;
 
-//   confirmRemoveFromProject(member_info:any): void {
-//     const dialogRef = this.dialog.open(ConfirmDeleteDialog, {
-//       width: '280px',
-//       data: {member_info: member_info}
-//     });
+    // stop here if form is invalid
+    if (this.loginForm.invalid) {
+        return;
+    }
 
-//     dialogRef.componentInstance.confirmMessage = "Are you sure you want to remove "+member_info.user.user_details.first_name+" "+ member_info.user.user_details.last_name +"'s account from this project.";
-
-//     dialogRef.afterClosed().subscribe(result => {
-//       console.log(result,'closed dialog');
-//       if(result){
-//         // this.removeUser(user);
-//         this.removeUserFromProject(member_info);
-//       }
-//     });
-//   }
-//   ngOnInit() {
-//     this.auth = this.authService.getAuthUser();
-//     this.setClient();
-//     this.memberFormShow = false;
-//     this.showMemberSearchForm = false;
-
-//     this.memberToAdd.title = '';
-//     this.memberToAdd.description = '';
-//     this.memberToAdd.assigned_to = null;
-//     this.memberToAdd.status_id = null;
-//     this.length = 0;
-
-//     this.memberForm = this.formBuilder.group({
-//       'username': new FormControl('', [Validators.required]),
-//       'email': new FormControl('', [Validators.required,Validators.email]),
-//       'password': new FormControl('', [Validators.required]),
-//       'confirmPassword': new FormControl('', [Validators.required]),
-//       'role_id': new FormControl('', [Validators.required]),
-//       'first_name': new FormControl('', [Validators.required]),
-//       'last_name': new FormControl('', [Validators.required]),
-//     }, {
-//         validator: [this.passwordMatchValidator, this.passwordStrenghtValidator],
-//     });
-
-//     this.route.params.subscribe(params => {
-//       if (params['project_name'] !== undefined) {
-//           this.project_name = params['project_name'];
-//           this.projectService.getProject(params['project_name']).subscribe( res=>{
-//             if(res) this.project_id = res.id;
-//           });
-//           this.getMember();
-//       }
-//     });
-//     this.dataSource.paginator = this.paginator;
-//   }
-
-//   setClient():void{
-//     this.subscription = this.userService.currentClientInfo.subscribe(client => {this.auth_client_info =  JSON.parse(client);  });
-//   }
-//   // convenience getter for easy access to form fields
-//   get f() { return this.memberForm.controls; }
-
-
-//   setPageSizeOptions(setPageSizeOptionsInput: string) {
-//     console.log(setPageSizeOptionsInput);
-//     this.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
-//   }
-
-//   //Pagination Section
-//   onPageChange(event) {
-//     // alert(JSON.stringify("Current page index: " + event.pageIndex));
-//     //   this.currentPage = event.pageIndex+1;
-//     //    console.log(event,'event');
-//     //    this.per_page = event.pageSize;
-//     //    // this.config.currentPage = number;
-//     //    // this.getDoctors(number);
-//     //  this.filter = this.filter !== null ? this.filter : "";
-
-//     //  this.userService.getEmployees(event.pageIndex+1, event.pageSize, this.filter).subscribe( 
-//     //    (res)  =>  {
-//     //      console.log(res,'new employee list');
-//     //      this.length = res.total;
-//     //      this.employees = res.data;
-//     //      this.dataSource = new MatTableDataSource(res.data);
-
-//     //      this.loading =  false;
-//     //    },
-//     //    (err)  =>  {
-//     //      console.log("Error:"+err.status);
-//     //    }
-//     //    );
-//   }
-
-//   passwordMatchValidator(form: FormGroup) {
-//       const condition = form.get('password').value !== form.get('confirmPassword').value;
-//       return condition ? { passwordsDoNotMatch: true} : null;
-//   }
-
-//   passwordStrenghtValidator(form: FormGroup){
-//     let hasNumber = /\d/.test(form.get('password').value);
-//     let hasUpper = /[A-Z]/.test(form.get('password').value);
-//     let hasLower = /[a-z]/.test(form.get('password').value);
-
-//     const valid = hasNumber && hasUpper && hasLower;
-//     return !valid ? { strong: true } : null;
-//   }
-
-//   getMember(){
-//     this.projectService.getAllMember(this.project_name).subscribe( res => {
-//       this.dataSource = new MatTableDataSource(res.data);
-//       this.users = res.data;
-//       this.length = res.total;
-//     });
-//   }
-
-//   toggleMemberForm(){
-//     if(! this.memberFormShow ) this.memberFormShow = true;
-//     else  this.memberFormShow = false;
-
-//     return false;
-//   }
-
-//   toggleMemberSearchForm(){
-//     if(! this.showMemberSearchForm ) this.showMemberSearchForm = true;
-//     else  this.showMemberSearchForm = false;
-
-//     return false;
-//   }
-
-//   memberSearch(term:string){
-//     this.memberService.searchMember(term).subscribe(res=>{
-//       if(res.length){
-//         this.memberSearchResult = res;
-//       } else {
-//         this.memberSearchResult = [];
-//       }
-//     });
-//     return false;
-//   }
-
-//   addMemberToProject(member:any){
-//     let memberObj = {
-//       user_id:member.user.id,
-//       project_id: this.project_id,
-//     };
-//     this.memberService.save(memberObj).subscribe( res => {
-//       if(res){
-//         this.snackBar.open('User '+res+' Member has been added to the project', 'X', {
-//                 duration: 5000,
-//                 direction: "ltr",
-//                 verticalPosition:"top",
-//                 horizontalPosition: "right",
-//                 panelClass: "success-snack"
-//             }
-//         );
-//       }
-//     });
-//     return false;
-//   }
-
-//   addNewAccountToProject(){
-//     if(this.memberForm.valid){
-//       let username = this.memberForm.value.username;
-//       let name = username;
-//       let email = this.memberForm.value.email;
-//       let password = this.memberForm.value.password;
-//       let role_id = this.memberForm.value.role_id;
-//       let account = {
-//           username:username,
-//           email:email,
-//           name:name,
-//           password:password,
-//           role_id: role_id
-//         };
-//       // Save Account information
-//       this.userService.save(account).subscribe( (res) => {
-//         let save_account:any = res;
-//         if(save_account.id){
-//           let account_info = {
-//             first_name:this.memberForm.value.first_name,
-//             last_name:this.memberForm.value.last_name,
-//             user_id:save_account.id,
-//           };
-//           // Save additional information
-//           this.userService.saveinfo(account_info).subscribe( (res) => {
-//             if(res){
-//               let memberObj = {
-//                 user_id:save_account.id,
-//                 project_id: this.project_id,
-//               };
-//               // Save Membership information
-//               this.memberService.save(memberObj).subscribe( res => {
-//                 this.getMember();
-//                 this.memberForm.reset();
-//                 this.toggleMemberForm();
-//               });
-//             }
-//           });
-
-//           this.snackBar.open('New Member has been added', 'X', {
-//                   duration: 5000,
-//                   direction: "ltr",
-//                   verticalPosition:"top",
-//                   horizontalPosition: "right",
-//                   panelClass: "success-snack"
-//               }
-//           );
-
-//         } else {
-//           this.snackBar.open('An error occured during  account creation.', 'X', {
-//                   duration: 5000,
-//                   direction: "ltr",
-//                   verticalPosition:"top",
-//                   horizontalPosition: "right",
-//                   panelClass: "fail-snack"
-//               }
-//           );
-//         }
-//       });
-//     } else {
-//        this.snackBar.open('An error occured during  account creation.', 'X', {
-//                   duration: 5000,
-//                   direction: "ltr",
-//                   verticalPosition:"top",
-//                   horizontalPosition: "right",
-//                   panelClass: "fail-snack"
-//               }
-//           );
-//     }
-//     return false;
-//   }
-
-//   removeUser(user_id:any){
-//     this.memberService.delete(user_id).subscribe( (res:any) =>{
-//       if(res == null){
-//         this.dataSource.data = this.dataSource.data.filter( (user:any) => user.user_id !== user_id);
-//         this.snackBar.open('User has been removed!', 'X', {
-//                 duration: 5000,
-//                 direction: "ltr",
-//                 verticalPosition:"top",
-//                 horizontalPosition: "right",
-//                 panelClass: "success-snack"
-//             }
-//         );
-//       }
-//     });
-//   }
-
-//   removeUserFromProject(member:any){
-//     this.memberService.removeUserFromProject(member.id).subscribe( (res:any) =>{
-//       if(res == null){
-//         this.dataSource.data = this.dataSource.data.filter( (user:any) => user.user_id !== member.user_id);
-//         this.snackBar.open('User has been removed!', 'X', {
-//                 duration: 5000,
-//                 direction: "ltr",
-//                 verticalPosition:"top",
-//                 horizontalPosition: "right",
-//                 panelClass: "success-snack"
-//             }
-//         );
-//       }
-//     });
-//   }
+    this.loading_login = true;
+    this.authService.loginAuth(this.f.username.value, this.f.password.value)
+        .pipe(first())
+        .subscribe(
+            data => {
+                let user_id:number;
+                localStorage.setItem('currentUser',JSON.stringify(data));
+                this.authService.getAuthenticatedUser().subscribe( res => {
+                    localStorage.setItem('authUser',JSON.stringify(res));
+                    user_id = JSON.parse(localStorage.getItem('authUser')).id;
+                    this.authService.getAuthenticatedUserProfile(user_id).subscribe( response => {
+                        this.avatar = response;
+                        if(this.avatar.avatar !== null){
+                            localStorage.setItem('avatar',this.avatar.avatar.data);
+                        }
+                        let auth_client= '';
+                        this.loading_login = false;
+                        if (!this.auth_client) {
+                            auth_client = localStorage.getItem('client');
+                        }
+                        console.log(localStorage.getItem('client'),'auth_client');
+                        if(localStorage.getItem('client') && data.access_token && !this.loading_login){
+                            // this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);
+                            window.location.href=localStorage.getItem('client')+'/admin';
+                        }
+                    });
+                });
+            },
+            error => {
+                // this.alertService.error(error);
+                this.loading_login = false;
+            });
+    return false;
+  }
   activateAccount(){
     if(this.memberForm.valid){
       let username = this.memberForm.value.username;
       let name = username;
       let email = this.token_info.email;
       let password = this.memberForm.value.password;
-      let role_id = this.memberForm.value.role_id;
       let account = {
         username: username,
         email: email,
         name: name,
         password: password,
-        role_id: role_id
+        role_id: this.token_info.role_id
       };
 
       this.userService.verifyUniqueUsername(username).subscribe( (res:any) => {
@@ -438,7 +226,7 @@ export class CreateAccountComponent implements OnInit {
 
           this.uniqueUsername = {unique : true};
           // Save Account information
-          this.userService.save(account).subscribe((res) => {
+          this.userService.unAuthSave(account,this.token_info.token).subscribe((res) => {
             let save_account: any = res;
             if (save_account.id) {
                   let account_info = {
@@ -449,7 +237,7 @@ export class CreateAccountComponent implements OnInit {
                   let processed_membeship = 0;
                   let account_activated = false;
                   // Save additional information
-                  this.userService.saveinfo(account_info).subscribe((res) => {
+                  this.userService.unAuthSaveinfo(account_info,this.token_info.token).subscribe((res) => {
                     if (res) {
                       let to_process_membeship = this.token_info.membership.length;
                       this.token_info.membership.forEach( (mem:any) => {
@@ -459,7 +247,7 @@ export class CreateAccountComponent implements OnInit {
                           client_id:this.token_info.client_id
                         };
                         // Save Membership information
-                        this.memberService.save(memberObj).subscribe( (res:any) => {
+                        this.memberService.unAuthSave(memberObj,this.token_info.token).subscribe( (res:any) => {
                           if(res.id){
                             processed_membeship++;
                             if(processed_membeship == to_process_membeship){
@@ -475,6 +263,11 @@ export class CreateAccountComponent implements OnInit {
                                   horizontalPosition: "right",
                                   panelClass: "success-snack"
                                 });
+                                // Client
+                                localStorage.setItem('client_info',JSON.stringify(this.token_info.client));
+                                localStorage.setItem('client',this.token_info.client.slug);
+                                this.subscription = this.userService.currentClientInfo.subscribe(client => {this.auth_client_info =  JSON.parse(client);  });
+
                                 this.account_activated = true;
                               });
                             }
@@ -494,51 +287,6 @@ export class CreateAccountComponent implements OnInit {
         }
 
       });
-      // Save Account information
-      // this.userService.save(account).subscribe((res) => {
-      //   let save_account: any = res;
-      //   if (save_account.id) {
-      //     let account_info = {
-      //       first_name: this.memberForm.value.first_name,
-      //       last_name: this.memberForm.value.last_name,
-      //       user_id: save_account.id,
-      //     };
-      //     // Save additional information
-      //     this.userService.saveinfo(account_info).subscribe((res) => {
-      //       if (res) {
-      //         let memberObj = {
-      //           user_id: save_account.id,
-      //           project_id: this.project_id,
-      //         };
-      //         // Save Membership information
-      //         this.memberService.save(memberObj).subscribe(res => {
-      //           // this.getMember();
-      //           this.memberForm.reset();
-      //           // this.toggleMemberForm();
-      //         });
-      //       }
-      //     });
-
-      //     this.snackBar.open('New Member has been added', 'X', {
-      //       duration: 5000,
-      //       direction: "ltr",
-      //       verticalPosition: "top",
-      //       horizontalPosition: "right",
-      //       panelClass: "success-snack"
-      //     }
-      //     );
-
-      //   } else {
-      //     this.snackBar.open('An error occured during  account creation.', 'X', {
-      //       duration: 5000,
-      //       direction: "ltr",
-      //       verticalPosition: "top",
-      //       horizontalPosition: "right",
-      //       panelClass: "fail-snack"
-      //     }
-      //     );
-      //   }
-      // });
     } else {
       this.snackBar.open('An error occured during  account creation.', 'X', {
         duration: 5000,

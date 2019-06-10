@@ -140,6 +140,7 @@ export class MemberComponent implements OnInit {
     this.memberToAdd.status_id = null;
     // invites
     this.memberToInvite.email = null;
+    this.memberToInvite.role = null;
     this.memberToInvite.projects = [];
     this.length = 0;
     this.memberForm = this.formBuilder.group({
@@ -163,7 +164,8 @@ export class MemberComponent implements OnInit {
               this.project_id = pid;
               this.memberInviteForm = this.formBuilder.group({
                 'email': new FormControl('', [Validators.required,Validators.email]),
-                'projects': new FormControl([pid], [Validators.required]),
+                'role': new FormControl('', [Validators.required]),
+                'projects': new FormControl([pid], []),
               });
               this.project = res;
               projectsInvitationList.push(pid);
@@ -311,11 +313,17 @@ export class MemberComponent implements OnInit {
     return false;
   }
   inviteAccountToProjects(){
-    if(this.memberInviteForm.valid){
+    console.log(projectsInvitationList,'projectsInvitationList');
+    let projects_val = projectsInvitationList;
+    if(this.memberInviteForm.value.projects){
       let distinct_project_id = projectsInvitationList.filter( this.onlyUniqueProjectID );
+      projects_val = distinct_project_id.concat(this.memberInviteForm.value.projects).filter(this.onlyUniqueProjectID);
+    }
+    if(this.memberInviteForm.valid){
       let inviteObj = {
         email:this.memberInviteForm.value.email,
-        projects: distinct_project_id.concat(this.memberInviteForm.value.projects).filter(this.onlyUniqueProjectID)
+        role_id:this.memberInviteForm.value.role,
+        projects: projects_val
       };
 
       this.clientService.createActivationToken(inviteObj).subscribe( (res:any) => {

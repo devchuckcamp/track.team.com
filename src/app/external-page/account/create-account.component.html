@@ -2,11 +2,11 @@
     <div *ngIf="loadedToken && token_info" class="container">
         <div class="col-lg-12">
             <div class="row">
-                <div class="col-lg-12 text-center pad-15">
+                <div *ngIf="!account_activated" class="col-lg-12 text-center pad-15">
                     <h2>{{ token_info.client.name }}</h2>
                 </div>
-                <div class="text-center col-lg-12 pad-15">
-                    <h2 *ngIf="!account_activated">Create your Account</h2>
+                <div *ngIf="!account_activated" class="text-center col-lg-12 pad-15">
+                    <h2 *ngIf="!account_activated">Create your Account as {{token_info.user_role.name | titlecase}}</h2>
                     <h2 *ngIf="account_activated">Login</h2>
                 </div>
             </div>
@@ -48,26 +48,6 @@
                         </div>
 
                         <div class="col-lg-6">
-                            <!-- User Role -->
-                            <div class="form-group full-w text-left">
-                                <!-- <mat-form-field class="full-w">
-                                                <input matInput formControlName="username" placeholder="Username" [(ngModel)]="memberToAdd.username" required>
-                                            </mat-form-field> -->
-                                <mat-form-field [formGroup]="memberForm">
-                                    <mat-label>Role </mat-label>
-                                    <select matNativeControl formControlName="role_id" [(ngModel)]="memberToAdd.role_id"
-                                        name="role_id" required>
-                                        <option value="2" selected>Project Owner</option>
-                                        <option value="3" selected>Project Manager</option>
-                                        <option value="4" selected>Developer</option>
-                                        <option value="5" selected>Tester</option>
-                                        <!-- <option *ngFor="let member of members" [value]="member.user.id">
-                                                    {{member.user_info.first_name }} {{ member.user_info.last_name }} ({{member.user.username}})
-                                                </option> -->
-                                    </select>
-                                </mat-form-field>
-                            </div>
-
                             <!-- First Name -->
                             <div class="form-group full-w">
                                 <mat-form-field class="full-w" [formGroup]="memberForm">
@@ -95,7 +75,36 @@
                 </div>
             </div>
              <!-- Activated Account Template -->
-             <div *ngIf="account_activated" class="row"></div>
+             <div *ngIf="account_activated" class="row">
+                <div class="col-lg-4 col-md-8  mar-t-20 pad-t-20 mar-0-auto">
+                    <div *ngIf="client" class="row container mar-0-auto pad-25 pad-y-30 font-white border-rad-5 mar-t-30" style="background-color:black;">
+                        <h2 *ngIf="client.name">{{client.name}} Login</h2>
+                        <form [formGroup]="loginForm" class="full-w" (ngSubmit)="onSubmit()">
+                            <div class="form-group">
+                                <i class="fa fa-user mar-r-5"></i>
+                                <label for="username">Username</label>
+                                <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
+                                <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+                                    <div *ngIf="f.username.errors.required">Username is required</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <i class="fa fa-lock mar-r-5"></i>
+                                <label for="password">Password</label>
+                                <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+                                <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                                    <div *ngIf="f.password.errors.required">Password is required</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button mat-raised-button mat-primary class="btn btn-primary mat-raised-button mat-primary">Login</button>
+                                <img *ngIf="loading_login" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                                <!-- <a routerLink="/register" class="btn btn-link">Register</a> -->
+                            </div>
+                        </form>
+                    </div>
+                </div>
+             </div>
         </div>
     </div>
 

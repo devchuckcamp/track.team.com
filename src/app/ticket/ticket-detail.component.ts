@@ -53,6 +53,8 @@ export class TicketDetailComponent implements OnInit {
     loggedin_user:string;
     replyView:boolean;
     loading:    boolean;
+    updating_status:boolean = false;
+    updating_priority:boolean = false;
     replayText:string;
     animal: string;
     name: string;
@@ -145,7 +147,6 @@ export class TicketDetailComponent implements OnInit {
         // Get all member
         this.projectService.getAllMemberFullList(this.project_name).subscribe( (res:any) => {
           if(res){
-            console.log(res,'members');
             this.members = res;
             for(var i = 0; i < this.members.length; i++){
               memberListArray.push(this.members[i].user);
@@ -157,6 +158,12 @@ export class TicketDetailComponent implements OnInit {
           }
         });
 
+    }
+
+    isAssignee(){
+      let assignees = this.ticket.assignees;
+      let assigned = assignees.filter(user => user.user_id == this.auth.id);
+      return assigned.length;
     }
     searchMemberToAssign(keyword:string){
       this.projectService.getAllMemberFullList(this.project_name,keyword).subscribe( (res:any) => {
@@ -365,11 +372,12 @@ export class TicketDetailComponent implements OnInit {
       let data = {
         status_id:status
       }
-
+      this.updating_status = true;
       this.ticketService.update(this.ticket,'status').subscribe( res => {
 
         if(res && res.status_id == status){
-          this.snackBar.open('Data has been updated', 'X', {
+          this.updating_status = false;
+          this.snackBar.open('Status has been updated', 'X', {
                   duration: 5000,
                   direction: "ltr",
                   verticalPosition:"top",
@@ -386,9 +394,11 @@ export class TicketDetailComponent implements OnInit {
 
     updateTicketPriority(priority_id:any){
       let priorityObj = this.settings.find( (res) =>  res.id == priority_id);
+      this.updating_priority = true;
       this.ticketService.update(this.ticket, 'priority', priorityObj).subscribe( res => {
-        if(res && res.priority_id == status){
+        if(res && res.priority_id == priority_id){
           this.ticket.priority = res;
+          this.updating_priority = false;
           this.snackBar.open('Priority has been updated', 'X', {
                   duration: 5000,
                   direction: "ltr",

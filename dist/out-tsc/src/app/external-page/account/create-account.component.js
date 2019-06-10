@@ -41,7 +41,7 @@ var CreateAccountComponent = /** @class */ (function () {
         // Form
         this.errorMatcher = new CrossFieldErrorMatcher();
         this.memberToAdd = {};
-        this.account_activated = true;
+        this.account_activated = false;
         this.tokenError = {};
         this.uniqueUsername = {};
         this.dataSource = new MatTableDataSource(ELEMENT_DATA);
