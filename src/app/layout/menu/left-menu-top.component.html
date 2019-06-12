@@ -1,36 +1,37 @@
 <div class="col-lg-2 col-md-1 left-nav-bar pad-0">
-        <div class="col-md-12 pad-0">
-            <div class="">
-    
+    <div class="col-md-12 pad-0">
+        <div class="row text-center">
+            <div class="col-lg-12 pad-10">
+                <a href="#" class="border-rad-5">
+                    <img *ngIf="!user_avatar" class="rounded-circle border-1-white" [src]="default_avatar" height="50" width="50"
+                        alt="profile">
+                    <img *ngIf="user_avatar" class="rounded-circle border-1-white" [src]="user_avatar" height="50" width="50"
+                        alt="profile">
+                </a>
             </div>
-            <div  *ngIf="project || auth_profile" class="parent-left-menu">
-                <ul class="parent-left-menu-ul pad-0">
-                    <li class="parent-left-menu-item"
-                        [ngClass]="{'active': is_dashboard == true || admin_project_sub == active_menu || admin_project_sub == 'profile' || (project_name && project_name == active_menu )}"
-                    >
-                        <a href="#" [routerLink]="['/',auth_client,'admin']"><i
-                                class="fa fa-home mar-r-5"></i>Dashboard</a>
-                    </li>
-                    <li class="parent-left-menu-item"
-                        [ngClass]="{'active':admin_project_sub == 'projects' || admin_sub_3 == 'projects' || admin_project_sub == 'add'}"
-                    >
-                        <a href="#" [routerLink]="['projects']"><i
-                                class="fa fa-ticket mar-r-5"></i>Projects</a>
-                    </li>
-                    
-                    <li class="parent-left-menu-item"
-                        [ngClass]="{'active': admin_project_sub == 'settings' || admin_sub_3 == 'settings'}"
-                    >
-                        <a href="#" [routerLink]="['settings']"><i
-                                class="fa fa-gears mar-r-5"></i>Setting</a>
-                    </li>
-                    <li class="parent-left-menu-item"
-                        [ngClass]="{'active': admin_project_sub == 'activity' || admin_sub_3 == 'activity'}"
-                    >
-                        <a href="#" [routerLink]="['activity']"><i
-                                class="fa fa-file-text-o mar-r-5"></i>Activity Logs</a>
-                    </li>
-                </ul>
+            <div class="col-lg-12">
+                <label for="profile-name" class="font-white">{{ auth_user.user_details.first_name }} {{ auth_user.user_details.last_name }}</label>
             </div>
         </div>
+        <div *ngIf="project || auth_profile" class="parent-left-menu">
+            <ul class="parent-left-menu-ul pad-0">
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': is_dashboard == true || admin_project_sub == active_menu || admin_project_sub == 'profile' || (project_name && project_name == active_menu )}">
+                    <a href="#" [routerLink]="['/',auth_client,'admin']"><i class="fa fa-home mar-r-5"></i>Dashboard</a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active':admin_project_sub == 'projects' || admin_sub_3 == 'projects' || admin_project_sub == 'add'}">
+                    <a href="#" [routerLink]="['projects']"><i class="fa fa-ticket mar-r-5"></i>Projects</a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': admin_project_sub == 'settings' || admin_sub_3 == 'settings'}">
+                    <a href="#" [routerLink]="['settings']"><i class="fa fa-gears mar-r-5"></i>Setting</a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': admin_project_sub == 'activity' || admin_sub_3 == 'activity'}">
+                    <a href="#" [routerLink]="['activity']"><i class="fa fa-file-text-o mar-r-5"></i>Activity Logs</a>
+                </li>
+            </ul>
+        </div>
     </div>
+</div>

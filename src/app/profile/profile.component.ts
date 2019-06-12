@@ -96,10 +96,13 @@ export class ProfileComponent implements OnInit, AfterViewInit {
       };
       this.userService.updateUserDetail(info, this.auth_user.user_details.id).subscribe(res => {
         if (res) {
+          this.userService
           localStorage.removeItem('avatar');
-          localStorage.setItem('avatar',  this.userAvatar);
-
+          if(this.userAvatar){
+            localStorage.setItem('avatar',  this.userAvatar);
+          }
           this.auth_user.user_details = res;
+          this.updateUserDetail(this.auth_user);
           let avatar = {
             data: this.userAvatar,
           };
@@ -124,7 +127,11 @@ export class ProfileComponent implements OnInit, AfterViewInit {
     }
     return false;
   }
-
+  updateUserDetail(user:any){
+    this.userService.setUser(JSON.stringify(user));
+    localStorage.setItem('authUser',  JSON.stringify(user));
+    this.userService.currentLoggedInUser = user;
+  }
   updateAvatar(avtr:any){
     this.userService.setAvatar(avtr);
     this.user_avatar.data = avtr;

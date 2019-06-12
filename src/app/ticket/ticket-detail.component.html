@@ -23,6 +23,10 @@
                 </select>
                 <span class="pad-l-10"><img *ngIf="updating_status" src="../../assets/icon/loading.gif" width="20" height="20"></span>
             </div>
+            <div class="form-group" *ngIf="!isAssignee() || ticket.created_by == auth.username" >
+                <label class="mar-r-10" for="ticket-status">Status:</label>
+                <span class="pad-x-10 pad-y-5">{{ ticket.status.name | titlecase }}</span>
+            </div>
             <!-- Priority -->
             <div class="form-group" *ngIf="isAssignee() || ticket.created_by == auth.username" >
                 <label class="mar-r-10" for="ticket-status">Priority</label>
@@ -30,6 +34,10 @@
                     <option  *ngFor="let setting of settings" [value]="setting.id" [selected]="setting.id == ticket.priority.id">{{setting.name}}</option>
                 </select>
                 <span class="pad-l-10"><img *ngIf="updating_priority" src="../../assets/icon/loading.gif" width="20" height="20"></span>
+            </div>
+            <div class="form-group" *ngIf="!isAssignee() || ticket.created_by == auth.username" >
+                <label class="mar-r-10" for="ticket-status">Priority:</label>
+                <span [style.background-color]="ticket.priority.color" class="font-white pad-x-10 pad-y-5">{{ ticket.priority.name | titlecase }}</span>
             </div>
             <!-- Assignees -->
             <div *ngIf="ticket.assignees.length" class="row form-group">

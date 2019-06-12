@@ -28,6 +28,7 @@ export class LayoutComponent implements OnInit {
   admin_sub_1: string;
   admin_sub_2: string;
   admin_project_sub: string;
+  auth_user:any;
   profile:any;
   breadcrumb:any;
   projectsList:any[] =[];
@@ -48,7 +49,6 @@ export class LayoutComponent implements OnInit {
       this.admin_project_sub = "";
       this.router.events.subscribe(path =>{
       this.profile = this.authService.getAuthUser();
-
         if(path instanceof NavigationEnd ){
           //Get Url
           let currentURL = path.url;
@@ -81,7 +81,7 @@ export class LayoutComponent implements OnInit {
         }
         
       });
-
+      this.setUser();
     }
   ngOnInit() {
     const id = this.activatedRoute.snapshot.params['filter'];
@@ -101,7 +101,9 @@ export class LayoutComponent implements OnInit {
           this.projectsList = res;
         });
   }
-
+  setUser():void {
+    this.subscription = this.userService.currentLoggedInUser.subscribe( (res:any) => { this.auth_user = res; });
+}
   ngAfterViewInit() {
   }
 

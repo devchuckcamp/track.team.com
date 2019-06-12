@@ -18,6 +18,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   activeURL:string;
   parentUrl:string;
   user_avatar:string;
+  auth_user:any;
   auth_client:string;
   auth_client_info:any;
   subscription: Subscription;
@@ -38,9 +39,15 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     if(!this.user_avatar){
       this.user_avatar = localStorage.getItem('avatar');
     }
+    if(!this.auth_user){
+      this.userService.setUser(localStorage.getItem('authUser'));
+      this.auth_user =JSON.parse(localStorage.getItem('authUser'));
+    }
+    
     this.setClient();
     this.setAvatar();
-
+    this.setUser();
+    
     this.router.events.subscribe(path =>{
 
       if(path instanceof NavigationEnd ){
@@ -86,8 +93,12 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   ngOnDestroy(){
     this.userService.clearAvatar();
     this.userService.clearClient();
+    this.userService.clearUser();
   }
-
+  setUser():void {
+    this.subscription = this.userService.currentLoggedInUser.subscribe( (res:any) => { this.auth_user = JSON.parse(res); });
+    console.log(this.auth_user);
+  }
   setClientInfo():void {
     this.subscription = this.userService.currentClientInfo.subscribe(client_info => { this.auth_client_info = client_info;  });
   }
@@ -98,6 +109,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   setAvatar():void {
     this.subscription = this.userService.currentAvatar.subscribe(avatar => { this.user_avatar = avatar;  });
   }
+
   logout(){
     localStorage.clear();
     this.authService.Bearer = '';

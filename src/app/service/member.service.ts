@@ -35,8 +35,10 @@ export class MemberService {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets/'+id, this.jt()).pipe(map( (res:any) => res));
     }
 
-    searchMember(term:string){
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/users/?search=1&term='+term, this.jt()).pipe(map( (res:any) => res));
+    searchMember(term:string, client_id:number=null, project_id:number = null){
+        let client = client_id != null ? '&client_id='+client_id : '';
+        let project = project_id != null ?  '&project_id='+project_id :'';
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/users/?search=1&keyword='+term+client+project, this.jt()).pipe(map( (res:any) => res));
     }
 
     save(member: any) {

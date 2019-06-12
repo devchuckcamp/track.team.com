@@ -283,9 +283,11 @@ export class MemberComponent implements OnInit {
     return false;
   }
   memberSearch(term:string){
-    this.memberService.searchMember(term).subscribe(res=>{
+    let client_id = this.project.client_id;
+    this.memberService.searchMember(term,client_id,this.project.id).subscribe(res=>{
       if(res.length){
         this.memberSearchResult = res;
+        this.memberSearchResult = this.memberSearchResult.filter( mem => mem.project.name !== this.project.name );
       } else {
         this.memberSearchResult = [];
       }
@@ -320,6 +322,7 @@ export class MemberComponent implements OnInit {
       projects_val = distinct_project_id.concat(this.memberInviteForm.value.projects).filter(this.onlyUniqueProjectID);
     }
     if(this.memberInviteForm.valid){
+      this.submittingInvitation = true;
       let inviteObj = {
         email:this.memberInviteForm.value.email,
         role_id:this.memberInviteForm.value.role,
@@ -329,6 +332,7 @@ export class MemberComponent implements OnInit {
       this.clientService.createActivationToken(inviteObj).subscribe( (res:any) => {
         if(res.token){
           console.log(res);
+          this.submittingInvitation = false;
           this.snackBar.open('Invite has been sent.', 'X', {
                   duration: 5000,
                   direction: "ltr",

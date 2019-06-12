@@ -3,8 +3,9 @@ import { Component, OnInit, Input, AfterViewInit  } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd  } from '@angular/router';
 import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase} from '@angular/common/http';
 import { ProjectService } from '../../service/project.service';
+import { UserService } from '../../service/user.service';
 import { Project } from '../../model/project';
-
+import { Observable, Subscription  } from 'rxjs';
 
 @Component({
     selector: 'app-left-menu-top',
@@ -17,6 +18,7 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
     @Input('auth_profile') auth_profile:any;
     @Input('auth_client') auth_client:any;
     active_menu:string;
+    auth_user:any;
     project:Project;
     profile:any;
     activeURL: string;
@@ -25,11 +27,15 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
     admin_sub_3:    string;
     onload_slug_list: any;
     is_dashboard:boolean;
+    user_avatar:string;
+    subscription:Subscription;
+    default_avatar = '../../assets/default-profile.png';
     constructor(
             private http: HttpClient,
             public router: Router,
             private route: ActivatedRoute,
-            private projectService: ProjectService
+            private projectService: ProjectService,
+            private userService:UserService
     ) { 
         
         this.admin_sub_3 = '';
@@ -92,14 +98,20 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-
+        this.setUser();
+        this.setAvatar();
         this.router.events.subscribe(path =>{
             if(path instanceof NavigationEnd ){
                 this.createUrlVariables(path);
             }
         });
     }
-
+    setUser():void {
+        this.subscription = this.userService.currentLoggedInUser.subscribe( (res:any) => { this.auth_user = JSON.parse(res); });
+    }
+    setAvatar():void {
+        this.subscription = this.userService.currentAvatar.subscribe(avatar => { this.user_avatar = avatar;  });
+      }
     ngAfterViewInit(){
         // this.router.events.subscribe(path =>{
         //     if(path instanceof NavigationEnd ){

@@ -11,12 +11,18 @@ import { GlobalRoutesService } from '../config/config';
 export class UserService {
     apiEndpoint:string;
     Bearer:any;
+    // Logged in user avatar
     Avatar =  new BehaviorSubject(localStorage.getItem("avatar"));
     currentAvatar = this.Avatar.asObservable();
+    // Logged in user info
+    loggedInUser =  new BehaviorSubject(<any>{});
+    currentLoggedInUser = this.loggedInUser.asObservable();
+    // Client Info
     client_slug =  new BehaviorSubject(localStorage.getItem("client"));
     currentClient = this.client_slug.asObservable();
     client_info =  new BehaviorSubject(localStorage.getItem("client_info"));
     currentClientInfo = this.client_info.asObservable();
+    
     constructor(
         private config: GlobalRoutesService,
         private http: HttpClient,
@@ -25,9 +31,12 @@ export class UserService {
             if(localStorage.getItem("currentUser")){
                 this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
             }
-            if(localStorage.getItem("client_info")){
-                this.client_info = JSON.parse(localStorage.getItem("client_info"));
-            }
+            // if(localStorage.getItem("client_info")){
+            //     this.client_info = JSON.parse(localStorage.getItem("client_info"));
+            // }
+            // if(localStorage.getItem("authUser")){
+            //     this.currentLoggedInUser = JSON.parse(localStorage.getItem("authUser"));
+            // }
     }
     setClientInfo(client:any){
         this.client_info.next(client);
@@ -51,6 +60,15 @@ export class UserService {
     clearAvatar(){
         this.Avatar.complete();
     }
+
+    setUser(user:any){
+        this.loggedInUser.next(user);
+    }
+
+    clearUser(){
+        this.loggedInUser.complete();
+    }
+
     validateAccountToken(token:string){
         return this.http.get(this.config.apiEndPoint()+'/api/v1/validate/account/token?token='+token);
     }

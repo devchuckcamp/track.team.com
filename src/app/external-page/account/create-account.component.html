@@ -6,7 +6,7 @@
                     <h2>{{ token_info.client.name }}</h2>
                 </div>
                 <div *ngIf="!account_activated" class="text-center col-lg-12 pad-15">
-                    <h2 *ngIf="!account_activated">Create your Account as {{token_info.user_role.name | titlecase}}</h2>
+                    <h2 *ngIf="!account_activated">Create your Account as {{ token_info.user_role.name.replace('-',' ') | titlecase}}</h2>
                     <h2 *ngIf="account_activated">Login</h2>
                 </div>
             </div>
@@ -65,9 +65,26 @@
                             </div>
                         </div>
                         <div class="col-lg-12">
+                            <div class="row pad-x-10">
+                                <label for="project-invitation-note">You were invited for the following projects:</label>
+                            </div>
+                            <div class="row pad-x-10">
+                                <label for=""><strong>Note:</strong>Project you were mainly invited can't be remove.</label>
+                            </div>
+                            <div class="row">
+                                <div *ngFor="let membership of token_info.membership;let i = index" [@removeAnimation] class="project-invited-to col-lg-3 pad-20 font-white border-rad-5 mar-10" [class.bg-success]="i==0" [class.bg-info]="i>=1">
+                                    <a href="#" (click)="removeInvite(membership.project_id)" *ngIf="i>=1" class="font-white decline-project-invite"><i class="fa fa-close"></i></a>
+                                    <div>
+                                        <span *ngIf="i==0" ><i class="fa fa-star"></i></span>
+                                        {{ membership.project.name }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
                             <div class="form-group full-w">
                                 <mat-action-row>
-                                    <button mat-button color="primary" [disabled]="memberForm.errors || submitting">Submit</button>
+                                    <button mat-button color="primary" [disabled]="!memberForm.valid  || memberForm.errors || submitting">Submit</button>
                                 </mat-action-row>
                             </div>
                         </div>

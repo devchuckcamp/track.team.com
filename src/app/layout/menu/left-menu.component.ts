@@ -4,7 +4,8 @@ import { Router, ActivatedRoute, NavigationEnd  } from '@angular/router';
 import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase} from '@angular/common/http';
 import { ProjectService } from '../../service/project.service';
 import { Project } from '../../model/project';
-
+import { UserService } from '../../service/user.service';
+import { Observable, Subscription  } from 'rxjs';
 
 @Component({
     selector: 'app-left-menu',
@@ -16,7 +17,11 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input('admin_project_sub') admin_project_sub:string;
     @Input('auth_profile') auth_profile:any;
     @Input('auth_client') auth_client:any;
-    
+
+    subscription:Subscription;
+    user_avatar:string;
+    auth_user:any;
+    default_avatar = '../../assets/default-profile.png';
     active_menu:string;
     project:Project;
     profile:any;
@@ -30,7 +35,8 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
             private http: HttpClient,
             public router: Router,
             private route: ActivatedRoute,
-            private projectService: ProjectService
+            private projectService: ProjectService,
+            private userService:UserService,
     ) {
         this.admin_sub_3 = '';
         this.active_menu = this.admin_project_sub;
@@ -166,6 +172,10 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
             this.admin_project_sub =  'activity';
             this.admin_sub_3 =  'activity';
         }
+    }
+
+    setUser():void {
+        this.subscription = this.userService.currentLoggedInUser.subscribe( (res:any) => { this.auth_user = JSON.parse(res); });
     }
 
 }

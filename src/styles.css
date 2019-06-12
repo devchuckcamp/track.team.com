@@ -29,9 +29,17 @@ li.active{
   padding: 15px;
 }
 /* Margin */
+.mar-l-10{
+  margin-left:10px!important;
+  margin-right: 10px!important;
+}
+.mar-l-15{
+  margin-left:15px!important;
+  margin-right: 15px!important;
+}
 .mar-x-30{
-  margin-left:30px;
-  margin-right: 30px;
+  margin-left:30px!important;
+  margin-right: 30px!important;
 }
 /* Global */
 .clickable{
@@ -267,4 +275,9 @@ li.active{
 /* Background */
 .bg-lightgray{
   background-color: lightgray!important;
+}
+
+/* Border */
+.border-1-white{
+  border:1px solid white;
 }

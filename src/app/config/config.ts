@@ -23,10 +23,7 @@ export class GlobalRoutesService {
     private Bearer:any;
     private err:any;
     private userID = '';
-    public mimsPort='80';
     public apiPort='';
-    //public apiPort = '8081'; //for staging
-    //public host='01ff761c.ngrok.io'; //development
     //public host='192.168.10.10'; //for staging
     public host='api-tickets-support.ecomia.com'; //for production
     //public protocol='http://'; //for development

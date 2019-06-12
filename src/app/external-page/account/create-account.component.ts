@@ -37,14 +37,14 @@ class CrossFieldErrorMatcher implements ErrorStateMatcher {
   styleUrls: ['./create-account.component.scss'],
   animations: [
     trigger(
-      'enterAnimation', [
+      'removeAnimation', [
         transition(':enter', [
-          style({transform: 'translateX(100%)', opacity: 0}),
+          style({transform: 'translateY(100%)', opacity: 0}),
           animate('150ms', style({transform: 'translateX(0)', opacity: 1}))
         ]),
         transition(':leave', [
           style({transform: 'translateX(0)', opacity: 1}),
-          animate('150ms', style({transform: 'translateX(100%)', opacity: 0}))
+          animate('150ms', style({transform: 'translateY(100%)', opacity: 0}))
         ])
       ]
     )
@@ -294,9 +294,14 @@ export class CreateAccountComponent implements OnInit {
         verticalPosition: "top",
         horizontalPosition: "right",
         panelClass: "fail-snack"
-      }
-      );
+      });
     }
+
+    return false;
+  }
+
+  removeInvite(project_id:number){
+    this.token_info.membership =  this.token_info.membership.filter( mem => mem.project_id != project_id);
     return false;
   }
 }

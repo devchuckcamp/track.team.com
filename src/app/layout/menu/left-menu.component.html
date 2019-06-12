@@ -1,8 +1,16 @@
 <div class="col-lg-2 col-md-1 left-nav-bar pad-0">
-    <div class="col-md-12 pad-0">
-        <div class="">
-
-        </div>
+        <div class="col-md-12 pad-0">
+                <div class="row text-center">
+                    <div class="col-lg-12 pad-10">
+                        <a href="#" class="border-rad-5">
+                            <img *ngIf="!user_avatar" class="rounded-circle border-1-white" [src]="default_avatar" height="50" width="50"
+                                alt="profile">
+                        </a>
+                    </div>
+                    <div class="col-lg-12">
+                        <label for="profile-name" class="font-white">Chuckie Granada</label>
+                    </div>
+                </div>
         <div  *ngIf="project || auth_profile" class="parent-left-menu">
             <ul class="parent-left-menu-ul pad-0">
                 <li class="parent-left-menu-item"
