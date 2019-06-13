@@ -174,9 +174,7 @@ export class MemberComponent implements OnInit {
           });
           this.getMember();
       }
-      console.log(this.projects, 'complete projects list');
-      console.log(this.projectsSearchable, 'projectsSearchable list');
-      console.log(projectsInvitationList,'projectsInvitationList list');
+
     });
     this.dataSource.paginator = this.paginator;
   }

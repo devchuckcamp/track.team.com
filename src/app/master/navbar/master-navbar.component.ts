@@ -1,23 +1,25 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart, NavigationEnd, NavigationError, NavigationCancel, RoutesRecognized } from '@angular/router';
-import { ProjectService } from '../service/project.service';
-import { AuthService } from '../service/auth.service';
-import { UserService } from '../service/user.service';
-import { ThreadService } from '../service/thread.service';
-import { TicketService } from '../service/ticket.service';
-import { MemberService } from '../service/member.service';
-import { Project } from '../model/project';
+import { ProjectService } from '../../service/project.service';
+import { AuthService } from '../../service/auth.service';
+import { UserService } from '../../service/user.service';
+import { ThreadService } from '../../service/thread.service';
+import { TicketService } from '../../service/ticket.service';
+import { MemberService } from '../../service/member.service';
+import { ClientService } from '../../service/client.service';
+import { Project } from '../../model/project';
 import { Observable, Subscription  } from 'rxjs';
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  selector: 'app-master-navbar',
+  templateUrl: './master-navbar.component.html',
+  styleUrls: ['./master-navbar.component.scss']
 })
-export class NavbarComponent implements OnInit, OnDestroy  {
+export class MasterNavbarComponent implements OnInit, OnDestroy  {
   activeURL:string;
   parentUrl:string;
   user_avatar:string;
+  clients:any;
   auth_user:any;
   auth_client:string;
   auth_client_info:any;
@@ -34,6 +36,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     private ticketService:TicketService,
     private threadService:ThreadService,
     private memberService:MemberService,
+    private clientService:ClientService,
     private activatedRoute: ActivatedRoute,
   ) {
     if(!this.user_avatar){
@@ -43,11 +46,11 @@ export class NavbarComponent implements OnInit, OnDestroy  {
       this.userService.setUser(localStorage.getItem('authUser'));
       this.auth_user =JSON.parse(localStorage.getItem('authUser'));
     }
-    
+
     this.setClient();
     this.setAvatar();
     this.setUser();
-    
+
     this.router.events.subscribe(path =>{
 
       if(path instanceof NavigationEnd ){
@@ -62,8 +65,8 @@ export class NavbarComponent implements OnInit, OnDestroy  {
         let slug_list = this.activeURL.split('/');
         let isSubRoute = (this.activeURL.match(/\//g) || []).length;
 
-        if(slug_list.includes("projects")){
-          this.parentUrl = "projects";
+        if(slug_list.includes("clients")){
+          this.parentUrl = "clients";
         } else if(slug_list.includes("tickets")){
           this.parentUrl = "tickets";
         } else if(slug_list.includes("users")){
@@ -82,13 +85,19 @@ export class NavbarComponent implements OnInit, OnDestroy  {
 
 
   ngOnInit() {
+    this.clientService.getAll().subscribe( res => {
+      if(res){
+        this.clients = res.data;
+      }
+    });
     this.userService.currentAvatar.subscribe(avatar => {
       this.user_avatar = avatar;
     });
-      this.projectService.loadAll();
-      this.projectService.projects.subscribe( (res:any) => {
-        this.projects = res;
-      });
+
+    this.projectService.loadAll();
+    this.projectService.projects.subscribe( (res:any) => {
+      this.projects = res;
+    });
   }
   ngOnDestroy(){
     this.userService.clearAvatar();

@@ -11,14 +11,12 @@ import { ProjectNewComponent } from '../project/project-new.component';
 import { UnderConstructionComponent } from '../share/under-construction.component';
 import { ActivityLogComponent } from '../share/activity-log.component';
 import { ProfileComponent } from '../profile/profile.component';
+import { MasterComponent } from '../master/master.component';
 import { AuthGuard } from '../guard/auth';
+import { MasterGuard } from '../guard/master';
+import { NonMasterGuard } from '../guard/non-master';
 
 const routes:   Routes = [
-    {
-        path: 'admin/fund',
-        redirectTo:'/admin/fund/current',
-        pathMatch:'full',
-    },
     {
         path: ':auth_client',
         redirectTo:':auth_client/admin',
@@ -26,7 +24,7 @@ const routes:   Routes = [
     },
     {
         path: ':auth_client/admin', component:LayoutComponent,
-        canActivate:[AuthGuard],
+        canActivate:[NonMasterGuard, AuthGuard],
         children:[
             { path: 'projects',  component:LayoutComponent },
             { path: 'projects/add', component:ProjectNewComponent},
@@ -57,7 +55,7 @@ const routes:   Routes = [
 
 @NgModule({
     imports:[RouterModule.forRoot(
-        routes,
+        routes, 
         // { enableTracing: true }
         )],
     exports:[RouterModule]

@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
+    <a class="nav-link" style="position: relative" [routerLink]="['/',auth_client,'admin']"><img width="40px" height="40px" style="position: absolute;top:-10px;" [src]="logo" alt="Ecomia"/></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topmenu-nav" aria-controls="topmenu-nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-md-center" id="topmenu-nav">
+    <!-- <div class="collapse navbar-collapse" id="topmenu-nav"> -->
+      <ul class="navbar-nav  ml-auto">
+        <!-- Dropdown -->
+        <li class="nav-item dropdown"
+          [ngClass]="{'active':activeURL == '/master/clients' || parentUrl == 'clients' || activeURL == '/master/clients/all'}"
+        >
+          <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+            Clients
+          </a>
+          <div class="dropdown-menu client-dropdown-menu">
+            <a  *ngFor="let client of clients"  class="dropdown-item" [ngClass]="{'active': activeURL == '/master/clients/'+client.slug }" [routerLink]="['clients', client.slug]">{{client.name | titlecase}}</a>
+            <a  class="dropdown-item" [ngClass]="{'active': activeURL === '/master/clients/add'}" [routerLink]="['clients','add']">Add Clients</a>
+          </div>
+        </li>
+
+        <!-- <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/news' }">
+          <a class="nav-link" [routerLink]="['news']">News</a>
+        </li> -->
+        <!-- <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/member' || this.activeURL.split('admin/member').length - 1 }">
+          <a class="nav-link" [routerLink]="['/admin/member']">User Role</a>
+        </li> -->
+        <!-- <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/activity'}">
+          <a class="nav-link" [routerLink]="['activity']">Activity Logs</a>
+        </li> -->
+      </ul>
+
+      <ul class="navbar-nav ml-auto">
+        <!-- Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle pad-x-40 pad-x-sm-0" href="#" id="navbardrop" data-toggle="dropdown"
+          [ngClass]="{'active':activeURL === '/master/profile' || activeURL === '/master/setting' }"
+          >
+            <img *ngIf="user_avatar" class="rounded-circle" [src]="user_avatar" height="22" width="22" alt="Account">
+            <img *ngIf="!user_avatar" class="rounded-circle" [src]="default_avatar" height="22" width="22" alt="Account">
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" [ngClass]="{'active':activeURL === '/master/profile' }" [routerLink]="['profile']"><i class="pad-x-5 fa fa-user-circle-o"></i>Profile</a>
+            <!-- <a class="dropdown-item" [ngClass]="{'active':activeURL === '/master/settings' }" [routerLink]="['settings']"><i class="pad-x-5 fa fa-wrench"></i>Settings</a> -->
+            <a href="#" class="dropdown-item" (click)="logout()"><i class="pad-x-5 fa fa-sign-out"></i>Logout</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>

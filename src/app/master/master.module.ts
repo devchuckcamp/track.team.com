@@ -1,25 +1,28 @@
-// import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {NgbModule, NgbAlertModule} from '@ng-bootstrap/ng-bootstrap';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule }    from '@angular/forms';
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
-import { LayoutModule } from './layout/layout.module';
-import { MasterModule } from './master/master.module';
-import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { AuthGuard } from './guard/auth';
-import { ClientGuard } from './guard/client';
-import { MasterGuard } from './guard/master';
-import { NonMasterGuard } from './guard/non-master';
-import { GlobalRoutesService } from './config/config';
-import { ClientGlobalRoutesService } from './config/client';
-import { ClientService } from './service/client.service';
+import { MasterRoutingModule } from './master-routing.module';
+// Components
+import { MasterComponent } from './master.component';
+import { MasterNavbarComponent } from './navbar/master-navbar.component';
+import { MasterSidebarComponent } from './sidebar/master-sidebar.component';
+import { MasterBreadcrumbComponent } from './component/master-breadcrumb.component';
+// Pages
+import { MasterClientComponent } from './pages/master-client.component';
 
+// Services
+import { SettingService } from '../service/setting.service';
+import { AuthService } from '../service/auth.service';
+import { UserService } from '../service/user.service';
+import { ProjectService } from '../service/project.service';
+import { TicketService } from '../service/ticket.service';
+import { ThreadService } from '../service/thread.service';
+import { ActivityService } from '../service/activity.service';
+
+import { SlickCarouselModule } from 'ngx-slick-carousel';
+import { FormsModule,ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators, EmailValidator,
+  FormGroupDirective, NgForm, } from '@angular/forms';
 // Material
 import {
   MatAutocompleteModule,
@@ -58,23 +61,24 @@ import {
   MatTooltipModule,
   MatTreeModule,
 } from '@angular/material';
+// Mention
+import { MentionModule } from 'angular-mentions';
+
 
 @NgModule({
   declarations: [
-    AppComponent,
-    HomeComponent,
-    LoginComponent,
-    RegisterComponent,
+    MasterComponent,
+    MasterNavbarComponent,
+    MasterSidebarComponent,
+    MasterClientComponent,
+    MasterBreadcrumbComponent,
   ],
   imports: [
-    BrowserAnimationsModule,
-    HttpClientModule,
+    CommonModule,
     NgbModule.forRoot(),
     NgbAlertModule,
-    AppRoutingModule,
-    LayoutModule,
-    MasterModule,
-    ReactiveFormsModule,
+    MasterRoutingModule,
+    SlickCarouselModule,
     MatAutocompleteModule,
     MatBadgeModule,
     MatBottomSheetModule,
@@ -110,18 +114,19 @@ import {
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
-  ],
-  exports:[
+    FormsModule,
+    ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
+    MentionModule,
   ],
   providers: [
-    AuthGuard,
-    ClientGuard,
-    MasterGuard,
-    NonMasterGuard,
-    GlobalRoutesService,
-    ClientGlobalRoutesService,
-    ClientService,
+    AuthService,
+    SettingService,
+    UserService,
+    ProjectService,
+    TicketService,
+    ThreadService,
+    ActivityService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [MasterComponent]
 })
-export class AppModule { }
+export class MasterModule { }

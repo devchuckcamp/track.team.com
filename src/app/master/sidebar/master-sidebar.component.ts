@@ -8,15 +8,15 @@ import { UserService } from '../../service/user.service';
 import { Observable, Subscription  } from 'rxjs';
 
 @Component({
-    selector: 'app-left-menu',
-    templateUrl: './left-menu.component.html',
-    styleUrls: ['../layout.component.scss']
+    selector: 'app-master-sidebar',
+    templateUrl: './master-sidebar.component.html',
+    styleUrls: ['../master.component.scss']
 })
-export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MasterSidebarComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input('project_name') project_name:string;
     @Input('admin_project_sub') admin_project_sub:string;
     @Input('auth_profile') auth_profile:any;
-    @Input('auth_client') auth_client:any;
+    // @Input('auth_client') auth_client:any;
 
     subscription:Subscription;
     user_avatar:string;
@@ -50,6 +50,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
         let indexActUrl = indexActUrlParam == -1 ? currentURL : currentURL.slice(0, indexActUrlParam );
         //Assign to our private activeUrl
         this.activeURL = indexActUrl;
+        console.log(this.activeURL,'activeURL');
         let slug_list = this.activeURL.split('/');
         let isSubRoute = (this.activeURL.match(/\//g) || []).length;
         this.onload_slug_list = slug_list;
@@ -66,31 +67,6 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.is_dashboard = true;
         }
-        if( (!slug_list.includes("activity") && !slug_list.includes("add")) && (slug_list.includes("projects") || slug_list[3] == 'projects') && slug_list.length >= 5){
-            this.admin_sub_1 = "projects";
-            this.admin_sub_2 =  slug_list[4];
-            this.admin_project_sub =  slug_list[slug_list.length-1];
-            this.project_name = this.admin_project_sub;
-            // console.log('get');
-            // this.getAllProject(this.admin_sub_2);
-        }
-        if(slug_list[3] == 'projects' && slug_list[5] == 'tickets'){
-            this.admin_project_sub =  'tickets';
-            this.admin_sub_3 =  'tickets';
-        }
-        if(slug_list[slug_list.length-1] !== this.admin_project_sub){
-            this.is_dashboard = false;
-        }
-        if(slug_list[2] == 'projects' && slug_list[5] == 'members'){
-            this.is_dashboard = false;
-            this.admin_project_sub =  'members';
-            this.admin_sub_3 =  'members';
-        }
-        if(slug_list[3] == 'projects' && slug_list[5] == 'activity'){
-            this.is_dashboard = false;
-            this.admin_project_sub =  'activity';
-            this.admin_sub_3 =  'activity';
-        }
     }
 
     ngOnInit() {
@@ -98,11 +74,6 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setAvatar();
         this.setClientInfo();
         this.route.params.subscribe(params => {
-            if ( (params['project_name'] !== 'add' ) && params['project_name'] !== undefined || this.project_name !== '') {
-                console.log(this.project_name);
-                let project_name = this.project_name ? this.project_name : params['project_name'];
-                //this.getAllProject(project_name);
-            }
             this.router.events.subscribe(path =>{
                 if(path instanceof NavigationEnd ){
                     this.createUrlVariables(path);
@@ -120,19 +91,14 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
         };
     }
     ngAfterViewInit(){
-        this.router.events.subscribe(path =>{
-            if(path instanceof NavigationEnd ){
-                this.createUrlVariables(path);
-            }
-        });
     }
 
-    getAllProject(project_name:any){
-            this.projectService.getProject(project_name,'left-menu').subscribe( res => {
-                if(res){
-                    this.project = res;
-                }
-            });
+    getAllProject(){
+        this.projectService.getAll().subscribe( res => {
+            if(res){
+                this.project = res;
+            }
+        });
     }
     createUrlVariables(path:any){
         //Get Url
@@ -154,31 +120,30 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.is_dashboard = true;
         }
-        if( (!slug_list.includes("add") && !slug_list.includes("activity") ) && (slug_list.includes("projects") || slug_list[3] == 'projects') && slug_list.length >= 5){
-            this.admin_sub_1 = "projects";
+        if( (!slug_list.includes("add") && !slug_list.includes("activity") ) && (slug_list.includes("clients") || slug_list[3] == 'clients') ){
+            this.admin_sub_1 = "clients";
             this.admin_sub_2 =  slug_list[4];
             this.admin_project_sub =  slug_list[slug_list.length-1];
             this.project_name = this.admin_project_sub;
-            //this.getAllProject(this.admin_sub_2);
+            this.getAllProject();
         }
-        else if(slug_list[3] == 'projects' && slug_list[5] == 'tickets'){
+        if(slug_list[3] == 'clients' && slug_list[5] == 'tickets'){
             this.admin_project_sub =  'tickets';
             this.admin_sub_3 =  'tickets';
         }
-        else if(slug_list[slug_list.length-1] !== this.admin_project_sub){
+        if(slug_list[slug_list.length-1] !== this.admin_project_sub){
             this.is_dashboard = false;
         }
-        if(slug_list[3] == 'projects' && slug_list[5] == 'members'){
+        if(slug_list[3] == 'clients' && slug_list[5] == 'members'){
             this.is_dashboard = false;
             this.admin_project_sub =  'members';
             this.admin_sub_3 =  'members';
         }
-        if(slug_list[3] == 'projects' && slug_list[5] == 'activity'){
+        if(slug_list[3] == 'clients' && slug_list[5] == 'activity'){
             this.is_dashboard = false;
             this.admin_project_sub =  'activity';
             this.admin_sub_3 =  'activity';
         }
-        console.log(this.onload_slug_list);
     }
 
     setUser():void {

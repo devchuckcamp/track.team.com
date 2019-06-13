@@ -1,13 +1,16 @@
-.left-nav-abs{
-    background: green;
-    height: auto;
-    position: absolute;
+#footer{
+    position: fixed;
     bottom: 0;
-    left: 0;
-    top: 0;
+    text-align: center;
+    width: 100%;
+    background: #343a40 !important;
+    z-index: 99;
+    color: #FAFAFA;
+    padding: 10px;
 }
+// Left Sidebar Menu
 .left-nav-bar{
-    background: #070b30;
+    background: #2d323e!important;
     height: auto;
     position: absolute;
     bottom: 0;
@@ -18,22 +21,21 @@
     z-index: 98;
 }
 
-
 .parent-left-menu-item{
     list-style: none;
     padding: 5px;
-    background: #3af3f3;
+    // background: #3af3f3;
     border: 1px solid gray;
     a{
         display: block!important;
         width: 100%;
         text-decoration: none;
-        color:#343a40;
+        color:#fafafa;
         font-weight: bolder;
         font-size: 1.4em;
     }
 }
 .parent-left-menu-item:hover,
 .parent-left-menu-item.active{
-    background: #1fb3b3;
+    background: #039be5;
 }

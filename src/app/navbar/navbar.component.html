@@ -43,7 +43,7 @@
       <!-- <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/member' || this.activeURL.split('admin/member').length - 1 }">
         <a class="nav-link" [routerLink]="['/admin/member']">User Role</a>
       </li> -->
-      <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/activity' || this.activeURL.split('admin/activity').length - 1}">
+      <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/activity' }">
         <a class="nav-link" [routerLink]="['activity']">Activity Logs</a>
       </li>
     </ul>
@@ -51,15 +51,13 @@
     <ul class="navbar-nav ml-auto">
       <!-- Dropdown -->
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle pad-x-40 pad-x-sm-0" href="#" id="navbardrop" data-toggle="dropdown"
-        [ngClass]="{'active':activeURL === '/admin/profile' || activeURL === '/admin/setting' || this.activeURL.split('admin/profile').length - 1 || this.activeURL.split('admin/setting').length - 1}"
-        >
+        <a class="nav-link dropdown-toggle pad-x-40 pad-x-sm-0" href="#" id="navbardrop" data-toggle="dropdown">
           <img *ngIf="user_avatar" class="rounded-circle" [src]="user_avatar" height="22" width="22" alt="Account">
           <img *ngIf="!user_avatar" class="rounded-circle" [src]="default_avatar" height="22" width="22" alt="Account">
         </a>
         <div class="dropdown-menu">
-          <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/profile' || this.activeURL.split('admin/profile').length - 1}" [routerLink]="['profile']"><i class="pad-x-5 fa fa-user-circle-o"></i>Profile</a>
-          <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/settings' || this.activeURL.split('admin/settings').length - 1}" [routerLink]="['settings']"><i class="pad-x-5 fa fa-wrench"></i>Settings</a>
+          <a class="dropdown-item"><i class="pad-x-5 fa fa-user-circle-o"></i>Profile</a>
+          <a class="dropdown-item" [routerLink]="['settings']"><i class="pad-x-5 fa fa-wrench"></i>Settings</a>
           <a href="#" class="dropdown-item" (click)="logout()"><i class="pad-x-5 fa fa-sign-out"></i>Logout</a>
         </div>
       </li>

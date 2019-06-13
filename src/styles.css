@@ -281,3 +281,7 @@ li.active{
 .border-1-white{
   border:1px solid white;
 }
+.carousel  div.nav-btn.prev-slide.slick-arrow  i.fa,
+.carousel div.nav-btn.next-slide.slick-arrow  i.fa{
+  font-size: 50px!important;
+}

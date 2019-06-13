@@ -1,8 +1,8 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div class="navbar-container">
-<app-navbar></app-navbar>
+<div *ngIf="profile.role_id !==9001"class="navbar-container">
+    <app-navbar></app-navbar>
 </div>
-<div *ngIf="profile.role_id !==99"class="col-md-12 pad-0">
+<div *ngIf="profile.role_id !==9001"class="col-md-12 pad-0">
     <div class="col-md-12 mar-0 h-100 pad-t-10" *ngIf="activeURL == '/'+auth_client || activeURL == '/'+auth_client+'/admin/profile' || activeURL == '/'+auth_client+'/admin/news' || activeURL == '/'+auth_client+'/admin/activity' || activeURL == '/'+auth_client+'//admin/profile' || activeURL == '/'+auth_client+'/admin/settings' || activeURL == '/'+auth_client+'/admin/projects' || activeURL == '/'+auth_client+'/admin' || activeURL == '/'+auth_client+'/admin/projects/add'">
     <!--
         <div class="col-md-6 pad-20 text-center">
@@ -45,7 +45,10 @@
     </div>
 </div>
 <!-- For Site Master -->
-<div *ngIf="profile.role_id !==99"class="col-md-12 pad-0">
-
+<div *ngIf="profile.role_id == 9001"class="navbar-container">
+    <!-- <app-master-navbar></app-master-navbar> -->
+</div>
+<div *ngIf="profile.role_id == 9001"class="col-md-12 pad-0">
+    <!-- <app-master></app-master> -->
 </div>
 <div id="footer"><p>Footer</p></div>

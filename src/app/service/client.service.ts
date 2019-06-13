@@ -6,11 +6,14 @@ import { catchError, retry } from 'rxjs/operators'
 import { map, take } from 'rxjs/operators';
 import { Project } from '../model/project';
 import { GlobalRoutesService } from '../config/config';
-
+interface Client{
+    name:string;
+}
 @Injectable({ providedIn: 'root' })
 export class ClientService {
     apiEndpoint:string;
     Bearer:any;
+    // Project
     projects: Observable<Project[]>
         private _projects: BehaviorSubject<Project[]>;
         private baseUrl: string;
@@ -18,6 +21,16 @@ export class ClientService {
             projects: any[]
         };
     ProjectsList: Project[]= [];
+
+    // Clients
+    clients: Observable<Project[]>
+        private _clients: BehaviorSubject<Client[]>;
+        private clienBaseUrl: string;
+        private clientDataStore: {
+            projects: any[]
+        };
+    ClientsList: Client[]= [];
+
     client =  new BehaviorSubject({});
     currentClient = this.client.asObservable();
 
@@ -50,11 +63,11 @@ export class ClientService {
     }
 
     getAll() {
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/projects', this.jt()).pipe(map( (res:any) => res));
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/clients', this.jt()).pipe(map( (res:any) => res));
     }
 
     loadAll() {
-        this.http.get(this.config.apiEndPoint()+'/api/v1/projects?all=1', this.jt()).subscribe( (data :any)=> {
+        this.http.get(this.config.apiEndPoint()+'/api/v1/clients?all=1', this.jt()).subscribe( (data :any)=> {
           this.dataStore.projects = data;
           this._projects.next(Object.assign({}, this.dataStore).projects);
         }, error => console.log('Could not load projects.'));

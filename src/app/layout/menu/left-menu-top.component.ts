@@ -28,6 +28,7 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
     onload_slug_list: any;
     is_dashboard:boolean;
     user_avatar:string;
+    auth_client_info:any;
     subscription:Subscription;
     default_avatar = '../../assets/default-profile.png';
     constructor(
@@ -100,6 +101,7 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.setUser();
         this.setAvatar();
+        this.setClientInfo();
         this.router.events.subscribe(path =>{
             if(path instanceof NavigationEnd ){
                 this.createUrlVariables(path);
@@ -111,7 +113,10 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
     }
     setAvatar():void {
         this.subscription = this.userService.currentAvatar.subscribe(avatar => { this.user_avatar = avatar;  });
-      }
+    }
+    setClientInfo():void {
+        this.subscription = this.userService.currentClientInfo.subscribe(client_info => { this.auth_client_info = JSON.parse(client_info);  });
+    }
     ngAfterViewInit(){
         // this.router.events.subscribe(path =>{
         //     if(path instanceof NavigationEnd ){

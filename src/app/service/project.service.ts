@@ -69,8 +69,10 @@ export class ProjectService {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+project_name+'?'+'members=all&full=1'+filter, this.jt()).pipe(map( (res:any) => res));
     }
 
-    getProject(id: any) {
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+id, this.jt()).pipe(map( (res:any) => res));
+    getProject(id: any,origin:any = null) {
+        let orgn = origin ? '?origin='+origin :'';
+        
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+id+orgn, this.jt()).pipe(map( (res:any) => res));
     }
 
     save(project: Project) {

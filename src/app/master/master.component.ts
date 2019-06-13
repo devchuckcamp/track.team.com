@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd  } from '@angular/router';
 import Chart from 'chart.js';
-import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
+import { MasterBreadcrumbComponent } from './component/master-breadcrumb.component';
 import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
 import { ProjectService } from '../service/project.service';
@@ -10,11 +10,11 @@ import { User } from '../model/user';
 import { Observable, Subscription  } from 'rxjs';
 
 @Component({
-  selector: 'app-layout',
-  templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss']
+  selector: 'app-master',
+  templateUrl: './master.component.html',
+  styleUrls: ['./master.component.scss']
 })
-export class LayoutComponent implements OnInit {
+export class MasterComponent implements OnInit {
   avatar:any;
   auth_client:any;
   @ViewChild("chart")
@@ -41,13 +41,13 @@ export class LayoutComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     ) {
-      this.setClient();
       // Settings
       this.settingService.loadAll();
-      this.profile = this.authService.getAuthUser();
       this.admin_sub_1 = "";
       this.admin_sub_2 = "";
       this.admin_project_sub = "";
+      this.profile = this.authService.getAuthUser();
+      console.log(this.profile,'profile');
       this.router.events.subscribe(path =>{
         if(path instanceof NavigationEnd ){
           //Get Url
@@ -79,36 +79,35 @@ export class LayoutComponent implements OnInit {
             this.admin_project_sub =  slug_list[slug_list.length-1];
           }
         }
-        
       });
-      this.setUser();
     }
-  ngOnInit() {
-    const id = this.activatedRoute.snapshot.params['filter'];
+    ngOnInit() {
+        this.setClient();
+        this.setUser();
+        const id = this.activatedRoute.snapshot.params['filter'];
 
-    this.settingService.settings.subscribe( (res:any) => {
-      this.settings = res;
-    });
-    
-    this.avatar = localStorage.getItem('avatar');
-    this.auth_client = localStorage.getItem('client');
-    // this.projectService.getAllProjects().subscribe( res =>{
-    //   let list = res;
-    //   this.projectsList = list;
-    // });
-    this.projectService.loadAll();
-        this.projectService.projects.subscribe( (res:any) => {
-          this.projectsList = res;
+        this.settingService.settings.subscribe( (res:any) => {
+        this.settings = res;
         });
-  }
-  setUser():void {
-    this.subscription = this.userService.currentLoggedInUser.subscribe( (res:any) => { this.auth_user = res; });
-}
-  ngAfterViewInit() {
-  }
+        this.avatar = localStorage.getItem('avatar');
+        this.auth_client = localStorage.getItem('client');
+        // this.projectService.getAllProjects().subscribe( res =>{
+        //   let list = res;
+        //   this.projectsList = list;
+        // });
+        this.projectService.loadAll();
+            this.projectService.projects.subscribe( (res:any) => {
+            this.projectsList = res;
+            });
+    }
+    ngAfterViewInit() {
+    }
 
-  setClient():void {
-    this.subscription = this.userService.currentClient.subscribe(client => { this.auth_client = client;  });
-  }
+    setUser():void {
+        this.subscription = this.userService.currentLoggedInUser.subscribe( (res:any) => { this.auth_user = res; });
+    }
+    setClient():void {
+        this.subscription = this.userService.currentClient.subscribe(client => { this.auth_client = client;  });
+    }
 
 }
