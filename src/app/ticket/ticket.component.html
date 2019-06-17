@@ -65,6 +65,11 @@
                 </tr>
             </tbody>
         </table>
+        <div *ngIf="tickets && !loading" class="col-lg-12">
+            <mat-paginator  [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                (page)="onPageChange($event)">
+                ></mat-paginator>
+        </div>
     </div>
    
     <form  *ngIf="ticketFormShow"  

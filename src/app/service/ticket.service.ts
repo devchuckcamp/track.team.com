@@ -25,8 +25,16 @@ export class TicketService {
     getAll() {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets', this.jt()).pipe(map( (res:any) => res));
     }
-    getProjectTicketAll(project_name: string){
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name, this.jt()).pipe(map( (res:any) => res));
+    getProjectTicketAll(project_name: string, page:number = 1, per_page:number = 25){
+        var page_num = '';
+        var per_page_num = '';
+        if(page != 1){
+            page_num = '&page='+page;
+        }
+        if(per_page != 25){
+            per_page_num = '&per_page='+per_page;
+        }
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name+page_num+per_page_num, this.jt()).pipe(map( (res:any) => res));
     }
     getProjectTicketFilter(project_name: string, filter: string){
         return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name+'&filter=1&status='+filter, this.jt()).pipe(map( (res:any) => res));

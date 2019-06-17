@@ -77,6 +77,12 @@ export class TicketComponent implements OnInit, OnDestroy {
     replayText:string;
     // Form Group
     ticketForm: FormGroup;
+    // Paginator
+    // MatPaginator Inputs
+    length = 0;
+    pageSize = 25;
+    pageNum = 1;
+    pageSizeOptions: number[] = [25, 50, 100];
     constructor(
         private ticketService: TicketService,
         private projectService: ProjectService,
@@ -180,13 +186,46 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.ticketService.getProjectTicketFilter(project_name,filter).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
+        this.length = res.total;
         this.tag_users = res.data.tag_users;
       });
     }
     getTicket(project_name:any){
-      this.ticketService.getProjectTicketAll(project_name).subscribe(res => {
+      this.ticketService.getProjectTicketAll(project_name, this.pageNum, this.pageSize).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
+        this.length = res.total;
+        this.tag_users = res.data.tag_users;
+      });
+    }
+
+    setPageSizeOptions(setPageSizeOptionsInput: any) {
+      console.log(setPageSizeOptionsInput,'setPageSizeOptionsInput');
+      this.pageSize = setPageSizeOptionsInput.pageSize;
+      let pageSize = setPageSizeOptionsInput.pageSize;
+      this.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
+      this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, 25).subscribe(res => {
+        this.loading = false;
+        this.tickets = res.data;
+        this.length = res.total;
+        this.tag_users = res.data.tag_users;
+      });
+    }
+
+    //Pagination Section
+    onPageChange(event) {
+      if(event.pageSize > this.length){
+        this.pageNum = 1;
+        this.pageSize = event.pageSize;
+      }else{
+        this.pageNum = event.pageIndex+1;
+        this.pageSize = this.pageSizeOptions[0];
+      }
+
+      this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, this.pageSize).subscribe(res => {
+        this.loading = false;
+        this.tickets = res.data;
+        this.length = res.total;
         this.tag_users = res.data.tag_users;
       });
     }
