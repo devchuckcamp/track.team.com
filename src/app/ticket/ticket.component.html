@@ -10,7 +10,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
+                    <!-- <th scope="col">#</th> -->
                     <th scope="col">Title</th>
                     <th scope="col">Description</th>
                     <th scope="col">Assignee</th>
@@ -24,7 +24,7 @@
             </thead>
             <tbody *ngIf="loading" class="text-center">
                 <tr>
-                    <td></td>
+                    <!-- <td></td> -->
                     <td></td>
                     <td></td>
                     <td></td>
@@ -38,11 +38,13 @@
             </tbody>
             <tbody *ngIf="tickets && !loading">
                 <tr class="clickable" *ngFor="let ticket of tickets">
-                    <th scope="row">{{ticket.id}}</th>
+                    <!-- <th scope="row">{{ticket.id}}</th> -->
                     <td>{{ticket.title}}</td>
-                    <td>{{ticket.description | ellipsis:80}}</td>
-                    <td *ngIf="ticket.assigned_to" [attr.data-user-id]="ticket.assigned_to.id">{{ticket.assigned_to.name}}</td>
-                    <td *ngIf="!ticket.assigned_to" >Multiple User</td>
+                    <td>{{ticket.description | ellipsis:60}}</td>
+                    <td *ngIf="ticket.assigned_to && !ticket.assignees" [attr.data-user-id]="ticket.assigned_to.id">{{ticket.assigned_to.name}}</td>
+                    <td *ngIf="ticket.assignees" >
+                        <a *ngFor="let assgn of ticket.assignees;let i = index">{{assgn.user.username}}{{ i >= 0 && i < (ticket.assignees.length-1) ? ', ': ''}}</a>
+                    </td>
                     <td>{{ticket.status.name | titlecase}}</td>
                     <td class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
                     <td>{{ticket.created_by}}</td>

@@ -46,7 +46,7 @@ export class SettingComponent implements OnInit {
   }
   updateTicketPrioritySetting(ticketPriority:any){
 
-    let color = {name:ticketPriority.name,color:ticketPriority.color};
+    let color = {name:ticketPriority.name,color:ticketPriority.color,order:ticketPriority.order};
     this.settingService.update(color, ticketPriority.id).subscribe();
   }
 

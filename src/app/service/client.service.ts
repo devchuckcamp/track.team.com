@@ -96,8 +96,8 @@ export class ClientService {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+id, this.jt()).pipe(map( (res:any) => res));
     }
 
-    save(project: Project) {
-        return this.http.post(this.config.apiEndPoint()+'/api/v1/projects', project, this.jt());
+    save(client: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/clients', client, this.jt());
     }
 
     update(project: Project) {
@@ -116,6 +116,10 @@ export class ClientService {
         return this.http.delete(this.config.apiEndPoint()+'/api/v1/activated/account/token?token='+token);
     }
 
+    // Validate Unique
+    verifyUnique(field:string,value:any){
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/clients/validate/unique?field='+field+'&value='+value, this.jt() );
+    }
     private jt() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer '+this.Bearer,

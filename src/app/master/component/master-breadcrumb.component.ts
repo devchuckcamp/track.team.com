@@ -44,7 +44,6 @@ export class MasterBreadcrumbComponent implements OnInit {
 
                 let slug_list = this.activeURL.split('/');
                 this.breadcrumbs = slug_list;
-                console.log(slug_list);
             }
         });
     }

@@ -75,7 +75,6 @@ export class MasterNavbarComponent implements OnInit, OnDestroy  {
           this.parentUrl = "user-role";
         } else if(slug_list.includes("activity")){
           this.parentUrl = "activity";
-          console.log(slug_list,'activity slug_list');
         } else {
           this.parentUrl = "";
         }
