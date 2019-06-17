@@ -42,9 +42,11 @@ li.active{
   margin-right: 30px!important;
 }
 /* Global */
+.clickable-only,
 .clickable{
     cursor: pointer!important;
 }
+
 .cdk-overlay-container {
   z-index: 9999;
 }
