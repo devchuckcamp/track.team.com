@@ -60,6 +60,7 @@ export class TicketComponent implements OnInit, OnDestroy {
     members:Members[] = [];
     tag_users:TaggableMembers[] = [];
     ticketPriorities:any[] =[];
+    ticketsCategory:any[] = [];
     taggable_members:any;
     tagged_members = new FormControl();
     assignees = new FormControl();
@@ -113,6 +114,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       });
       this.ticketToAdd.title = '';
       this.ticketToAdd.description = '';
+      this.ticketToAdd.category = null;
       this.ticketToAdd.assigned_to = null;
       this.ticketToAdd.assignees = null;
       this.ticketToAdd.status_id = null;
@@ -121,27 +123,23 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.ticketForm = new FormGroup({
         'title': new FormControl('', [Validators.required,]),
         'description': new FormControl('', [Validators.required,]),
+        'category': new FormControl('', [Validators.required,]),
         'priority': new FormControl('', [Validators.required,]),
         'assigned_to': new FormControl('', []),
         'assignees': new FormControl('', []),
       });
-
+      // Tickets Category
+      this.ticketService.ticketsCategory.subscribe( (res:any) => {
+        this.ticketsCategory = res;
+      });
       this.projectService.getAllMemberFullList(this.project_name).subscribe( res => {
         console.log(res);
         if(res){
           this.members = res;
           this.taggable_members = res;
-
-          // console.log(this.taggable_members, 'taggable_members');
         }
         // this.length = res.total;
       });
-
-      // const membersObservable = this.projectService.getAllMemberObs(this.project_name);
-      // membersObservable.subscribe(( members:Members[]) => { this.members = members; });
-
-      // const taggableMembersObservable = this.projectService.getAllMemberObs(this.project_name);
-      // taggableMembersObservable.subscribe(( taggable_members:TaggableMembers[]) => { this.taggable_members = taggable_members; console.log(taggable_members,'taggable_members') });
 
       this.route.params.subscribe(params => {
         if (params['project_name'] !== undefined) {
@@ -167,9 +165,7 @@ export class TicketComponent implements OnInit, OnDestroy {
     }
 
     assignTo(id:number){
-      // this.taggable_members = this.members;
-      // let new_taggable_members = this.taggable_members.filter( member => member.user_id != id);
-      // this.taggable_members = new_taggable_members;
+
     }
 
     tagTo(member:any){
@@ -200,7 +196,6 @@ export class TicketComponent implements OnInit, OnDestroy {
     }
 
     setPageSizeOptions(setPageSizeOptionsInput: any) {
-      console.log(setPageSizeOptionsInput,'setPageSizeOptionsInput');
       this.pageSize = setPageSizeOptionsInput.pageSize;
       let pageSize = setPageSizeOptionsInput.pageSize;
       this.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
@@ -232,6 +227,16 @@ export class TicketComponent implements OnInit, OnDestroy {
 
     viewTicket(ticket){
       this.ticket = ticket;
+      return false;
+    }
+    goToTicket(ticketID:any){
+      this.router.navigateByUrl(ticketID).then(e => {
+        if (e) {
+          // console.log("Navigation is successful!");
+        } else {
+          // console.log("Navigation has failed!");
+        }
+      });
       return false;
     }
 
@@ -359,7 +364,7 @@ export class TicketComponent implements OnInit, OnDestroy {
           project_id: this.project_id,
           priority_id:this.ticketToAdd.priority,
         };
-        console.log(this.ticketToAdd,'ticketToAdd');
+
         this.submitting= true;
         this.ticketService.save(ticket).subscribe( res => {
 
@@ -374,12 +379,10 @@ export class TicketComponent implements OnInit, OnDestroy {
 
               if(this.ticketToAdd.assignees.length){
                 const assigned_members:any = this.getAssignedMembers(added_ticket.id);
-                console.log(assigned_members,'assigned_members');
                 this.addAssignees(assigned_members);
                 this.submitting =false;
               }
             if(!this.submitting){
-              console.log(tagged,'tagged');
               this.tickets = [];
               this.loading = true;
               this.ticketFormShow = false;
@@ -396,7 +399,6 @@ export class TicketComponent implements OnInit, OnDestroy {
               // Refresh ticket table
               this.getTicket(this.project_name);
             }
-            
           } else {
             this.snackBar.open('Data entered is not valid!', 'X', {
                     duration: 5000,
@@ -425,13 +427,10 @@ export class TicketComponent implements OnInit, OnDestroy {
     }
     addAssignees(assignees){
       this.ticketService.addAssignees(assignees).subscribe( res => {
-        console.log(res,'saved assinees');
       });
     }
     deleteTicket(ticket_id:number){
-      console.log(ticket_id);
       this.ticketService.delete(ticket_id).subscribe( res => {
-        console.log(res);
         if(res == null){
           this.getTicket(this.project_name);
           this.snackBar.open('Ticket has been deleted', 'X', {

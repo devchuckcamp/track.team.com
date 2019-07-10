@@ -16,9 +16,11 @@ import { AuthGuard } from './guard/auth';
 import { ClientGuard } from './guard/client';
 import { MasterGuard } from './guard/master';
 import { NonMasterGuard } from './guard/non-master';
+import { ProjectMemberGuard } from './guard/project-member-guard';
 import { GlobalRoutesService } from './config/config';
 import { ClientGlobalRoutesService } from './config/client';
 import { ClientService } from './service/client.service';
+import { NotificationService } from './service/notification.service';
 
 // Material
 import {
@@ -118,9 +120,11 @@ import {
     ClientGuard,
     MasterGuard,
     NonMasterGuard,
+    ProjectMemberGuard,
     GlobalRoutesService,
     ClientGlobalRoutesService,
     ClientService,
+    NotificationService
   ],
   bootstrap: [AppComponent]
 })

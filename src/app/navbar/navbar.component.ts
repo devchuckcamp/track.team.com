@@ -6,8 +6,21 @@ import { UserService } from '../service/user.service';
 import { ThreadService } from '../service/thread.service';
 import { TicketService } from '../service/ticket.service';
 import { MemberService } from '../service/member.service';
+import { NotificationService } from '../service/notification.service';
 import { Project } from '../model/project';
 import { Observable, Subscription  } from 'rxjs';
+import { WebSocketSubject } from 'rxjs/webSocket';
+
+export class Message {
+  constructor(
+      public sender: any,
+      public content: any,
+      public isBroadcast = false,
+      public channel: any,
+      public event: any,
+      public data :any,
+  ) { }
+}
 
 @Component({
   selector: 'app-navbar',
@@ -21,10 +34,25 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   auth_user:any;
   auth_client:string;
   auth_client_info:any;
+  web_app_key:any = 12345;
   subscription: Subscription;
   default_avatar = '../assets/default-profile.png';
   projects: any[] = [];
+  ticketsCategory: any[] =[];
+  // notification
+  notification:any = [];
+  unread_notification:any = [];
+  unread_notification_count:number = 0;
+
   logo = '../assets/logo/ecomia-header-logo.svg';
+  public serverMessages = new Array<Message>();
+
+  public clientMessage = '';
+  public isBroadcast = false;
+  public sender = '';
+
+  private socket$: WebSocketSubject<any>;
+
   constructor(
     private router: Router,
     private activedRoute: ActivatedRoute,
@@ -35,6 +63,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     private threadService:ThreadService,
     private memberService:MemberService,
     private activatedRoute: ActivatedRoute,
+    private notificationService:NotificationService,
   ) {
     if(!this.user_avatar){
       this.user_avatar = localStorage.getItem('avatar');
@@ -72,12 +101,36 @@ export class NavbarComponent implements OnInit, OnDestroy  {
           this.parentUrl = "user-role";
         } else if(slug_list.includes("activity")){
           this.parentUrl = "activity";
-          console.log(slug_list,'activity slug_list');
         } else {
           this.parentUrl = "";
         }
       }
     });
+
+    this.socket$ = new WebSocketSubject('ws://192.168.10.10:6001/app/'+this.web_app_key);
+    this.socket$
+      .subscribe(
+        (message) => {
+          if (message.channel == 'channel-notify.' + this.auth_user.id) {
+            if (message.data != undefined) {
+              let ss = message.data;
+              let obj = JSON.parse(ss);
+              message = {
+                sender: obj.message.data.message_by.username,
+                data: obj.message,
+                app_link: obj.link,
+                isBroadcast: false
+              };
+              this.unread_notification_count++;
+              this.notification.push(message);
+            }
+          }
+        },
+        (err) => console.error(err),
+        () => console.warn('Completed!')
+      );
+    let data = { "event": "pusher:subscribe", "data": { "channel": "channel-notify." + this.auth_user.id } }
+    this.socket$.next(data);
   }
 
 
@@ -88,6 +141,25 @@ export class NavbarComponent implements OnInit, OnDestroy  {
       this.projectService.loadAll();
       this.projectService.projects.subscribe( (res:any) => {
         this.projects = res;
+      });
+      this.ticketService.loadAllTicketCategory(this.auth_client);
+      this.ticketService.ticketsCategory.subscribe(res => {
+        this.ticketsCategory = res;
+      });
+      this.notificationService.loadAllNotification();
+      this.notificationService.notification.subscribe((res: any) => {
+        res.forEach( (info:any) => {
+          let message = {
+            id:info.id,
+            sender: info.data.data.message_by.username,
+            data: info.data,
+            app_link: info.app_link,
+            read:info.read,
+            isBroadcast: false
+          };
+          if(!info.read) this.unread_notification_count++;
+          this.notification.push(message);
+        });
       });
   }
   ngOnDestroy(){
@@ -109,6 +181,13 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     this.subscription = this.userService.currentAvatar.subscribe(avatar => { this.user_avatar = avatar;  });
   }
 
+  read(link:string, index:number){
+    this.notificationService.read(link).subscribe( (res:any) => {
+      this.unread_notification_count--;
+      this.notification[index].read = 1;
+    });
+  }
+
   logout(){
     localStorage.clear();
     this.authService.Bearer = '';
@@ -117,7 +196,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     this.threadService.Bearer = '';
     this.ticketService.Bearer = '';
     this.memberService.Bearer = '';
-    // this.router.navigate(['/login'] );
+
     window.location.href='/'
     return false;
   }

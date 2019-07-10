@@ -37,24 +37,24 @@
                 </tr>
             </tbody>
             <tbody *ngIf="tickets && !loading">
-                <tr class="clickable" *ngFor="let ticket of tickets">
+                <tr class="clickable" *ngFor="let ticket of tickets" >
                     <!-- <th scope="row">{{ticket.id}}</th> -->
-                    <td>{{ticket.title}}</td>
-                    <td>{{ticket.description | ellipsis:60}}</td>
-                    <td *ngIf="ticket.assigned_to && !ticket.assignees" [attr.data-user-id]="ticket.assigned_to.id">{{ticket.assigned_to.name}}</td>
-                    <td *ngIf="ticket.assignees" >
+                    <td [routerLink]="[ticket.id]">{{ticket.title}}</td>
+                    <td [routerLink]="[ticket.id]">{{ticket.description | ellipsis:60}}</td>
+                    <td [routerLink]="[ticket.id]" *ngIf="ticket.assigned_to && !ticket.assignees" [attr.data-user-id]="ticket.assigned_to.id">{{ticket.assigned_to.name}}</td>
+                    <td [routerLink]="[ticket.id]" *ngIf="ticket.assignees" >
                         <a *ngFor="let assgn of ticket.assignees;let i = index">{{assgn.user.username}}{{ i >= 0 && i < (ticket.assignees.length-1) ? ', ': ''}}</a>
                     </td>
-                    <td>{{ticket.status.name | titlecase}}</td>
-                    <td class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
-                    <td>{{ticket.created_by}}</td>
-                    <td>{{ticket.created_at}}</td>
-                    <td>{{ ticket.updated_at == ticket.created_at ? '' : ticket.updated_at}}</td>
+                    <td [routerLink]="[ticket.id]">{{ticket.status.name | titlecase}}</td>
+                    <td [routerLink]="[ticket.id]" class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
+                    <td [routerLink]="[ticket.id]">{{ticket.created_by}}</td>
+                    <td [routerLink]="[ticket.id]">{{ticket.created_at}}</td>
+                    <td [routerLink]="[ticket.id]">{{ ticket.updated_at == ticket.created_at ? '' : ticket.updated_at}}</td>
                     <td>
-                        <a href="#"
+                        <!-- <a href="#"
                             [routerLink]="[ticket.id]"
                             class="btn btn-success mar-r-5"><i
-                                class="fa fa-eye"></i></a>
+                                class="fa fa-eye"></i></a> -->
                         <a href="#" (click)="deleteTicket(ticket.id)" class="btn btn-danger"><i class="fa fa-trash"></i></a>
                     </td>
                 </tr>
@@ -107,18 +107,33 @@
                 </mat-form-field>
             </div>
 
-             <!-- Priority -->
-             <div class="form-group half-width">
-                    <p *ngIf="!ticketPriorities.length " class="text-danger">No priority options found. Please check account settings - admin/settings.</p>
-                    <mat-form-field>
-                       <mat-label>Priority</mat-label>
-                       <select matNativeControl #priority  formControlName="priority" [(ngModel)]="ticketToAdd.priority" name="priority">
-                         <option *ngFor="let prio of ticketPriorities;let i = index" [value]="prio.id">
-                           {{prio.name }}
-                         </option>
-                       </select>
-                   </mat-form-field>
-               </div>
+            <!-- Category -->
+            <div class="form-group half-width">
+                <p *ngIf="!ticketsCategory.length " class="text-danger">No priority options found. Please check account settings -
+                    admin/settings.</p>
+                <mat-form-field>
+                    <mat-label>Category</mat-label>
+                    <select matNativeControl #category formControlName="category" [(ngModel)]="ticketToAdd.category" name="category">
+                        <option *ngFor="let cat of ticketsCategory;let i = index" [value]="cat.id">
+                            {{cat.name }}
+                        </option>
+                    </select>
+                </mat-form-field>
+            </div>
+
+            <!-- Priority -->
+            <div class="form-group half-width">
+                <p *ngIf="!ticketPriorities.length " class="text-danger">No priority options found. Please check account settings -
+                    admin/settings.</p>
+                <mat-form-field>
+                    <mat-label>Priority</mat-label>
+                    <select matNativeControl #priority formControlName="priority" [(ngModel)]="ticketToAdd.priority" name="priority">
+                        <option *ngFor="let prio of ticketPriorities;let i = index" [value]="prio.id">
+                            {{prio.name }}
+                        </option>
+                    </select>
+                </mat-form-field>
+            </div>
 
              <!-- Assignee -->
              <div class="form-group half-width">

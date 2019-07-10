@@ -23,26 +23,11 @@
             <!-- <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/incoming' }" [routerLink]="['/admin/fund/{{proj.name}}']">Mass Depot</a> -->
           </div>
       </li>
-      <!-- <li class="nav-item dropdown"
-      [ngClass]="{'active':activeURL === '/admin/fund' || activeURL === '/admin/fund/current' || activeURL === '/admin/fund/incoming' || activeURL === '/admin/fund/pending'}"
-      >
-        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-          My Task
-        </a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/current' || activeURL === '/admin/fund' }" [routerLink]="['/admin/fund/current']">Assigned to me</a>
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">Open</a>
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">In Progress</a>
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">Completed</a>
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/pending' }" [routerLink]="['/admin/fund/pending']">All</a>
-        </div>
-      </li> -->
+
       <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/news' }">
         <a class="nav-link" [routerLink]="['news']">News</a>
       </li>
-      <!-- <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/member' || this.activeURL.split('admin/member').length - 1 }">
-        <a class="nav-link" [routerLink]="['/admin/member']">User Role</a>
-      </li> -->
+
       <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/activity' }">
         <a class="nav-link" [routerLink]="['activity']">Activity Logs</a>
       </li>
@@ -50,6 +35,15 @@
 
     <ul class="navbar-nav ml-auto">
       <!-- Dropdown -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle pad-x-40 pad-x-sm-0" href="#" id="navbardrop" data-toggle="dropdown">
+          <mat-icon *ngIf="unread_notification_count" [matBadge]="unread_notification_count" matBadgeColor="warn" class="material-icons notification-bell-icon">notifications</mat-icon>
+          <mat-icon *ngIf="!unread_notification_count" matBadgeColor="warn" class="material-icons notification-bell-icon">notifications</mat-icon>
+        </a>
+        <div *ngIf="notification.length" class="dropdown-menu notification-navbar-panel">
+          <a *ngFor="let ntf of notification;let i = index" [href]="ntf.app_link" (click)="read(ntf.app_link,i)" class="dropdown-item" [ngClass]="{'unread': ntf.read }" target="_blank" >{{ntf.data.message}}</a>
+        </div>
+      </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle pad-x-40 pad-x-sm-0" href="#" id="navbardrop" data-toggle="dropdown">
           <img *ngIf="user_avatar" class="rounded-circle" [src]="user_avatar" height="22" width="22" alt="Account">

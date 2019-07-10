@@ -19,6 +19,7 @@ import {MatSnackBar, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/ma
 import {DialogOverviewExampleDialog} from './dialog-attachment-overview.component';
 import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase } from '@angular/common/http';
 import { projection } from '@angular/core/src/render3';
+import { WebSocketSubject } from 'rxjs/webSocket';
 
 class ImageSnippet {
   constructor(public src: string, public file: File) {}
@@ -47,6 +48,7 @@ export class TicketDetailComponent implements OnInit {
     settings:any[] = [];
     memberList = [];
     items: any[] =[];
+    ticketCategories:any[] = [];
     mentionConfig:any;
 
     project_name:string;
@@ -55,12 +57,16 @@ export class TicketDetailComponent implements OnInit {
     loading:    boolean;
     updating_status:boolean = false;
     updating_priority:boolean = false;
+    updating_category:boolean = false;
     replayText:string;
     animal: string;
     name: string;
     selectedFile: ImageSnippet;
     public uploader: FileUploader = new FileUploader({});
     public hasBaseDropZoneOver: boolean = false;
+
+    private socket$: WebSocketSubject<any>;
+
     constructor(
         private ticketService: TicketService,
         private threadService:  ThreadService,
@@ -106,11 +112,41 @@ export class TicketDetailComponent implements OnInit {
       this.settingService.settings.subscribe( (res:any) => {
         this.settings = res;
       });
+      // Tickets Category
+      this.ticketService.ticketsCategory.subscribe( (res:any) => {
+        this.ticketCategories = res;
+      });
         this.replayText = "";
         this.route.params.subscribe(params => {
             if (params['ticket_id'] !== undefined) {
                 this.project_name = params['project_name'];
                 this.auth = this.authService.getAuthUser();
+
+                this.socket$ = new WebSocketSubject('ws://192.168.10.10:6001/app/12345');
+                this.socket$
+                  .subscribe(
+                    (message) => {
+                      // let content = JSON.parse(message.data);
+                      if (message.channel == 'channel-notify.' + this.auth.id) {
+                        if (message.data != undefined) {
+                          let ss = message.data;
+                          let obj = JSON.parse(ss);
+                          message = {
+                            sender: obj.message.data.message_by.username,
+                            content: obj.message,
+                            app_link: obj.link,
+                            isBroadcast: false
+                          };
+
+                          this.ticket.thread.push(message.content.data);
+                        }
+                      }
+                    },
+                    (err) => console.error(err),
+                    () => console.warn('Completed!')
+                  );
+                let data = { "event": "pusher:subscribe", "data": { "channel": "channel-notify." + this.auth.id } }
+                this.socket$.next(data);
 
                 this.ticketService.getProjectTicket(params['project_name'],params['ticket_id']).subscribe( (res:any) => {
                   if(res){
@@ -231,10 +267,12 @@ export class TicketDetailComponent implements OnInit {
         return false;
     }
     auto_grow(element) {
-      //console.log(element);
-      // element.style.height = "5px";
-      // element.style.height = (element.scrollHeight)+"px";
-      let style = {'min-height': '200px','max-height':'300px'};
+
+      let  textArea = document.getElementById("ticket-description-info")
+      textArea.style.overflow = 'hidden';
+      textArea.style.height = '0px';
+      let height =  textArea.scrollHeight + 'px';
+      let style = {'min-height': height,'max-height':height };
       return style;
     
     }
@@ -400,6 +438,27 @@ export class TicketDetailComponent implements OnInit {
           this.ticket.priority = res;
           this.updating_priority = false;
           this.snackBar.open('Priority has been updated', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "success-snack"
+              }
+          );
+        } else {
+
+        }
+      });
+    }
+
+    updateTicketCategory(category:any){
+      let priorityObj = this.ticketCategories.find( (res) =>  res.id == category);
+      this.updating_category = true;
+      this.ticketService.update(this.ticket, 'category', priorityObj).subscribe( res => {
+        if(res && res.category_id == category){
+          this.ticket.category = res;
+          this.updating_category = false;
+          this.snackBar.open('Category has been updated', 'X', {
                   duration: 5000,
                   direction: "ltr",
                   verticalPosition:"top",

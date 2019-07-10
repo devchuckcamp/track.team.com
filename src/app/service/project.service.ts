@@ -11,6 +11,9 @@ import { GlobalRoutesService } from '../config/config';
 export class ProjectService {
     apiEndpoint:string;
     Bearer:any;
+    // Logged in user avatar
+    isAMember =  new BehaviorSubject<boolean>(null);
+    currentIsMember = this.isAMember.asObservable();
     projects: Observable<Project[]>
         private _projects: BehaviorSubject<Project[]>;
         private baseUrl: string;
@@ -32,7 +35,9 @@ export class ProjectService {
             this._projects = <BehaviorSubject<Project[]>>new BehaviorSubject([]);
             this.projects = this._projects.asObservable();
         }
-
+    setIsMember(valid:boolean){
+        this.isAMember.next(valid);
+    }
     getAll() {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/projects', this.jt()).pipe(map( (res:any) => res));
     }
@@ -87,6 +92,20 @@ export class ProjectService {
         return this.http.delete(this.config.apiEndPoint()+'/projects/id');
     }
 
+    isMember(project_name:any): Observable<any>{
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/project-auth-member?project='+project_name, this.jt()).pipe(
+            map( (res:any) => {
+                if(res.id){
+                    this.setIsMember(true);
+                    return res;
+                } else {
+                    this.setIsMember(false);
+                    return ;
+                }
+                return res;
+            })
+            );
+    }
     private jt() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer '+this.Bearer,

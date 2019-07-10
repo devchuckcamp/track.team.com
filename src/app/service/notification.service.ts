@@ -6,42 +6,42 @@ import { catchError, retry } from 'rxjs/operators'
 import { map, take } from 'rxjs/operators';
 import { Ticket } from '../model/ticket';
 import { GlobalRoutesService } from '../config/config';
-class TicketCategory{
-    name:string;
+class Notification{
+    data:any;
 }
 @Injectable({ providedIn: 'root' })
-export class TicketService {
+export class NotificationService {
     apiEndpoint:string;
     Bearer:any;
-    // Ticket Category List
-    ticketsCategory: Observable<TicketCategory[]>
-    _ticketsCategory: BehaviorSubject<TicketCategory[]>;
-    ticketsCategoryStore: {
-        ticketsCategory: any[]
+    // Notification List
+    notification: Observable<Notification[]>
+    _notification: BehaviorSubject<Notification[]>;
+    notificationStore: {
+        notification: any[]
     };
-    TicketsCategoryList: TicketCategory[]= [];
+    NotificationList: Notification[]= [];
     constructor(
         private config: GlobalRoutesService,
         private http: HttpClient,
         ) {
             this.apiEndpoint = this.config.apiEndPoint();
-            this.ticketsCategoryStore = { ticketsCategory: [] };
-            this._ticketsCategory = <BehaviorSubject<TicketCategory[]>>new BehaviorSubject([]);
-            this.ticketsCategory = this._ticketsCategory.asObservable();
+            this.notificationStore = { notification: [] };
+            this._notification = <BehaviorSubject<Notification[]>>new BehaviorSubject([]);
+            this.notification = this._notification.asObservable();
             if(localStorage.getItem("currentUser")){
                 this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
             }
         }
 
     getAll() {
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets', this.jt()).pipe(map( (res:any) => res));
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/notifications', this.jt()).pipe(map( (res:any) => res));
     }
 
-    loadAllTicketCategory(client:any) {
-        this.http.get(this.config.apiEndPoint()+'/api/v1/ticket-category?client='+client, this.jt()).subscribe( (data :any)=> {
-          this.ticketsCategoryStore.ticketsCategory = data;
-          this._ticketsCategory.next(Object.assign({}, this.ticketsCategoryStore).ticketsCategory);
-        }, error => console.log('Could not load Categories.'));
+    loadAllNotification() {
+        this.http.get(this.config.apiEndPoint()+'/api/v1/notifications?per_page='+10, this.jt()).subscribe( (data :any)=> {
+          this.notificationStore.notification = data.data;
+          this._notification.next(Object.assign({}, this.notificationStore).notification);
+        }, error => console.log('Could not load notifications.'));
     }
     getProjectTicketAll(project_name: string, page:number = 1, per_page:number = 25){
         var page_num = '';
@@ -68,13 +68,19 @@ export class TicketService {
         return this.http.post(this.config.apiEndPoint()+'/api/v1/tickets', ticket, this.jt());
     }
 
-    update(ticket: any, type:string = 'all', customData:any = null):any {
+    read(link:any){
         let data = JSON.stringify({
-            status_id:ticket.status_id
+            read:1,
+            app_link:link
         });
-        if(type == 'status'){
+        return this.http.put(this.config.apiEndPoint()+'/api/v1/notifications/read', data, this.jt());
+    }
+
+    update(id: any, type:string = 'read', customData:any = null):any {
+        let data = JSON.stringify(customData);
+        if(type == 'read'){
             data = JSON.stringify({
-                status_id:ticket.status_id
+                read:1
             });
         }
         if(type == 'priority'){
@@ -87,7 +93,7 @@ export class TicketService {
                 category_id:customData.id
             });
         }
-        return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets/'+ticket.id, data, this.jt());
+        return this.http.put(this.config.apiEndPoint()+'/api/v1/notifications/'+id, data, this.jt());
     }
 
     delete(id: number) {

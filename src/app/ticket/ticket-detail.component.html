@@ -2,15 +2,6 @@
     <div class="thread-container col-lg-12">
         <h2>{{ticket.title}}</h2>
         <form>
-            <!-- <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                </div>
-                <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                </div> -->
             <!-- Status -->
             <div class="form-group"  *ngIf="isAssignee() || ticket.created_by == auth.username">
                 <label class="mar-r-10" for="ticket-status">Status  </label>
@@ -39,6 +30,19 @@
                 <label class="mar-r-10" for="ticket-status">Priority:</label>
                 <span [style.background-color]="ticket.priority.color" class="font-white pad-x-10 pad-y-5">{{ ticket.priority.name | titlecase }}</span>
             </div>
+            <!-- Category -->
+            <div class="form-group" *ngIf="isAssignee() || ticket.created_by == auth.username" >
+                <label class="mar-r-10" for="ticket-status">Category</label>
+                <select  #ticketCategory (change)="updateTicketCategory(ticketCategory.value)">
+                    <option  *ngFor="let category of ticketCategories" [value]="category.id" [selected]="category.id == ticket.category_id">{{category.name}}</option>
+                </select>
+                <span class="pad-l-10"><img *ngIf="updating_category" src="../../assets/icon/loading.gif" width="20" height="20"></span>
+            </div>
+            <div class="form-group" *ngIf="!isAssignee() && ticket.created_by !== auth.username" >
+                <label class="mar-r-10" for="ticket-status">Category:</label>
+                <span class="pad-x-10 pad-y-5"><b>{{ ticket.category.name | titlecase }}</b></span>
+            </div>
+
             <!-- Assignees -->
             <div *ngIf="ticket.assignees.length" class="row form-group">
                 <div  class="col-lg-12">
@@ -112,7 +116,7 @@
                     disabled
                     [ngStyle]="auto_grow(this)"
                     class="form-control ticket-description-info" id="ticket-description-info"
-                    rows="3">{{ticket.description}}</textarea>
+                    >{{ticket.description}}</textarea>
             </div>
             <!-- <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
@@ -131,7 +135,7 @@
             </div>
             <div *ngFor="let thread of ticket.thread; let i = index" [attr.data-index]="i" class="thread-message mar-y-10 full-w pad-0">
                 <div class="card thread-message-content text-left">
-                    <div class="row thread-attachment-list-container" *ngIf="thread.upload && thread.upload.length">
+                    <div *ngIf="ticket.thread[i].upload && ticket.thread[i].upload.length" class="row thread-attachment-list-container">
                         <div *ngFor="let upload of thread.upload; let ii = index" [attr.data-index]="ii" class="comment-attachment-container col">
                             <!-- thread ID:{{thread.id}} -->
                             <img (click)="openDialog(thread.upload)"  class="mar-x-30 full-w full-h" [src]="getSantizeUrl(upload.url)">
@@ -142,7 +146,7 @@
                             class="col card-header thread-message-head q-width border-rad-10 pad-20 mar-r-10"> <label
                                 for="">{{thread.user_id == auth.id ? 'You' : thread.message_by.name }}</label>
                             : <label class="message-create">{{thread.created_at}}</label></div>
-                        <div [ngClass]="{'text-right': thread.user_id == auth.id, 'text-left': thread.message_by.username != loggedin_user}"
+                        <div [ngClass]="{'text-left': thread.user_id == auth.id, 'text-left': thread.message_by.username != loggedin_user}"
                             class="col-lg-9 card-body thread-message-wrapper">{{thread.message}}</div>
                     </div>
                 </div>

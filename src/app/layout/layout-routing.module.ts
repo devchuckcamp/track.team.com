@@ -15,7 +15,7 @@ import { MasterComponent } from '../master/master.component';
 import { AuthGuard } from '../guard/auth';
 import { MasterGuard } from '../guard/master';
 import { NonMasterGuard } from '../guard/non-master';
-
+import { ProjectMemberGuard } from '../guard/project-member-guard';
 const routes:   Routes = [
     {
         path: ':auth_client',
@@ -28,17 +28,17 @@ const routes:   Routes = [
         children:[
             { path: 'projects',  component:LayoutComponent },
             { path: 'projects/add', component:ProjectNewComponent},
-            { path: 'projects/:project_name', loadChildren:'../project/project-detail.module#ProjectDetailModule'},
-            { path: 'projects/:project_name/tickets', loadChildren:'../ticket/ticket.module#TicketModule'},
-            { path: 'projects/:project_name/tickets/filter', loadChildren:'../ticket/ticket.module#TicketModule'},
-            { path: 'projects/:project_name/tickets/filter/:filter_type', loadChildren:'../ticket/ticket.module#TicketModule'},
-            { path: 'projects/:project_name/tickets/filter/:filter_type', loadChildren:'../ticket/ticket.module#TicketModule'},
-            { path: 'projects/:project_name/tickets/:ticket_id', loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
-            { path: 'projects/:project_name/tickets/filter/:filter_type/:ticket_id', loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
-            { path: 'projects/:project_name/members', loadChildren:'../member/member.module#MemberModule'},
-            { path: 'projects/:project_name/members/:user_id', loadChildren:'../member/member-detail.module#MemberDetailModule'},
-            { path: 'projects/:project_name/settings', component:UnderConstructionComponent},
-            { path: 'projects/:project_name/activity', component:ActivityLogComponent},
+            { path: 'projects/:project_name',canActivate:[ProjectMemberGuard], loadChildren:'../project/project-detail.module#ProjectDetailModule'},
+            { path: 'projects/:project_name/tickets',canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket.module#TicketModule'},
+            { path: 'projects/:project_name/tickets/filter', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket.module#TicketModule'},
+            { path: 'projects/:project_name/tickets/filter/:filter_type', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket.module#TicketModule'},
+            { path: 'projects/:project_name/tickets/filter/:filter_type', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket.module#TicketModule'},
+            { path: 'projects/:project_name/tickets/:ticket_id', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
+            { path: 'projects/:project_name/tickets/filter/:filter_type/:ticket_id', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
+            { path: 'projects/:project_name/members', canActivate:[ProjectMemberGuard], loadChildren:'../member/member.module#MemberModule'},
+            { path: 'projects/:project_name/members/:user_id', canActivate:[ProjectMemberGuard], loadChildren:'../member/member-detail.module#MemberDetailModule'},
+            { path: 'projects/:project_name/settings', canActivate:[ProjectMemberGuard], component:UnderConstructionComponent},
+            { path: 'projects/:project_name/activity', canActivate:[ProjectMemberGuard], component:ActivityLogComponent},
             { path: 'fund/current', loadChildren:'../fund/fund.module#FundModule'},
             { path: 'fund/incoming', loadChildren:'../fund/fund-incoming.module#FundIncomingModule'},
             { path: 'fund/pending', loadChildren:'../fund/fund-pending.module#FundPendingModule'},

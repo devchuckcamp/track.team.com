@@ -101,9 +101,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setClientInfo();
         this.route.params.subscribe(params => {
             if ( (params['project_name'] !== 'add' ) && params['project_name'] !== undefined || this.project_name !== '') {
-                console.log(this.project_name);
                 let project_name = this.project_name ? this.project_name : params['project_name'];
-                //this.getAllProject(project_name);
             }
             this.router.events.subscribe(path =>{
                 if(path instanceof NavigationEnd ){
