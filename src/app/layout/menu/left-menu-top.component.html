@@ -24,6 +24,10 @@
                     <a href="#" [routerLink]="['projects']"><i class="fa fa-ticket mar-r-5"></i>Projects</a>
                 </li>
                 <li class="parent-left-menu-item"
+                    [ngClass]="{'active': admin_project_sub == 'reports' || admin_sub_3 == 'reports'}">
+                    <a href="#" [routerLink]="['reports']"><i class="fa fa-file-text-o mar-r-5"></i>Report</a>
+                </li>
+                <li class="parent-left-menu-item"
                     [ngClass]="{'active': admin_project_sub == 'settings' || admin_sub_3 == 'settings'}">
                     <a href="#" [routerLink]="['settings']"><i class="fa fa-gears mar-r-5"></i>Setting</a>
                 </li>

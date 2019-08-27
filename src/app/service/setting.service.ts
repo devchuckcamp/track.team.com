@@ -11,13 +11,28 @@ import { GlobalRoutesService } from '../config/config';
 export class SettingService {
     apiEndpoint:string;
     Bearer:any;
+    // Project Priorities
     settings: Observable<any[]>
         private _settings: BehaviorSubject<any[]>;
         private baseUrl: string;
         private dataStore: {
             settings: any[]
         };
+    // Project Status
+    statusSettings: Observable<any[]>
+        private _statusSettings: BehaviorSubject<any[]>;
+        private statusSettingsDataStore: {
+            statusSettings: any[]
+        };
     ProjectsList: Project[]= [];
+
+    // Project Category
+     categorySettings: Observable<any[]>
+     private _categorySettings: BehaviorSubject<any[]>;
+     private categorySettingsDataStore: {
+        categorySettings: any[]
+     };
+
     constructor(
         private config: GlobalRoutesService,
         private http: HttpClient,
@@ -30,6 +45,14 @@ export class SettingService {
             this.dataStore = { settings: [] };
             this._settings = <BehaviorSubject<any[]>>new BehaviorSubject([]);
             this.settings = this._settings.asObservable();
+
+            this.statusSettingsDataStore = { statusSettings: [] };
+            this._statusSettings = <BehaviorSubject<any[]>>new BehaviorSubject([]);
+            this.statusSettings = this._statusSettings.asObservable();
+
+            this.categorySettingsDataStore = { categorySettings: [] };
+            this._categorySettings = <BehaviorSubject<any[]>>new BehaviorSubject([]);
+            this.categorySettings = this._categorySettings.asObservable();
         }
 
     getAll() {
@@ -47,6 +70,35 @@ export class SettingService {
         this.http.post(this.config.apiEndPoint()+'/api/v1/ticket-priorities', JSON.stringify(ticket)).subscribe( (data:any) => {
             this.dataStore.settings.push(data);
             this._settings.next(Object.assign({}, this.dataStore).settings);
+          }, error => console.log('Could not create todo.'));
+    }
+
+
+    loadAllProjectStatus() {
+        this.http.get(this.config.apiEndPoint()+'/api/v1/ticket_statuses?all=1', this.jt()).subscribe( (res :any)=> {
+          this.statusSettingsDataStore.statusSettings = res;
+          this._statusSettings.next(Object.assign({}, this.statusSettingsDataStore).statusSettings);
+        }, error => console.log('Could not load projects.'));
+    }
+    
+    createProjectStatus(ticket: any) {
+        this.http.post(this.config.apiEndPoint()+'/api/v1/ticket_statuses', JSON.stringify(ticket)).subscribe( (data:any) => {
+            this.statusSettingsDataStore.statusSettings.push(data);
+            this._statusSettings.next(Object.assign({}, this.statusSettingsDataStore).statusSettings);
+          }, error => console.log('Could not create todo.'));
+    }
+
+    loadAllTicketCategory() {
+        this.http.get(this.config.apiEndPoint()+'/api/v1/ticket-category?all=1', this.jt()).subscribe( (res :any)=> {
+          this.categorySettingsDataStore.categorySettings = res;
+          this._categorySettings.next(Object.assign({}, this.categorySettingsDataStore).categorySettings);
+        }, error => console.log('Could not load projects.'));
+    }
+    
+    createTicketCategory(ticket: any) {
+        this.http.post(this.config.apiEndPoint()+'/api/v1/ticket-category', JSON.stringify(ticket)).subscribe( (data:any) => {
+            this.categorySettingsDataStore.categorySettings.push(data);
+            this._categorySettings.next(Object.assign({}, this.categorySettingsDataStore).categorySettings);
           }, error => console.log('Could not create todo.'));
       }
 
@@ -74,13 +126,46 @@ export class SettingService {
         let data = JSON.stringify({
             name:ticket.name,
             color:ticket.color,
+            order:ticket.order
         });
         return this.http.put(this.config.apiEndPoint()+'/api/v1/ticket-priorities/'+ticket_id, data, this.jt());
     }
 
+    saveTicketStatus(ticketOption: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/ticket_statuses', ticketOption, this.jt());
+    }
+
+    updateTicketStatus(ticket: any, ticket_id: number) {
+        let data = JSON.stringify({
+            name:ticket.name,
+            color:ticket.color,
+        });
+        return this.http.put(this.config.apiEndPoint()+'/api/v1/ticket_statuses/'+ticket_id, data, this.jt());
+    }
+
+    deleteTicketStatus(id: number) {
+        return this.http.delete(this.config.apiEndPoint()+'/projects/id');
+    }
+    saveTicketCategory(ticketOption: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/ticket-category', ticketOption, this.jt());
+    }
+
+    updateTicketCategory(ticket: any, ticket_id: number) {
+        let data = JSON.stringify({
+            name:ticket.name,
+        });
+        return this.http.put(this.config.apiEndPoint()+'/api/v1/ticket-category/'+ticket_id, data, this.jt());
+    }
+
+    deleteTicketCategory(id: number) {
+        return this.http.delete(this.config.apiEndPoint()+'/api/v1/ticket-category/'+id);
+    }
     delete(id: number) {
         return this.http.delete(this.config.apiEndPoint()+'/projects/id');
     }
+
+
+
 
     private jt() {
         let headers = new HttpHeaders({

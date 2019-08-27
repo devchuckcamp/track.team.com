@@ -44,6 +44,8 @@ export class LayoutComponent implements OnInit {
       this.setClient();
       // Settings
       this.settingService.loadAll();
+      this.settingService.loadAllProjectStatus();
+      this.settingService.loadAllTicketCategory();
       this.profile = this.authService.getAuthUser();
       this.admin_sub_1 = "";
       this.admin_sub_2 = "";
@@ -75,6 +77,12 @@ export class LayoutComponent implements OnInit {
 
           if(slug_list.includes("activity") || slug_list[3] == 'activity'){
             this.admin_sub_1 = "activity";
+            this.admin_sub_2 =  slug_list[4];
+            this.admin_project_sub =  slug_list[slug_list.length-1];
+          }
+
+          if(slug_list.includes("reports") || slug_list[3] == 'reports'){
+            this.admin_sub_1 = "reports";
             this.admin_sub_2 =  slug_list[4];
             this.admin_project_sub =  slug_list[slug_list.length-1];
           }

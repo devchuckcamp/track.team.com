@@ -160,7 +160,6 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
             this.admin_sub_2 =  slug_list[4];
             this.admin_project_sub =  slug_list[slug_list.length-1];
             this.project_name = slug_list[4];
-            //this.getAllProject(this.admin_sub_2);
         }
         else if(slug_list[3] == 'projects' && slug_list[5] == 'tickets'){
             this.admin_project_sub =  'tickets';
@@ -182,7 +181,6 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
             this.admin_project_sub =  'activity';
             this.admin_sub_3 =  'activity';
         }
-        console.log(slug_list,'slug_list');
     }
 
     setUser():void {

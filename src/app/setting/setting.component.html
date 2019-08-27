@@ -80,7 +80,20 @@
               Status Options
             </mat-panel-description>
           </mat-expansion-panel-header>
-          <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
+          <!-- <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p> -->
+          <project-status-setting></project-status-setting>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="step == 2" (opened)="panelOpenState = true" (opened)="setStep(2)" (closed)="panelOpenState = false">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>category</mat-icon>
+            </mat-panel-title>
+            <mat-panel-description>
+              Category Options
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <project-category-setting></project-category-setting>
         </mat-expansion-panel>
       </mat-accordion>
     </div>
@@ -91,7 +104,7 @@
       <div class="col-lg-12">
         <mat-accordion>
   
-          <mat-expansion-panel [expanded]="step == 2" (opened)="setStep(2)">
+          <mat-expansion-panel [expanded]="step == 3" (opened)="setStep(3)">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <mat-icon>low_priority</mat-icon>
@@ -103,7 +116,7 @@
             <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
           </mat-expansion-panel>
   
-          <mat-expansion-panel [expanded]="step == 3" (opened)="panelOpenState = true" (opened)="setStep(3)" (closed)="panelOpenState = false">
+          <mat-expansion-panel [expanded]="step == 4" (opened)="panelOpenState = true" (opened)="setStep(4)" (closed)="panelOpenState = false">
             <mat-expansion-panel-header>
               <mat-panel-title>
                   <i class="material-icons">security</i>
@@ -123,7 +136,7 @@
       <div class="col-lg-12">
         <mat-accordion>
   
-          <mat-expansion-panel [expanded]="step == 4" (opened)="setStep(4)">
+          <mat-expansion-panel [expanded]="step == 5" (opened)="setStep(5)">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <mat-icon>accessibility</mat-icon>
@@ -135,7 +148,7 @@
             <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
           </mat-expansion-panel>
   
-          <mat-expansion-panel [expanded]="step == 5" (opened)="panelOpenState = true" (opened)="setStep(5)" (closed)="panelOpenState = false">
+          <mat-expansion-panel [expanded]="step == 6" (opened)="panelOpenState = true" (opened)="setStep(6)" (closed)="panelOpenState = false">
             <mat-expansion-panel-header>
               <mat-panel-title>
                   <i class="material-icons">security</i>
@@ -155,7 +168,7 @@
       <div class="col-lg-12">
         <mat-accordion>
   
-          <mat-expansion-panel [expanded]="step == 6" (opened)="setStep(6)">
+          <mat-expansion-panel [expanded]="step == 7" (opened)="setStep(7)">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <mat-icon>email</mat-icon>

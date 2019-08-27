@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart, NavigationEnd, NavigationError, NavigationCancel, RoutesRecognized } from '@angular/router';
+import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase } from '@angular/common/http';
 import { ProjectService } from '../service/project.service';
 import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
@@ -107,36 +108,36 @@ export class NavbarComponent implements OnInit, OnDestroy  {
       }
     });
 
-    this.socket$ = new WebSocketSubject('ws://192.168.10.10:6001/app/'+this.web_app_key);
-    this.socket$
-      .subscribe(
-        (message) => {
-          if (message.channel == 'channel-notify.' + this.auth_user.id) {
-            if (message.data != undefined) {
-              let ss = message.data;
-              let obj = JSON.parse(ss);
-              message = {
-                sender: obj.message.data.message_by.username,
-                data: obj.message,
-                app_link: obj.link,
-                isBroadcast: false
-              };
-              this.unread_notification_count++;
-              this.notification.push(message);
-            }
-          }
-        },
-        (err) => console.error(err),
-        () => console.warn('Completed!')
-      );
-    let data = { "event": "pusher:subscribe", "data": { "channel": "channel-notify." + this.auth_user.id } }
-    this.socket$.next(data);
+    // this.socket$ = new WebSocketSubject({url:'ws://192.168.10.10:6001/app/'+this.web_app_key, protocol:[]});
+    // this.socket$
+    //   .subscribe(
+    //     (message) => {
+    //       if (message.channel == 'channel-notify.' + this.auth_user.id) {
+    //         if (message.data != undefined) {
+    //           let ss = message.data;
+    //           let obj = JSON.parse(ss);
+    //           message = {
+    //             sender: obj.message.data.message_by.username,
+    //             data: obj.message,
+    //             app_link: obj.link,
+    //             isBroadcast: false
+    //           };
+    //           this.unread_notification_count++;
+    //           this.notification.push(message);
+    //         }
+    //       }
+    //     },
+    //     (err) => console.error(err),
+    //     () => console.warn('Completed!')
+    //   );
+    // let data = { "event": "pusher:subscribe", "data": { "channel": "channel-notify." + this.auth_user.id } }
+    // this.socket$.next(data);
   }
 
 
   ngOnInit() {
     this.userService.currentAvatar.subscribe(avatar => {
-      this.user_avatar = avatar;
+      this.user_avatar = avatar ;
     });
       this.projectService.loadAll();
       this.projectService.projects.subscribe( (res:any) => {
@@ -181,14 +182,40 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     this.subscription = this.userService.currentAvatar.subscribe(avatar => { this.user_avatar = avatar;  });
   }
 
-  read(link:string, index:number){
-    this.notificationService.read(link).subscribe( (res:any) => {
-      this.unread_notification_count--;
-      this.notification[index].read = 1;
+  readAll(){
+
+    this.notificationService.readAll().subscribe( (res:any) => {
+      this.unread_notification_count = 0;
+      for(var i =0;i <this.notification.length;i++){
+        this.notification[i].read = 1;
+      }
     });
+    console.log('read', this.notification);
+    return false;
+  }
+
+  read(link:string, index:number){
+
+    this.notificationService.read(link).subscribe( (res:any) => {
+      let readCount = 1;
+      let len = this.notification.length;
+      this.notification[index].read = 1;
+      for(var i =0;i <len;i++){
+        if(this.notification[i].app_link == link){
+          this.notification[i].read = 1;
+          readCount++;
+        }
+      }
+      this.unread_notification_count = this.unread_notification_count - readCount;
+      if(this.unread_notification_count <=0) {  this.unread_notification_count  = 0; }
+    });
+    if(link == window.location.href){
+      return false;
+    }
   }
 
   logout(){
+    // this.socket$.unsubscribe();
     localStorage.clear();
     this.authService.Bearer = '';
     this.userService.Bearer = '';
@@ -200,6 +227,19 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     window.location.href='/'
     return false;
   }
+
+  private jt() {
+    let headers = new HttpHeaders({
+        'Authorization': 'Bearer '+12345,
+        'Content-Type':  'application/json',
+        'Accept':'application/json',
+        'Access-Control-Allow-Origin':'*',
+        'Allow_Headers':' Allow, Access-Control-Allow-Origin, Content-type, Accept',
+        'Allow':'GET,POST,PUT,DELETE,OPTION'
+      })
+    let options = { headers: headers };
+    return options;
+}
 
 
 

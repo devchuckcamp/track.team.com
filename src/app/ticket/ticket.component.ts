@@ -57,6 +57,7 @@ interface Members {
 })
 export class TicketComponent implements OnInit, OnDestroy {
     tickets: Ticket[] = [];
+    ticketStatuses: any[] = [];
     members:Members[] = [];
     tag_users:TaggableMembers[] = [];
     ticketPriorities:any[] =[];
@@ -78,6 +79,12 @@ export class TicketComponent implements OnInit, OnDestroy {
     replayText:string;
     // Form Group
     ticketForm: FormGroup;
+    //Filter
+    filter:any;
+    initialFilter:any = [];
+    statusFilter:any = [];
+    // Search
+    searchText:any = '';
     // Paginator
     // MatPaginator Inputs
     length = 0;
@@ -102,8 +109,8 @@ export class TicketComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+      this.statusFilter.length =0;
       this.auth = this.authService.getAuthUser();
-
       this.settingService.settings.subscribe( (res:any) => {
         this.ticketPriorities = res;
       });
@@ -132,8 +139,9 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.ticketService.ticketsCategory.subscribe( (res:any) => {
         this.ticketsCategory = res;
       });
+      // Tickets Status
+      this.ticketService.loadAllTicketStatuses(1);
       this.projectService.getAllMemberFullList(this.project_name).subscribe( res => {
-        console.log(res);
         if(res){
           this.members = res;
           this.taggable_members = res;
@@ -142,15 +150,43 @@ export class TicketComponent implements OnInit, OnDestroy {
       });
 
       this.route.params.subscribe(params => {
+        let filteredStats = [];
+
         if (params['project_name'] !== undefined) {
           this.project_name = params['project_name'];
           this.loading = true;
-
           if (params['filter_type'] !== undefined) {
+            this.filter = params['filter_type'];
             this.getFilterTicket(params['project_name'],params['filter_type']);
           } else {
             this.getTicket(params['project_name']);
           }
+          this.ticketService.ticketStatus.subscribe( (res:any) => {
+            this.ticketStatuses = res.data;
+            filteredStats = res.data;
+            if(res.data){
+              this.statusFilter = [];
+
+              let filterIDs = [];
+              filterIDs = res.data.filter(res=> res.name == this.filter );
+
+              if (params['filter_type'] !== undefined) {
+                res.data.forEach(stat => {
+                  let filter_type = params['filter_type'].replace('-', " ").toLowerCase();
+                  if(stat.name.toLowerCase() == filter_type){
+                    this.statusFilter.push(stat.id);
+                  }
+                });
+              } else {
+                res.data.forEach(stat => {
+                  if(stat.id !==5){
+                    this.statusFilter.push(stat.id);
+                  }
+                });
+              }
+            }
+          });
+
           this.projectService.getProject(params['project_name']).subscribe( res=>{
             if(res) this.project_id = res.id;
           });
@@ -160,8 +196,23 @@ export class TicketComponent implements OnInit, OnDestroy {
       });
     }
 
-    ngOnDestroy(){
+    isSelected(id:any){
+      let index: number = this.statusFilter.indexOf(id);
+      let found = false;
+      if (index !== -1) {
+        found = true;
+      }else{
+        found = false;
+      }
+      return found;
+    }
 
+    ngOnDestroy(){
+      this.filter = '';
+      this.initialFilter = [];
+      this.initialFilter.length =0;
+      this.statusFilter= [];
+      this.statusFilter.length =0;
     }
 
     assignTo(id:number){
@@ -199,7 +250,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.pageSize = setPageSizeOptionsInput.pageSize;
       let pageSize = setPageSizeOptionsInput.pageSize;
       this.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
-      this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, 25).subscribe(res => {
+      this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, this.pageSize).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
         this.length = res.total;
@@ -217,7 +268,7 @@ export class TicketComponent implements OnInit, OnDestroy {
         this.pageSize = this.pageSizeOptions[0];
       }
 
-      this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, this.pageSize).subscribe(res => {
+      this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, this.pageSize, this.filter).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
         this.length = res.total;
@@ -361,6 +412,7 @@ export class TicketComponent implements OnInit, OnDestroy {
           title:title,
           description:description,
           assigned_to:null,
+          category_id:this.ticketForm.value.category,
           project_id: this.project_id,
           priority_id:this.ticketToAdd.priority,
         };
@@ -446,4 +498,22 @@ export class TicketComponent implements OnInit, OnDestroy {
       return false;
     }
 
+    searchTicket(){
+      if(this.searchText !== ''){
+        this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter).subscribe( (res:any) =>{
+          this.tickets = res.data;
+          this.length = res.total;
+        });
+      }
+      return false;
+    }
+    checkStatusFilter(stat:any){
+      const index: number = this.statusFilter.indexOf(stat);
+      if (index !== -1) {
+          this.statusFilter.splice(index, 1);
+      }else{
+        this.statusFilter.push(stat);
+      }
+      console.log(this.statusFilter,'statusFilter');
+    }
 }

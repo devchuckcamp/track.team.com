@@ -300,7 +300,8 @@ export class MemberComponent implements OnInit {
     };
     this.memberService.save(memberObj).subscribe( res => {
       if(res){
-        this.snackBar.open('User '+res+' Member has been added to the project', 'X', {
+        this.getMember();
+        this.snackBar.open('New Member has been added to the project', 'X', {
                 duration: 5000,
                 direction: "ltr",
                 verticalPosition:"top",

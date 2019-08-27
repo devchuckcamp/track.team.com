@@ -75,7 +75,9 @@ export class NotificationService {
         });
         return this.http.put(this.config.apiEndPoint()+'/api/v1/notifications/read', data, this.jt());
     }
-
+    readAll(){
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/notifications-read-all', this.jt());
+    }
     update(id: any, type:string = 'read', customData:any = null):any {
         let data = JSON.stringify(customData);
         if(type == 'read'){

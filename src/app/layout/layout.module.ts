@@ -16,6 +16,8 @@ import { LeftMenuTopComponent } from '../layout/menu/left-menu-top.component';
 import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
 import { UnderConstructionComponent } from '../share/under-construction.component';
 import { ActivityLogComponent } from '../share/activity-log.component';
+import { ReportProjectComponent } from '../report/project/report-project.component';
+
 // Services
 import { SettingService } from '../service/setting.service';
 import { AuthService } from '../service/auth.service';
@@ -85,6 +87,7 @@ import { MentionModule } from 'angular-mentions';
     ProfileComponent,
     UnderConstructionComponent,
     ActivityLogComponent,
+    ReportProjectComponent
     // MasterComponent,
     // MasterNavbarComponent
   ],

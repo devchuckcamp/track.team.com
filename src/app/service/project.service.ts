@@ -106,6 +106,25 @@ export class ProjectService {
             })
             );
     }
+
+    getProjectReport(project:any, start:any, end:any,auth_token:any){
+        let params = '';
+        let startDate = start ? '&start='+start :'';
+        let endDate =   end ? '&end='+end :'';
+        let projectname = project ? '?project='+project :'';
+        let token = '&auth_token='+auth_token;
+        params = projectname+ token + startDate + endDate;
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/project-report'+params, this.jt()).pipe(map( (res:any) => res));
+    }
+
+    createDownloadToken(ticket:any){
+        let data:any = JSON.stringify({
+            ticket_id:ticket.id,
+            project_id:ticket.project_id
+        });
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/ticket-download-token', data,this.jt());
+    }
+
     private jt() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer '+this.Bearer,

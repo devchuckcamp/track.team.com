@@ -3,15 +3,27 @@
     <h2 class="header-title" *ngIf="project">Project {{ project.name | titlecase}}</h2>
 </div>
 <div class="col-lg-12 content-main">
-    <div *ngIf="tickets" class="row">
-        <div class="col-lg-4 clickable" (click)="goToFilterTicket('open');">
-            <mat-card class="font-white bg-info">Open Tickets <span class="badge"> {{ openTickets.length }}</span></mat-card>
+    <!-- <div *ngIf="tickets" class="row">
+        <div class="col-lg-4 clickable mar-y-10" (click)="goToFilterTicket('open');">
+            <mat-card class="font-white bg-info">Open Tickets <span class="badge"> ({{ openTickets.length }})</span></mat-card>
         </div>
-        <div class="col-lg-4 clickable" (click)="goToFilterTicket('in-progress');">
-            <mat-card class="font-white bg-warning">In Progress Tickets <span class="badge">{{ inProgressTickets.length }}</span></mat-card>
+        <div class="col-lg-4 clickable mar-y-10" (click)="goToFilterTicket('in-progress');">
+            <mat-card class="font-white bg-warning">In Progress Tickets <span class="badge">({{ inProgressTickets.length }})</span></mat-card>
         </div>
-        <div class="col-lg-4 clickable" (click)="goToFilterTicket('complete');">
-            <mat-card class="font-white bg-success">Completed Tickets <span class="badge">{{ completedTickets.length }}</span> </mat-card>
+        <div class="col-lg-4 clickable mar-y-10" (click)="goToFilterTicket('complete');">
+            <mat-card class="font-white bg-success">Completed Tickets <span class="badge"> ({{ completedTickets.length }})</span> </mat-card>
+        </div>
+        <div class="col-lg-4 clickable mar-y-10" (click)="goToFilterTicket('on-qa');">
+            <mat-card class="font-white bg-medium">Tickets On QA<span class="badge"> ({{ onQaTickets.length }})</span></mat-card>
+        </div>
+        <div class="col-lg-4 clickable mar-y-10" (click)="goToFilterTicket('for-testing');">
+            <mat-card class="font-white bg-danger">Tickets On Testing<span class="badge"> ({{ onTestingTickets.length }})</span></mat-card>
+        </div>
+    </div> -->
+    <div class="row" *ngIf="ticketStatusList">
+        
+        <div class="col-lg-4 clickable mar-y-10" *ngFor="let status of ticketStatusList" (click)="goToFilterTicket( status.slug);">
+            <mat-card class="font-white"  [ngStyle]="{'background-color': status.color, 'color':'#fafafa'}">{{ status.name }} Tickets <span class="badge"> ({{ status.count.length }})</span></mat-card>
         </div>
     </div>
 </div>

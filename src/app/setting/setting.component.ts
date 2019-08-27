@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SettingService } from '../service/setting.service';
 
 type TicketPriorityType = Array<{id: number, name: string }>;
+type TicketStatusType = Array<{id: number, name: string }>;
 type  TicketOptionSetting = {name: string, color: string };
 const add = {
   name: '',
@@ -21,6 +22,7 @@ export class SettingComponent implements OnInit {
   // Option Initiators
   ticketOptionLoaded: boolean;
   ticketPriorityList: TicketPriorityType = [];
+  ticketStatusList: TicketStatusType = [];
   ticketSettingToAdd:TicketOptionSetting;
   constructor(
     private settingService:SettingService,
@@ -39,7 +41,6 @@ export class SettingComponent implements OnInit {
   }
 
   addTicketPrioritySetting(){
-    console.log(this.ticketSettingToAdd,'ticketSettingToAdd');
     this.settingService.save(this.ticketSettingToAdd).subscribe( (res:any) => {
       this.settingService.loadAll();
     });

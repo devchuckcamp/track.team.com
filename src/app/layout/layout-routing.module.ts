@@ -11,6 +11,7 @@ import { ProjectNewComponent } from '../project/project-new.component';
 import { UnderConstructionComponent } from '../share/under-construction.component';
 import { ActivityLogComponent } from '../share/activity-log.component';
 import { ProfileComponent } from '../profile/profile.component';
+import { ReportProjectComponent } from '../report/project/report-project.component';
 import { MasterComponent } from '../master/master.component';
 import { AuthGuard } from '../guard/auth';
 import { MasterGuard } from '../guard/master';
@@ -49,6 +50,8 @@ const routes:   Routes = [
             { path: 'activity/:filter', component:ActivityLogComponent,},
             { path: 'profile', component:ProfileComponent},
             { path: 'settings', loadChildren:'../setting/setting.module#SettingModule'},
+            { path: 'reports', loadChildren:'../report/report.module#ReportModule'},
+            { path: 'reports/:project_name', component:ReportProjectComponent},
         ]
     },
 ];

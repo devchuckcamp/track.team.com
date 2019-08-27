@@ -6,25 +6,35 @@
     <a href="#" *ngIf="auth.role_id < 4 && ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
 </div>
 <div  class="col-lg-12 content-main">
+    <div class="row pad-10">
+        <div class="col-3">
+            <input  type="search" class="search-field" placeholder="Search..." [(ngModel)]="searchText" >
+            <button mat-button color="primary"  class="search-btn" (click)="searchTicket()"><mat-icon>search</mat-icon></button>
+        </div>
+        <div class="col" *ngIf="ticketStatuses">
+            <p class="mar-0"><b>Filters:</b></p>
+            <mat-checkbox class="mar-x-10" *ngFor="let stat of ticketStatuses" [checked]="isSelected(stat.id)"  (change)="checkStatusFilter(stat.id)"   >{{ stat.name }}</mat-checkbox>
+        </div>
+    </div>
     <div *ngIf="!ticketFormShow" class="table-responsive table-striped">
         <table class="table">
             <thead>
                 <tr>
-                    <!-- <th scope="col">#</th> -->
+                    <th scope="col">#</th>
                     <th scope="col">Title</th>
                     <th scope="col">Description</th>
                     <th scope="col">Assignee</th>
+                    <th scope="col">Billed</th>
                     <th scope="col">Status</th>
                     <th scope="col" class="text-center">Priority</th>
                     <th scope="col">Created By</th>
                     <th scope="col">Created</th>
-                    <th scope="col">Modified</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody *ngIf="loading" class="text-center">
                 <tr>
-                    <!-- <td></td> -->
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -38,18 +48,20 @@
             </tbody>
             <tbody *ngIf="tickets && !loading">
                 <tr class="clickable" *ngFor="let ticket of tickets" >
-                    <!-- <th scope="row">{{ticket.id}}</th> -->
+                    <th scope="row">{{ticket.id}}</th>
                     <td [routerLink]="[ticket.id]">{{ticket.title}}</td>
-                    <td [routerLink]="[ticket.id]">{{ticket.description | ellipsis:60}}</td>
+                    <td [routerLink]="[ticket.id]">{{ticket.description | ellipsis:30}}</td>
                     <td [routerLink]="[ticket.id]" *ngIf="ticket.assigned_to && !ticket.assignees" [attr.data-user-id]="ticket.assigned_to.id">{{ticket.assigned_to.name}}</td>
                     <td [routerLink]="[ticket.id]" *ngIf="ticket.assignees" >
                         <a *ngFor="let assgn of ticket.assignees;let i = index">{{assgn.user.username}}{{ i >= 0 && i < (ticket.assignees.length-1) ? ', ': ''}}</a>
                     </td>
+                    <td *ngIf="ticket.billed_time_consumed">{{  ticket.billed_time_consumed.time ? 'Started': 'Stopped'  }}</td>
+                    <td *ngIf="!ticket.billed_time_consumed">Stopped</td>
                     <td [routerLink]="[ticket.id]">{{ticket.status.name | titlecase}}</td>
                     <td [routerLink]="[ticket.id]" class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
                     <td [routerLink]="[ticket.id]">{{ticket.created_by}}</td>
                     <td [routerLink]="[ticket.id]">{{ticket.created_at}}</td>
-                    <td [routerLink]="[ticket.id]">{{ ticket.updated_at == ticket.created_at ? '' : ticket.updated_at}}</td>
+                    <!-- <td [routerLink]="[ticket.id]">{{ ticket.updated_at == ticket.created_at ? '' : ticket.updated_at}}</td> -->
                     <td>
                         <!-- <a href="#"
                             [routerLink]="[ticket.id]"
