@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { SettingService } from '../../../service/setting.service';
-
+import {MatSnackBar} from '@angular/material';
 type TicketPriorityType = Array<{id: number, name: string }>;
 type TicketStatusType = Array<{id: number, name: string,  color: string }>;
-type  TicketOptionSetting = {name: string, color: string };
+type  TicketOptionSetting = {name: string, color: string, order: number };
 const add = {
   name: '',
   color: '',
+  order:0
 }
 
 
@@ -26,6 +27,7 @@ export class ProjectStatusComponent implements OnInit {
   ticketSettingToAdd:TicketOptionSetting;
   constructor(
     private settingService:SettingService,
+    private snackBar: MatSnackBar,
   ) {
     this.step = 0;
   }
@@ -43,19 +45,35 @@ export class ProjectStatusComponent implements OnInit {
       this.ticketStatusList = res;
       this.ticketOptionLoaded = true;
     });
+    
   }
 
   addTicketStatusSetting(){
     this.settingService.saveTicketStatus(this.ticketSettingToAdd).subscribe( (res:any) => {
       this.settingService.loadAllProjectStatus();
+      this.snackBar.open('New Status has been added', 'X', {
+        duration: 5000,
+        direction: "ltr",
+        verticalPosition:"top",
+        horizontalPosition: "right",
+        panelClass: "success-snack"
+          }
+      );
     });
   }
   updateTicketStatusSetting(ticketStatus:any){
 
-    let color = {name:ticketStatus.name,color:ticketStatus.color,order:ticketStatus.order};
+    let color = {name:ticketStatus.name, color:ticketStatus.color, order:ticketStatus.order};
     this.settingService.updateTicketStatus(color, ticketStatus.id).subscribe( (res:any) => {
       if(res && res.color == ticketStatus.color){
-
+        this.snackBar.open('Status has been updated', 'X', {
+          duration: 5000,
+          direction: "ltr",
+          verticalPosition:"top",
+          horizontalPosition: "right",
+          panelClass: "success-snack"
+            }
+        );
       }
     });
   }

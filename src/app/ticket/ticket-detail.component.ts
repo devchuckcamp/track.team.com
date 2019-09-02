@@ -127,10 +127,10 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
 
       if(this.startedBillingTime){
         event.returnValue = false;
-        console.log("Billing Ongoing");
+        //console.log("Billing Ongoing");
         this.startBillTime(this.ticket.id);
       } else {
-        console.log("Billing on hold");
+        //console.log("Billing on hold");
       }
     }
 
@@ -263,7 +263,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
 
     ngOnInit() {
       this.settingService.statusSettings.subscribe( (res:any) =>{
-        console.log(res,'status list');
+        //console.log(res,'status list');
         this.ticketStatusList = res;
       });
       this.assignableMembersFiltered = false;
@@ -315,8 +315,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
                   if(res){
 
                         if(res.ticket_logs){
-                          this.ticket_logs = res.ticket_logs;
-                          console.log( res.ticket_logs, ' res.ticket_logs');
+                          this.ticket_logs = res.ticket_logs.reverse();
                         }
                         today.setSeconds(0);
                         today.setMinutes(this.seconds_minutes(0));
@@ -730,7 +729,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
       this.ticketService.update(this.ticket,'status').subscribe( res => {
 
         if(res && res.status_id == status){
-          this.ticket_logs = res.ticket_logs;
+          this.ticket_logs = res.ticket_logs.reverse();
           this.process_time_consumption(res.progress_time_consumed);
           this.updating_status = false;
           this.snackBar.open('Status has been updated', 'X', {

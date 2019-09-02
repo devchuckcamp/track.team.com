@@ -18,7 +18,7 @@ export interface DialogData {
       private sanitizer: DomSanitizer,
       public dialogRef: MatDialogRef<DialogStatusHistoryDialog>,
       @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-        console.log(data,'status dialog data');
+        // console.log(data,'status dialog data');
       }
 
     onNoClick(): void {

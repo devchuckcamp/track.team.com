@@ -8,6 +8,7 @@ import { GlobalRoutesService } from '../config/config';
 import { FileDropModule } from 'ngx-file-drop';
 import { FormsModule,ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators, EmailValidator,
   FormGroupDirective, NgForm, } from '@angular/forms';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 // Material
 import {
   MatAutocompleteModule,
@@ -95,6 +96,7 @@ import { EllipsisPipe } from '../component/pipe/ellipses.pipe';
     FileDropModule,
     FormsModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
+    DragDropModule,
   ],
   exports:[
     FormsModule,

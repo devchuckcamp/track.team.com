@@ -139,6 +139,7 @@ export class SettingService {
         let data = JSON.stringify({
             name:ticket.name,
             color:ticket.color,
+            order:ticket.order,
         });
         return this.http.put(this.config.apiEndPoint()+'/api/v1/ticket_statuses/'+ticket_id, data, this.jt());
     }

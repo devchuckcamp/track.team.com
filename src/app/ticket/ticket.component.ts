@@ -9,6 +9,7 @@ import { Ticket } from '../model/ticket';
 import { Thread } from '../model/thread';
 import { User } from '../model/user';
 import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import { FormGroup, FormBuilder, FormControl, Validators, EmailValidator } from '@angular/forms';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { MatSnackBar  } from '@angular/material';
@@ -91,6 +92,24 @@ export class TicketComponent implements OnInit, OnDestroy {
     pageSize = 25;
     pageNum = 1;
     pageSizeOptions: number[] = [25, 50, 100];
+    // tslint:disable:max-line-length
+    todo = [
+      'Get to work',
+      'Pick up groceries',
+      'Go home',
+      'Fall asleep'
+    ];
+  
+    done = [
+      'Get up',
+      'Brush teeth',
+      'Take a shower',
+      'Check e-mail',
+      'Walk dog'
+    ];
+  
+    
+
     constructor(
         private ticketService: TicketService,
         private projectService: ProjectService,
@@ -194,6 +213,36 @@ export class TicketComponent implements OnInit, OnDestroy {
 
         }
       });
+    }
+
+    drop(event: CdkDragDrop<any[]>) {
+      let swap = false;
+      //If they're on the same priority order swap their sub order
+      if(event.container.data[event.previousIndex].order == event.container.data[event.currentIndex].order){
+        this.ticketService.updateOrder(event.container.data[event.previousIndex], event.container.data[event.currentIndex]).subscribe( (res:any) => {
+          if(res){
+            this.snackBar.open('Ticket has been swapped!', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "success-snack"
+              }
+          );
+          }
+        });
+        if (event.previousContainer === event.container) {
+          moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+        } else {
+          transferArrayItem(event.previousContainer.data,
+                            event.container.data,
+                            event.previousIndex,
+                            event.currentIndex);
+        }
+      } else {
+        alert('Swapping of priority order are only exclusive to tickets of the same priority group.');
+      }
+
     }
 
     isSelected(id:any){
@@ -495,6 +544,14 @@ export class TicketComponent implements OnInit, OnDestroy {
           );
         }
       });
+      return false;
+    }
+
+    reOrderTickets(){
+      this.ticketService.reOrderTickets(this.project_id).subscribe( (res:any) =>{
+        console.log(res,'res');
+      });
+
       return false;
     }
 

@@ -123,6 +123,21 @@ export class TicketService {
         return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets/'+ticket.id, data, this.jt());
     }
 
+    updateOrder(ticket_1: any, ticket_2:any):any {
+        let data = JSON.stringify({
+            swap:1,
+            ticket_lead:ticket_1.id,
+            ticket_trail:ticket_2.id,
+        });
+
+        return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets/'+ticket_1.id, data, this.jt());
+    }
+    reOrderTickets(project_id:number){
+        let data = {};
+        data = { project_id:project_id }
+        let datas:any = JSON.stringify(data);
+        return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets-reorder', datas, this.jt());
+    }
     delete(id: number) {
         return this.http.delete(this.config.apiEndPoint()+'/api/v1/tickets/'+id, this.jt());
     }

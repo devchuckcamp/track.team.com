@@ -1,7 +1,36 @@
 <div class="col-lg-12 content-header text-center">
     <h2 class="header-title" *ngIf="project_name">{{project_name | uppercase}} Ticket</h2>
+    <!-- <div class="example-container">
+        <h2>To do</h2>
+      
+        <div
+          cdkDropList
+          #todoList="cdkDropList"
+          [cdkDropListData]="todo"
+          [cdkDropListConnectedTo]="[doneList]"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)">
+          <div class="example-box" *ngFor="let item of todo" cdkDrag>{{item}}</div>
+        </div>
+      </div>
+      
+      <div class="example-container">
+        <h2>Done</h2>
+      
+        <div
+          cdkDropList
+          #doneList="cdkDropList"
+          [cdkDropListData]="done"
+          [cdkDropListConnectedTo]="[todoList]"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)">
+          <div class="example-box" *ngFor="let item of done" cdkDrag>{{item}}</div>
+        </div>
+      </div> -->
+
 </div>
 <div  *ngIf="auth" class="col-lg-12 content-option text-right mar-10 pad-10">
+    <a href="#"  *ngIf="auth.username == 'chuckiedev'" (click)="reOrderTickets()" class="btn btn-success mar-r-20 q-width">Reorder</a>
     <a href="#" *ngIf="auth.role_id < 4 && !ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a>
     <a href="#" *ngIf="auth.role_id < 4 && ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
 </div>
@@ -46,8 +75,13 @@
                     <td></td>
                 </tr>
             </tbody>
-            <tbody *ngIf="tickets && !loading">
-                <tr class="clickable" *ngFor="let ticket of tickets" >
+            <tbody *ngIf="tickets && !loading" 
+                cdkDropList
+                #ticketsList="cdkDropList"
+                [cdkDropListData]="tickets"
+                (cdkDropListDropped)="drop($event)"
+            >
+                <tr class="clickable" *ngFor="let ticket of tickets" cdkDrag>
                     <th scope="row">{{ticket.id}}</th>
                     <td [routerLink]="[ticket.id]">{{ticket.title}}</td>
                     <td [routerLink]="[ticket.id]">{{ticket.description | ellipsis:30}}</td>
@@ -83,7 +117,7 @@
                 ></mat-paginator>
         </div>
     </div>
-   
+
     <form  *ngIf="ticketFormShow"  
         [@enterAnimation] mat-form 
         [formGroup]="ticketForm" id="ticketForm" 
