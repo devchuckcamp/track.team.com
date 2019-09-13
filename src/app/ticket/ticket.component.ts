@@ -99,7 +99,6 @@ export class TicketComponent implements OnInit, OnDestroy {
       'Go home',
       'Fall asleep'
     ];
-  
     done = [
       'Get up',
       'Brush teeth',
@@ -107,8 +106,6 @@ export class TicketComponent implements OnInit, OnDestroy {
       'Check e-mail',
       'Walk dog'
     ];
-  
-    
 
     constructor(
         private ticketService: TicketService,
@@ -196,12 +193,12 @@ export class TicketComponent implements OnInit, OnDestroy {
                     this.statusFilter.push(stat.id);
                   }
                 });
-              } else {
-                res.data.forEach(stat => {
-                  if(stat.id !==5){
-                    this.statusFilter.push(stat.id);
-                  }
-                });
+              // } else {
+              //   res.data.forEach(stat => {
+              //     if(stat.id !==5){
+              //       this.statusFilter.push(stat.id);
+              //     }
+              //   });
               }
             }
           });
@@ -228,7 +225,7 @@ export class TicketComponent implements OnInit, OnDestroy {
                   horizontalPosition: "right",
                   panelClass: "success-snack"
               }
-          );
+            );
           }
         });
         if (event.previousContainer === event.container) {
@@ -242,7 +239,6 @@ export class TicketComponent implements OnInit, OnDestroy {
       } else {
         alert('Swapping of priority order are only exclusive to tickets of the same priority group.');
       }
-
     }
 
     isSelected(id:any){
@@ -549,7 +545,7 @@ export class TicketComponent implements OnInit, OnDestroy {
 
     reOrderTickets(){
       this.ticketService.reOrderTickets(this.project_id).subscribe( (res:any) =>{
-        console.log(res,'res');
+        // console.log(res,'res');
       });
 
       return false;
@@ -561,6 +557,8 @@ export class TicketComponent implements OnInit, OnDestroy {
           this.tickets = res.data;
           this.length = res.total;
         });
+      } else {
+        this.getTicket(this.project_name);
       }
       return false;
     }
@@ -571,6 +569,6 @@ export class TicketComponent implements OnInit, OnDestroy {
       }else{
         this.statusFilter.push(stat);
       }
-      console.log(this.statusFilter,'statusFilter');
+      // console.log(this.statusFilter,'statusFilter');
     }
 }
