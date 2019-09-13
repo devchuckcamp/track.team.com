@@ -32,7 +32,8 @@
 <div  *ngIf="auth" class="col-lg-12 content-option text-right mar-10 pad-10">
     <a href="#"  *ngIf="auth.username == 'chuckiedev'" (click)="reOrderTickets()" class="btn btn-success mar-r-20 q-width">Reorder</a>
     <!-- <a href="#" *ngIf="auth.role_id < 4 && !ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a> -->
-    <a href="#" *ngIf="!ticketFormShow" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a>
+
+    <a href="#" *ngIf="!ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a>
     <a href="#" *ngIf="auth.role_id < 4 && ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
 </div>
 <div  class="col-lg-12 content-main">
