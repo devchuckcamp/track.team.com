@@ -51,7 +51,17 @@
                         <label class="mar-r-10" for="ticket-status">Category:</label>
                         <span class="pad-x-10 pad-y-5"><b>{{ ticket.category.name | titlecase }}</b></span>
                     </div>
-
+                    <!-- Patches -->
+                    <div class="form-group" *ngIf="isAssignee() || ticket.created_by == auth.username">
+                        <label class="mar-r-10" for="ticket-patch">Patch</label>
+                        <select #ticketPatch (change)="updateTicketPatch(ticketPatch.value)">
+                            <option value="null">NA</option>
+                            <option *ngFor="let patch of ticket_patches" [value]="patch.id"
+                                [selected]="patch.id == ticket.patch_id">{{patch.name}}</option>
+                        </select>
+                        <span class="pad-l-10"><img *ngIf="updating_patch" src="../../assets/icon/loading.gif" width="20"
+                                height="20"></span>
+                    </div>
                     <!-- Assignees -->
                     <div *ngIf="ticket.assignees.length" class="row form-group">
                         <div  class="col-lg-12">

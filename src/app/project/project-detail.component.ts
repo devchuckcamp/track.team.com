@@ -47,6 +47,7 @@ export class ProjectDetailComponent implements OnInit {
                         this.ticketOptionLoaded = true;
                       });
                     if(res){
+                        console.log('Project ID', res);
                         this.project = res;
                         this.tickets = this.project.tickets;
                     }

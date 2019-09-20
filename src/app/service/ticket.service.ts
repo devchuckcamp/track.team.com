@@ -120,6 +120,11 @@ export class TicketService {
                 category_id:customData.id
             });
         }
+        if(type == 'patch'){
+            data = JSON.stringify({
+                patch_id:customData.id
+            });
+        }
         return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets/'+ticket.id, data, this.jt());
     }
 

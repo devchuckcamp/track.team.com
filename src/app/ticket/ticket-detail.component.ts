@@ -59,6 +59,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     memberList = [];
     items: any[] =[];
     ticketCategories:any[] = [];
+    ticket_patches:any =  [];
     ticketStatusList: TicketStatusType = [];
     mentionConfig:any;
 
@@ -86,6 +87,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     updating_status:boolean = false;
     updating_priority:boolean = false;
     updating_category:boolean = false;
+    updating_patch:boolean = false;
     replayText:string;
     animal: string;
     name: string;
@@ -254,7 +256,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
 
       return false;
     }
-    getSantizeUrl(url : string) {
+    getSantizeUrl(url : string) { 
       if(url.includes("application/pdf")){
         url = this.pdfImages;
       }
@@ -366,6 +368,12 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
             } else {
 
             }
+        });
+
+        this.projectService.loadAllPatches(this.project_name, 1, 15, 1);
+        this.projectService.projectsPatches.subscribe( (res:any)=> {
+          console.log(res,'patches');
+          this.ticket_patches = res;
         });
 
         this.mentionConfig = {
@@ -786,6 +794,27 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
         } else {
 
         }
+      });
+    }
+
+    updateTicketPatch(patch:any){
+      let patchObj = this.ticket_patches.find( (res) =>  res.id == patch);
+      this.updating_patch = true;
+      this.ticketService.update(this.ticket, 'patch', patchObj).subscribe( res => {
+        if(res && res.patch_id == patch){
+          this.ticket.category = res;
+          this.updating_patch = false;
+          this.snackBar.open('Patch has been updated', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "success-snack"
+              }
+            );
+          } else {
+
+          }
       });
     }
 

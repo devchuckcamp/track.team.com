@@ -5,6 +5,7 @@ import { Observable, throwError, Subject, BehaviorSubject } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators'
 import { map, take } from 'rxjs/operators';
 import { Project } from '../model/project';
+import { Patch } from '../model/patch';
 import { GlobalRoutesService } from '../config/config';
 
 @Injectable({ providedIn: 'root' })
@@ -21,6 +22,15 @@ export class ProjectService {
             projects: any[]
         };
     ProjectsList: Project[]= [];
+
+    projectsPatches: Observable<Project[]>
+        private _projectPatch: BehaviorSubject<Project[]>;
+        private projectPatchBaseUrl: string;
+        public projectPatchDataStore: {
+            projectPatches: any[]
+        };
+    ProjectPatches: Patch[]= [];
+
     constructor(
         private config: GlobalRoutesService,
         private http: HttpClient,
@@ -34,6 +44,11 @@ export class ProjectService {
             this.dataStore = { projects: [] };
             this._projects = <BehaviorSubject<Project[]>>new BehaviorSubject([]);
             this.projects = this._projects.asObservable();
+
+            this.projectPatchBaseUrl = this.config.apiEndPoint()+'/api/v1/ticket-patch';
+            this.projectPatchDataStore = { projectPatches: [] };
+            this._projectPatch = <BehaviorSubject<any[]>>new BehaviorSubject([]);
+            this.projectsPatches = this._projectPatch.asObservable();
         }
     setIsMember(valid:boolean){
         this.isAMember.next(valid);
@@ -60,6 +75,30 @@ export class ProjectService {
          //return this.http.get<Project[]>(this.config.apiEndPoint()+'/api/v1/projects?all=1', this.jt());
          return this.http.get<Project[]>(this.config.apiEndPoint()+'/api/v1/projects?all=1', this.jt());
     }
+
+    loadAllPatches(project, page = 1, pageSize = 25, full:any ='') {
+        this.http.get(this.projectPatchBaseUrl+'?project='+project+'&page='+page+'&per_page='+pageSize+'&all='+full, this.jt()).subscribe( (data :any)=> {
+          this.projectPatchDataStore.projectPatches = data;
+          this._projectPatch.next(Object.assign({}, this.projectPatchDataStore).projectPatches);
+        }, error => console.log('Could not load projects.'));
+    }
+
+    createPatch(patch: Patch) {
+        return this.http.post(this.projectPatchBaseUrl, JSON.stringify(patch), this.jt()).subscribe( (data:any) => {
+            //this.projectPatchDataStore.projectPatches.push(data);
+            this._projectPatch.next(Object.assign({}, this.projectPatchDataStore).projectPatches);
+          }, error => console.log('Could not create Patch.'));
+    }
+    viewPatch(id){
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/ticket-patch/'+id, this.jt()).pipe(map( (res:any) => res));
+    }
+    updateTicketPatch(patch: any, patch_id: number) {
+        let data = JSON.stringify({
+            name:patch.name
+        });
+        return this.http.put(this.config.apiEndPoint()+'/api/v1/ticket-patch/'+patch_id, data, this.jt());
+    }
+
     getAllMember(project_name:string) {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/projects/'+project_name+'?'+'members=all', this.jt()).pipe(map( (res:any) => res));
     }
