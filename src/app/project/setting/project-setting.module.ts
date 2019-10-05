@@ -90,6 +90,9 @@ import {
     MatTooltipModule,
     MatTreeModule,
   ],
+  exports:[
+    TicketPatchSettingComponent
+  ]
 
 })
 export class ProjectSettingModule{ }

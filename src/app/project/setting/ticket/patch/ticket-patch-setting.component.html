@@ -1,4 +1,4 @@
-<div class="row"  *ngIf="!selected_patch">
+<div class="row"  *ngIf="!selected_patch && loaded">
     <!-- Existing Ticket Setting Options -->
     <div *ngIf="projectPatchList" class="col-lg-12">
       <!-- <div *ngFor="let patch of projectPatchList;index as i" class="pad-0 mar-0 row">
@@ -19,6 +19,7 @@
               <tr>
                   <th scope="col">#</th>
                   <th scope="col">Name</th>
+                  <th>Ticket Associated</th>
                   <th scope="col">Created By</th>
                   <th scope="col">Date</th>
                   <th scope="col">Action</th>
@@ -26,6 +27,7 @@
           </thead>
           <tbody *ngIf="loading" class="text-center">
               <tr>
+                  <td></td>
                   <td></td>
                   <td></td>
                   <td class="text-center"><img src="../../../../assets/icon/loading.gif"></td>
@@ -37,6 +39,7 @@
               <tr class="clickable" *ngFor="let patch of projectPatchList">
                 <td>{{ patch.id }}</td>
                 <td>{{ patch.name }}</td>
+                <td>{{ patch.tickets.length ? patch.tickets.length : 'None'  }}</td>
                 <td>{{ patch.creator.username }}</td>
                 <td>{{ patch.created_at | date : 'medium' }}</td>
                 <td>
@@ -50,7 +53,7 @@
           </tbody>
           <tbody *ngIf="!projectPatchList">
               <tr>
-                  <td>No Ticket</td>
+                  <td>No Patch</td>
               </tr>
           </tbody>
         </table>
@@ -78,7 +81,7 @@
     </div>
 </div>
 
-<div class="row" *ngIf="selected_patch">
+<div class="row" *ngIf="selected_patch && loaded">
   <div class="co-lg-12 text-center">
       <h1>{{selected_patch.name}}</h1>
   </div>
@@ -121,6 +124,7 @@
                   <th scope="col" class="text-center">Priority</th>
                   <th scope="col">Created By</th>
                   <th scope="col">Date</th>
+                  <th scope="col">Action</th>
               </tr>
           </thead>
           <tbody *ngIf="loading" class="text-center">
@@ -129,6 +133,7 @@
                   <td></td>
                   <td></td>
                   <td class="text-center"><img src="../../../../assets/icon/loading.gif"></td>
+                  <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
@@ -146,6 +151,7 @@
                   <td [routerLink]="[ticket.id]" class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
                   <td [routerLink]="[ticket.id]">{{ticket.created_by}}</td>
                   <td [routerLink]="[ticket.id]">{{ticket.created_at | date: 'medium'}}</td>
+                  <a href="#" (click)="viewTicket(ticket.id)" class="btn btn-success"><i class="fa fa-pencil"></i></a>
               </tr>
           </tbody>
       </table>

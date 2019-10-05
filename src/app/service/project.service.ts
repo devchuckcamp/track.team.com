@@ -76,7 +76,7 @@ export class ProjectService {
          return this.http.get<Project[]>(this.config.apiEndPoint()+'/api/v1/projects?all=1', this.jt());
     }
 
-    loadAllPatches(project, page = 1, pageSize = 25, full:any ='') {
+    loadAllPatches(project:any, page = 1, pageSize = 25, full:any ='') {
         this.http.get(this.projectPatchBaseUrl+'?project='+project+'&page='+page+'&per_page='+pageSize+'&all='+full, this.jt()).subscribe( (data :any)=> {
           this.projectPatchDataStore.projectPatches = data;
           this._projectPatch.next(Object.assign({}, this.projectPatchDataStore).projectPatches);

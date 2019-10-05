@@ -17,7 +17,8 @@ import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
 import { UnderConstructionComponent } from '../share/under-construction.component';
 import { ActivityLogComponent } from '../share/activity-log.component';
 import { ReportProjectComponent } from '../report/project/report-project.component';
-
+import { TicketPatchSettingComponent } from '../project/setting/ticket/patch/ticket-patch-setting.component';
+import { ProjectSettingModule } from '../project/setting/project-setting.module';
 // Services
 import { SettingService } from '../service/setting.service';
 import { AuthService } from '../service/auth.service';
@@ -87,7 +88,8 @@ import { MentionModule } from 'angular-mentions';
     ProfileComponent,
     UnderConstructionComponent,
     ActivityLogComponent,
-    ReportProjectComponent
+    ReportProjectComponent,
+    // TicketPatchSettingComponent
     // MasterComponent,
     // MasterNavbarComponent
   ],
@@ -136,6 +138,7 @@ import { MentionModule } from 'angular-mentions';
     FormsModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     MentionModule,
+    ProjectSettingModule,
   ],
   providers: [
     AuthService,

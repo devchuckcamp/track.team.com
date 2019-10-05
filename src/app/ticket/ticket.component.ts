@@ -193,6 +193,7 @@ export class TicketComponent implements OnInit, OnDestroy {
                     this.statusFilter.push(stat.id);
                   }
                 });
+                console.log(this.statusFilter,'this.statusFilter');
               // } else {
               //   res.data.forEach(stat => {
               //     if(stat.id !==5){
@@ -275,7 +276,8 @@ export class TicketComponent implements OnInit, OnDestroy {
       return false;
     }
     getFilterTicket(project_name:any,filter:any){
-      this.ticketService.getProjectTicketFilter(project_name,filter).subscribe(res => {
+      
+      this.ticketService.getProjectTicketFilter(project_name, filter, this.statusFilter).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
         this.length = res.total;
@@ -283,7 +285,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       });
     }
     getTicket(project_name:any){
-      this.ticketService.getProjectTicketAll(project_name, this.pageNum, this.pageSize).subscribe(res => {
+      this.ticketService.getProjectTicketAll(project_name, this.pageNum, this.pageSize, '', this.statusFilter).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
         this.length = res.total;
@@ -295,7 +297,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.pageSize = setPageSizeOptionsInput.pageSize;
       let pageSize = setPageSizeOptionsInput.pageSize;
       this.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
-      this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, this.pageSize).subscribe(res => {
+      this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, this.pageSize, '', this.statusFilter).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
         this.length = res.total;
@@ -313,10 +315,16 @@ export class TicketComponent implements OnInit, OnDestroy {
         this.pageSize = this.pageSizeOptions[0];
       }
 
-      this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, this.pageSize, this.filter).subscribe(res => {
-        this.loading = false;
+      // this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, this.pageSize, this.statusFilter).subscribe(res => {
+      //   this.loading = false;
+      //   this.tickets = res.data;
+      //   this.length = res.total;
+      //   this.tag_users = res.data.tag_users;
+      // });
+      this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter).subscribe( (res:any) =>{
         this.tickets = res.data;
         this.length = res.total;
+        this.loading = false;
         this.tag_users = res.data.tag_users;
       });
     }
@@ -552,14 +560,15 @@ export class TicketComponent implements OnInit, OnDestroy {
     }
 
     searchTicket(){
-      if(this.searchText !== ''){
-        this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter).subscribe( (res:any) =>{
+      // if(this.searchText !== ''){
+        this.ticketService.filterTicketByKeyword(this.project_name, 1, this.pageSize, this.searchText, this.statusFilter).subscribe( (res:any) =>{
           this.tickets = res.data;
           this.length = res.total;
+          this.pageNum = 1;
         });
-      } else {
-        this.getTicket(this.project_name);
-      }
+      // } else {
+      //   this.getTicket(this.project_name);
+      // }
       return false;
     }
     checkStatusFilter(stat:any){

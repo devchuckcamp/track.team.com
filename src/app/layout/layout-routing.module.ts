@@ -9,6 +9,7 @@ import { NavbarModule } from '../navbar/navbar.module';
 import { LayoutComponent } from './layout.component';
 import { ProjectNewComponent } from '../project/project-new.component';
 import { UnderConstructionComponent } from '../share/under-construction.component';
+import { TicketPatchSettingComponent } from '../project/setting/ticket/patch/ticket-patch-setting.component';
 import { ActivityLogComponent } from '../share/activity-log.component';
 import { ProfileComponent } from '../profile/profile.component';
 import { ReportProjectComponent } from '../report/project/report-project.component';
@@ -39,7 +40,8 @@ const routes:   Routes = [
             { path: 'projects/:project_name/members', canActivate:[ProjectMemberGuard], loadChildren:'../member/member.module#MemberModule'},
             { path: 'projects/:project_name/members/:user_id', canActivate:[ProjectMemberGuard], loadChildren:'../member/member-detail.module#MemberDetailModule'},
             { path: 'projects/:project_name/settings', canActivate:[ProjectMemberGuard], loadChildren:'../project/setting/project-setting.module#ProjectSettingModule',},
-            // { path: 'projects/:project_name/settings/patches/:patch_id', canActivate:[ProjectMemberGuard], loadChildren:'../project/setting/project-setting.module#ProjectSettingModule',},
+            { path: 'projects/:project_name/patches', canActivate:[ProjectMemberGuard],  component:TicketPatchSettingComponent},
+            { path: 'projects/:project_name/patches/:patch_id', canActivate:[ProjectMemberGuard],  component:TicketPatchSettingComponent},
             { path: 'projects/:project_name/activity', canActivate:[ProjectMemberGuard], component:ActivityLogComponent},
             { path: 'fund/current', loadChildren:'../fund/fund.module#FundModule'},
             { path: 'fund/incoming', loadChildren:'../fund/fund-incoming.module#FundIncomingModule'},

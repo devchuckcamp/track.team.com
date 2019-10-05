@@ -79,6 +79,11 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
             this.project_name = slug_list[4];
             this.admin_sub_3 =  'tickets';
         }
+        if(slug_list[3] == 'projects' && slug_list[5] == 'patches'){
+            this.admin_project_sub =  'patches';
+            this.project_name = slug_list[4];
+            this.admin_sub_3 =  'patches';
+        }
         if(slug_list[slug_list.length-1] !== this.admin_project_sub){
             this.is_dashboard = false;
         }
@@ -182,6 +187,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
             this.admin_sub_3 =  'activity';
         }
     }
+
 
     setUser():void {
         this.subscription = this.userService.currentLoggedInUser.subscribe( (res:any) => { this.auth_user = JSON.parse(res); });

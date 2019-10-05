@@ -58,8 +58,10 @@
                     <th scope="col">Patch</th>
                     <th scope="col">Status</th>
                     <th scope="col" class="text-center">Priority</th>
-                    <th scope="col">Created By</th>
+                    <th scope="col">Creator</th>
                     <th scope="col">Date</th>
+                    <th scope="col">Last Update</th>
+                    <th scope="col">Update Date</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -69,8 +71,9 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <!-- <td></td> -->
+                    <td></td>
                     <td class="text-center"><img src="../../assets/icon/loading.gif"></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -84,7 +87,7 @@
                 (cdkDropListDropped)="drop($event)"
             >
                 <tr class="clickable" *ngFor="let ticket of tickets" cdkDrag>
-                    <th scope="row">{{ticket.id}}</th>
+                    <td scope="row">{{ticket.id}}</td>
                     <td [routerLink]="[ticket.id]">{{ticket.title}}</td>
                     <!-- <td [routerLink]="[ticket.id]">{{ticket.description | ellipsis:30}}</td> -->
                     <td [routerLink]="[ticket.id]" *ngIf="ticket.assigned_to && !ticket.assignees" [attr.data-user-id]="ticket.assigned_to.id">{{ticket.assigned_to.name}}</td>
@@ -97,6 +100,10 @@
                     <td [routerLink]="[ticket.id]" class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
                     <td [routerLink]="[ticket.id]">{{ticket.created_by}}</td>
                     <td [routerLink]="[ticket.id]">{{ticket.created_at | date: 'medium'}}</td>
+                    <td [routerLink]="[ticket.id]" *ngIf="ticket.last_action" [innerHTML]="ticket.last_action.message"></td>
+                    <td [routerLink]="[ticket.id]" *ngIf="ticket.last_action">{{ticket.last_action.created_at | date: 'medium'}}</td>
+                    <td *ngIf="!ticket.last_action">-</td>
+                    <td *ngIf="!ticket.last_action">-</td>
                     <!-- <td [routerLink]="[ticket.id]">{{ ticket.updated_at == ticket.created_at ? '' : ticket.updated_at}}</td> -->
                     <td>
                         <!-- <a href="#"

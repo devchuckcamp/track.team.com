@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { SettingService } from './../../../../service/setting.service';
 import { ProjectService } from './../../../../service/project.service';
+import { UserService } from './../../../../service/user.service';
 import {MatSnackBar} from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, FormControl, Validators, EmailValidator } from '@angular/forms';
@@ -29,13 +30,16 @@ export class TicketPatchSettingComponent implements OnInit {
   projectPatchList: TicketPatch = [];
   ticketPatchSetting:TicketPatchOption;
   project_name:string;
+  auth_client:any;
   //Patch View
   selected_patch:any;
   ticketPatchForm:FormGroup;
   patch_id:any;
   ticketPatchFormSubmitting:boolean;
   loading:boolean;
-  
+  activeURL:any;
+  on_main_page:boolean;
+  loaded:boolean;
   // Paginator
   // MatPaginator Inputs
   length = 0;
@@ -48,32 +52,73 @@ export class TicketPatchSettingComponent implements OnInit {
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     private projectService: ProjectService,
+    private userService:  UserService,
+    private router:Router,
   ) {
     this.step = 0;
     this.loading = true;
+    this.loaded = false;
+    this.on_main_page = false;
   }
 
   ngOnInit() {
+    this.userService.client_slug.subscribe(res => this.auth_client = res);
     this.route.params.subscribe(params => {
       if (params['project_name'] !== undefined ) {
-        console.log(params['project_name'], 'params');
         this.project_name = params['project_name'];
       }
-
-      if (params['patch_id'] !== undefined ) {
-        console.log(params['patch_id'], 'patch_id');
-        this.patch_id = params['patch_id'];
-        
+      let currentURL = window.location.pathname;
+      //Get Params
+      let indexActUrlParam = currentURL.indexOf("?");
+      //Get the exact active route
+      let indexActUrl = indexActUrlParam == -1 ? currentURL : currentURL.slice(0, indexActUrlParam );
+      //Assign to our private activeUrl
+      this.activeURL = indexActUrl;
+      let slug_list = this.activeURL.split('/');
+      if( (!slug_list.includes("settings"))){
+        this.on_main_page = true;
+      } else {
+        this.on_main_page = false;
       }
+      if (params['patch_id'] !== undefined ) {
+        this.patch_id = params['patch_id'];
+        this.on_main_page = true;
+        this.projectService.viewPatch(params['patch_id']).subscribe( (res:any) => {
+          if(res.id){
+            this.selected_patch = res;
+            this.loaded = true;
+            this.loading = false;
+            this.ticketPatchForm = new FormGroup({
+              'name': new FormControl('', [Validators.required,])
+            });
+          }
+        });
+        setTimeout(()=>{
+          this.projectService.loadAllPatches(this.project_name, this.pageNum, this.pageSize);
+          this.projectService.projectsPatches.subscribe( (res:any) =>{
+              this.projectPatchList = res.data;
+              this.length = res.total;
+              this.loading = false;
+              this.loaded = true;
+              this.ticketPatchSetting = add;
+              this.ticketOptionLoaded = false;
+            });
+        },2000);
+      } else {
+        this.projectService.loadAllPatches(this.project_name, this.pageNum, this.pageSize);
+        this.projectService.projectsPatches.subscribe( (res:any) =>{
+            this.projectPatchList = res.data;
+            this.length = res.total;
+            this.loading = false;
+            this.loaded = true;
+            this.ticketPatchSetting = add;
+            this.ticketOptionLoaded = false;
+          });
+        }
     });
-    this.ticketPatchSetting = add;
-    this.ticketOptionLoaded = false;
-    this.projectService.loadAllPatches(this.project_name, this.pageNum, this.pageSize);
-    this.projectService.projectsPatches.subscribe( (res:any) =>{
-        this.projectPatchList = res.data;
-        this.length = res.total;
-        this.loading = false;
-      });
+    
+    
+      this.loaded = true;
   }
 
   addTicketPatchSetting(){
@@ -92,15 +137,22 @@ export class TicketPatchSettingComponent implements OnInit {
     setTimeout(()=>{ this.projectService.loadAllPatches(this.project_name, this.pageNum, this.pageSize); }, 1000);
   }
   viewPatch(patch){
-    console.log(patch,'patch');
-    this.projectService.viewPatch(patch.id).subscribe( (res:any) => {
-      if(res.id){
-        this.selected_patch = res;
-        this.ticketPatchForm = new FormGroup({
-          'name': new FormControl('', [Validators.required,])
-        });
-      }
-    });
+    if(this.on_main_page){
+      this.router.navigate([ '/'+this.auth_client+'/admin/projects/',this.project_name,'patches', patch.id]);
+    } else {
+      this.projectService.viewPatch(patch.id).subscribe((res: any) => {
+        if (res.id) {
+          this.selected_patch = res;
+          this.ticketPatchForm = new FormGroup({
+            'name': new FormControl('', [Validators.required,])
+          });
+        }
+      });
+    }
+    return false;
+  }
+  viewTicket(ticketID){
+      this.router.navigate([ '/'+this.auth_client+'/admin/projects/'+this.project_name+'/tickets/'+ticketID]);
     return false;
   }
   updateTicketPatchSetting(){
@@ -122,8 +174,10 @@ export class TicketPatchSettingComponent implements OnInit {
   }
 
   returnToPatchList(){
+    if(this.on_main_page){
+      this.router.navigate([ '/'+this.auth_client+'/admin/projects/',this.project_name,'patches']);
+    }
     this.selected_patch = null;
-
     return false;
   }
 

@@ -24,8 +24,14 @@
                 <li class="parent-left-menu-item"
                     [ngClass]="{'active':admin_project_sub == 'tickets' || admin_sub_3 == 'tickets' || onload_slug_list[5] == 'tickets'}"
                 >
-                    <a href="#" [routerLink]="['projects', project_name , 'tickets']"><i
+                    <a href="#" [routerLink]="['projects', project_name , 'tickets'] "><i
                             class="fa fa-ticket mar-r-5"></i>Ticket</a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active':admin_project_sub == 'patches' || admin_sub_3 == 'patches' || onload_slug_list[5] == 'patches'}"
+                >
+                    <a href="#" [routerLink]="['projects', project_name , 'patches']"><i
+                            class="fa fa-ticket mar-r-5"></i>Patch</a>
                 </li>
                 <li class="parent-left-menu-item"
                     [ngClass]="{'active': admin_project_sub == 'members' || admin_sub_3 == 'members'}"

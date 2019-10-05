@@ -55,7 +55,7 @@
                     <div class="form-group" *ngIf="isAssignee() || ticket.created_by == auth.username">
                         <label class="mar-r-10" for="ticket-patch">Patch</label>
                         <select #ticketPatch (change)="updateTicketPatch(ticketPatch.value)">
-                            <option value="null">NA</option>
+                            <option value="">NA</option>
                             <option *ngFor="let patch of ticket_patches" [value]="patch.id"
                                 [selected]="patch.id == ticket.patch_id">{{patch.name}}</option>
                         </select>

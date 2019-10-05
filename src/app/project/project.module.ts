@@ -5,6 +5,7 @@ import { ProjectRoutingModule } from './project-routing.module';
 import { UserService } from '../service/user.service';
 import { ClientGlobalRoutesService } from '../config/client';
 import { GlobalRoutesService } from '../config/config';
+
 // Material
 import {
   MatAutocompleteModule,
@@ -47,6 +48,7 @@ import {
 @NgModule({
   declarations: [
     // ProjectComponent,
+    // TicketPatchSettingComponent
   ],
   imports: [
     MatAutocompleteModule,

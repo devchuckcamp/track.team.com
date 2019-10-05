@@ -316,8 +316,8 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
                 this.ticketService.getProjectTicket(params['project_name'],params['ticket_id']).subscribe( (res:any) => {
                   if(res){
 
-                        if(res.ticket_logs){
-                          this.ticket_logs = res.ticket_logs.reverse();
+                        if(res.ticket_status_logs){
+                          this.ticket_logs = res.ticket_status_logs.reverse();
                         }
                         today.setSeconds(0);
                         today.setMinutes(this.seconds_minutes(0));
@@ -372,7 +372,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
 
         this.projectService.loadAllPatches(this.project_name, 1, 15, 1);
         this.projectService.projectsPatches.subscribe( (res:any)=> {
-          console.log(res,'patches');
           this.ticket_patches = res;
         });
 
@@ -400,9 +399,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
             }
           }
         });
-
-
-      
     }
     ngOnDestroy(){
       this.unixBillableTimeTotal = 0;
@@ -493,7 +489,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     }
     getTicketBillReport(id:number){
       this.ticketService.getTicketBillReport(this.ticket.billed_time_consumed.id).subscribe( (res:any )=>{
-        console.log(res);
+
       } );
     }
 
@@ -502,7 +498,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
       // Check if user is authorized
       //Generate download token
       this.ticketService.createDownloadToken(this.ticket).subscribe( (res:any) => {
-        console.log(res);
+
         if(res)  {
           this.download_auth_token = '?token='+res.token;
             let param = this.download_auth_token+this.download_report;
@@ -559,10 +555,10 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
             );
           }
         }, (err)=> {
-          console.log('ERROR:',err);
+          //console.log('ERROR:',err);
         });
       } else {
-        console.log(assignee,'member already assigned');
+        //console.log(assignee,'member already assigned');
       }
     }
 
@@ -581,7 +577,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     onReplayKey(text:string){
         this.replayText = text;
         var result = '';
-        console.log(text.length);
+        //console.log(text.length);
       while (text.length > 0) {
         result += text.substring(0, 200) + '\n';
         text = text.substring(200);
@@ -612,7 +608,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
               };
 
               this.threadService.send(thread).subscribe( res => {
-                console.log(res,'saved thread');
+                //console.log(res,'saved thread');
                 if(res){
                   this.ticketService.mentionUser(mentionedMember, this.ticket.id).subscribe(res => {
                     mentionedMember.length = 0;
@@ -653,7 +649,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
       this.pdf = base64textString;
       
       this.uploadImages.push('data:'+this.getFileType()+';base64,'+btoa(binaryString));
-      console.log(this.uploadImages,'uploadImages');
+      //console.log(this.uploadImages,'uploadImages');
       return base64textString;
     }
     public dropped(event: UploadEvent) {
@@ -704,7 +700,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
       this.http.post(this.apiEndpoint+'/api/v1/thread/image/upload', this.requests, this.fileHeader())
       .subscribe(data => {
         // Sanitized logo returned from backend
-        console.log(data, 'data');
+        //console.log(data, 'data');
       })
     }
     private fileHeader() {
@@ -737,7 +733,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
       this.ticketService.update(this.ticket,'status').subscribe( res => {
 
         if(res && res.status_id == status){
-          this.ticket_logs = res.ticket_logs.reverse();
+          this.ticket_logs = res.ticket_status_logs.reverse();
           this.process_time_consumption(res.progress_time_consumed);
           this.updating_status = false;
           this.snackBar.open('Status has been updated', 'X', {
@@ -798,10 +794,15 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     }
 
     updateTicketPatch(patch:any){
-      let patchObj = this.ticket_patches.find( (res) =>  res.id == patch);
+      let patchObj :any;
+      if(patch !== ''){
+        patchObj = this.ticket_patches.find( (res) =>  res.id == patch);
+      } else {
+        patchObj = { id:null};
+      }
       this.updating_patch = true;
       this.ticketService.update(this.ticket, 'patch', patchObj).subscribe( res => {
-        if(res && res.patch_id == patch){
+        if( patchObj.id == null || (res && res.patch_id == patch)){
           this.ticket.category = res;
           this.updating_patch = false;
           this.snackBar.open('Patch has been updated', 'X', {

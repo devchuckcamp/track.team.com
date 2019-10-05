@@ -71,7 +71,7 @@ export class TicketService {
           this._ticketsCategory.next(Object.assign({}, this.ticketsCategoryStore).ticketsCategory);
         }, error => console.log('Could not load Categories.'));
     }
-    getProjectTicketAll(project_name: string, page:number = 1, per_page:number = 25, filter:any = ''){
+    getProjectTicketAll(project_name: string, page:number = 1, per_page:number = 25, filter:any = '', filterStatus:any = ''){
         var page_num = '';
         var per_page_num = '';
         var filter_by = '';
@@ -81,14 +81,18 @@ export class TicketService {
         if(per_page != 25){
             per_page_num = '&per_page='+per_page;
         }
-
-        if(filter !== ''){
+        if(filterStatus !== ''){
+            filterStatus = '&status_filter='+filter;
+        }else if(filter !== ''){
             filter_by = '&filter_by='+filter;
         }
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name+page_num+per_page_num+filter_by, this.jt()).pipe(map( (res:any) => res));
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name+page_num+per_page_num+filter_by+filterStatus, this.jt()).pipe(map( (res:any) => res));
     }
-    getProjectTicketFilter(project_name: string, filter: string){
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name+'&filter=1&status='+filter, this.jt()).pipe(map( (res:any) => res));
+    getProjectTicketFilter(project_name: string, filter: string, statusFilter:any = []){
+        if(statusFilter.length){
+            status = '&status_filter='+statusFilter;
+        }
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name+'&filter=1&status='+filter+status, this.jt()).pipe(map( (res:any) => res));
     }
     getProjectTicket(project_name: string = '',ticket_id:number){
         return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets/'+ticket_id+'?project='+project_name, this.jt()).pipe(map( (res:any) => res));
@@ -180,7 +184,7 @@ export class TicketService {
             keyword = '&keyword='+keyword_filter;
         }
 
-        if(statusFilter){
+        if(statusFilter.length){
             status = '&status_filter='+statusFilter;
         }
         return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name+page_num+per_page_num+keyword+status, this.jt()).pipe(map( (res:any) => res));
