@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart, NavigationEnd, NavigationError, NavigationCancel, RoutesRecognized } from '@angular/router';
 import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase } from '@angular/common/http';
 import { ProjectService } from '../service/project.service';
+import { MenuService } from '../service/menu.service';
 import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
 import { ThreadService } from '../service/thread.service';
@@ -35,6 +36,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   auth_user:any;
   auth_client:string;
   auth_client_info:any;
+  currentSideBarMenu:number;
   web_app_key:any = 12345;
   subscription: Subscription;
   default_avatar = '../assets/default-profile.png';
@@ -63,6 +65,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     private ticketService:TicketService,
     private threadService:ThreadService,
     private memberService:MemberService,
+    private menuService:MenuService,
     private activatedRoute: ActivatedRoute,
     private notificationService:NotificationService,
   ) {
@@ -73,7 +76,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
       this.userService.setUser(localStorage.getItem('authUser'));
       this.auth_user =JSON.parse(localStorage.getItem('authUser'));
     }
-    
+    this.setSideBarStatus();
     this.setClient();
     this.setAvatar();
     this.setUser();
@@ -181,7 +184,9 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   setAvatar():void {
     this.subscription = this.userService.currentAvatar.subscribe(avatar => { this.user_avatar = avatar;  });
   }
-
+  setSideBarStatus():void {
+    this.subscription = this.menuService.currentSideBarMenu.subscribe( (res:any) => { this.currentSideBarMenu = res; });
+  }
   readAll(){
 
     this.notificationService.readAll().subscribe( (res:any) => {
@@ -239,8 +244,15 @@ export class NavbarComponent implements OnInit, OnDestroy  {
       })
     let options = { headers: headers };
     return options;
-}
+  }
 
-
+  toggleSideNav(){
+    if(this.currentSideBarMenu == 1){
+      this.menuService.setAvatar(0);
+    } else {
+      this.menuService.setAvatar(1);
+    }
+    return false;
+  }
 
 }

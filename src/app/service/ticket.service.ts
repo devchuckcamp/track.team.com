@@ -254,7 +254,10 @@ export class TicketService {
     removeTag(id: number) {
         return this.http.delete(this.config.apiEndPoint()+'/api/v1/tickets-tag-users/'+id, this.jt());
     }
-
+    // Last Action
+    getLastAction(project_name:string, id:number){
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets/'+id+'?project='+project_name+'&action=last_action', this.jt()).pipe(map( (res:any) => res));
+    }
 
     // Report
     getTicketBillReport(id: number, token:any = '') {

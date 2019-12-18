@@ -36,6 +36,8 @@ nav.navbar.navbar-expand-lg.sticky-top{
     margin-bottom: -46%;
     padding-bottom: 0%;
     z-index: 98;
+    transition-duration: 0.1s;
+    transition-delay: 0.0s;
 }
 
 .parent-left-menu-item{
@@ -55,4 +57,14 @@ nav.navbar.navbar-expand-lg.sticky-top{
 .parent-left-menu-item:hover,
 .parent-left-menu-item.active{
     background: #039be5;
+}
+.parent-left-menu-item .hidden{
+    display: none!important;
+}
+.left-nav-bar.collapse-sidebar{
+    width: 3%!important;
+}
+.main-content.max-main-content{
+    width: 96.77%!important;
+    margin-left: 3.33%;
 }

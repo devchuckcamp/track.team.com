@@ -482,9 +482,13 @@ export class TicketComponent implements OnInit, OnDestroy {
               });
             }
 
-              if(this.ticketToAdd.assignees.length){
+              if(this.ticketToAdd.assignees){
                 const assigned_members:any = this.getAssignedMembers(added_ticket.id);
                 this.addAssignees(assigned_members);
+                this.submitting =false;
+              } else {
+                this.ticketFormShow = false;
+                this.ticketForm.reset();
                 this.submitting =false;
               }
             if(!this.submitting){
@@ -579,5 +583,12 @@ export class TicketComponent implements OnInit, OnDestroy {
         this.statusFilter.push(stat);
       }
       // console.log(this.statusFilter,'statusFilter');
+      this.pageNum = 1;
+      this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter).subscribe( (res:any) =>{
+        this.tickets = res.data;
+        this.length = res.total;
+        this.loading = false;
+        this.tag_users = res.data.tag_users;
+      });
     }
 }

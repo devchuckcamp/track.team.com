@@ -4,6 +4,7 @@ import { Router, ActivatedRoute, NavigationEnd  } from '@angular/router';
 import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase} from '@angular/common/http';
 import { ProjectService } from '../../service/project.service';
 import { UserService } from '../../service/user.service';
+import { MenuService } from '../../service/menu.service';
 import { Project } from '../../model/project';
 import { Observable, Subscription  } from 'rxjs';
 
@@ -31,12 +32,15 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
     auth_client_info:any;
     subscription:Subscription;
     default_avatar = '../../assets/default-profile.png';
+    currentSideBarMenu:number;
+
     constructor(
             private http: HttpClient,
             public router: Router,
             private route: ActivatedRoute,
             private projectService: ProjectService,
-            private userService:UserService
+            private userService:UserService,
+            private menuService:MenuService
     ) { 
         
         this.admin_sub_3 = '';
@@ -102,6 +106,8 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
         this.setUser();
         this.setAvatar();
         this.setClientInfo();
+        this.setSideBarStatus();
+
         this.router.events.subscribe(path =>{
             if(path instanceof NavigationEnd ){
                 this.createUrlVariables(path);
@@ -168,6 +174,30 @@ export class LeftMenuTopComponent implements OnInit, AfterViewInit {
             this.admin_project_sub =  'activity';
             this.admin_sub_3 =  'activity';
         }
+    }
+
+
+    toggleSideNav() {
+        return false;
+    }
+
+    setSideBarStatus():void {
+        this.subscription = this.menuService.currentSideBarMenu.subscribe( (res:any) => { this.currentSideBarMenu = res; });
+    }
+
+    getSidebarMenuStatus(){
+        const active=this.currentSideBarMenu ==1;
+        return {'col-lg-2 col-md-1':active , 'col-lg-1 col-md-1 collapse-sidebar':!active};
+    }
+
+    collapseSidebarMenuStatus(){
+        const active=this.currentSideBarMenu ==0;
+        return {'hidden':active};
+    }
+
+    displaySidebarMenuStatus(){
+        const active=this.currentSideBarMenu ==1;
+        return {'hidden':active};
     }
 
 }

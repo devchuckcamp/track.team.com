@@ -47,6 +47,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     tickets: Ticket[] = [];
     ticket: any;
     thread:Thread[];
+    thread_pager:any;
     auth:any;
     fileType:any;
     uploadImages:any = [];
@@ -97,8 +98,8 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     download_report_url:any;
     public uploader: FileUploader = new FileUploader({});
     public hasBaseDropZoneOver: boolean = false;
-   download_auth_token:any = ""
-   download_report:any = "";
+    download_auth_token:any = ""
+    download_report:any = "";
 
     private socket$: WebSocketSubject<any>;
 
@@ -312,7 +313,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
                 //   );
                 // let data = { "event": "pusher:subscribe", "data": { "channel": "channel-notify." + this.auth.id } }
                 // this.socket$.next(data);
-
+                this.loading = true;
                 this.ticketService.getProjectTicket(params['project_name'],params['ticket_id']).subscribe( (res:any) => {
                   if(res){
 
@@ -350,19 +351,22 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
                         this.startedBillingTime = false;
                       }
                       this.format_billed_time();
+                      res.thread = res.thread.reverse();
                       this.ticket = res;
+                      this.thread_pager = res.thread_pager;
 
                       this.assigned_user = res.assignees.map(assgn => {
                         return assgn.user_id;
                       });
+                      this.loading = false;
                   }
-                  this.loading = true;
-                  this.threadService.getAllTicketThread(res.id).subscribe(  res => {
-                    if(res.data){
-                      this.thread = res.data;
-                    }
-                    this.loading = false;
-                  });
+
+                  // this.threadService.getAllTicketThread(res.id).subscribe(  res => {
+                  //   if(res.data){
+                  //     this.thread = res.data;
+                  //   }
+                  //   this.loading = false;
+                  // });
 
                 });
             } else {
@@ -577,7 +581,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     onReplayKey(text:string){
         this.replayText = text;
         var result = '';
-        //console.log(text.length);
       while (text.length > 0) {
         result += text.substring(0, 200) + '\n';
         text = text.substring(200);
@@ -587,12 +590,59 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
 
     auto_grow(element) {
 
-      let  textArea = document.getElementById("ticket-description-info")
+      let  textArea = document.getElementById("ticket-description-info");
       textArea.style.overflow = 'hidden';
       textArea.style.height = '0px';
       let height =  textArea.scrollHeight + 'px';
       let style = {'min-height': height,'max-height':height };
       return style;
+    }
+
+    showMore(){
+      if(this.ticket.thread_pager.current_page < this.ticket.thread_pager.total_page){
+        this.ticket.thread_pager.current_page++;
+        this.threadService.pageTicketThread(this.ticket.id, this.thread_pager.per_page, this.ticket.thread_pager.current_page).subscribe((res) => {
+          
+          if(res.data.length){
+            this.thread_pager.current_page = res.current_page;
+            // this.thread_pager.total = res.current_page* this.thread_pager.per_page >= this.thread_pager.total ? this.thread_pager.total : res.current_page* this.thread_pager.per_page;
+            this.ticket.thread_pager.current_page = res.current_page;
+            let newThreads = res.data.reverse();
+            newThreads.forEach(thrd => {
+              this.ticket.thread.unshift(thrd);
+            });
+            this.ticket.thread = this.ticket.thread.filter((thing, index, self) =>
+              index === self.findIndex((t) => (
+                t.id === thing.id
+              ))
+            );
+          }
+        });
+      }
+      return false;
+    }
+
+    showLess(){
+      if(this.ticket.thread_pager.current_page < this.ticket.thread_pager.total_page){
+        this.ticket.thread_pager.current_page++;
+        this.threadService.pageTicketThread(this.ticket.id, this.thread_pager.per_page, this.ticket.thread_pager.current_page).subscribe((res) => {
+          if(res.data.length){
+            this.thread_pager.current_page = res.current_page;
+            // this.thread_pager.total = res.current_page* this.thread_pager.per_page >= this.thread_pager.total ? this.thread_pager.total : res.current_page* this.thread_pager.per_page;
+            this.ticket.thread_pager.current_page = res.current_page;
+            let newThreads = res.data.reverse();
+            newThreads.forEach(thrd => {
+              this.ticket.thread.unshift(thrd);
+            });
+            this.ticket.thread = this.ticket.thread.filter((thing, index, self) =>
+              index === self.findIndex((t) => (
+                t.id === thing.id
+              ))
+            );
+          }
+        });
+      }
+      return false;
     }
     submitReplyBox(){
         if(this.replyView){
@@ -615,6 +665,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
 
                   });
                   this.loading = false;
+                  this.getLastAction();
                   this.ticket.thread.push(res);
                   this.uploadImages = [];
                 }
@@ -736,6 +787,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
           this.ticket_logs = res.ticket_status_logs.reverse();
           this.process_time_consumption(res.progress_time_consumed);
           this.updating_status = false;
+          this.getLastAction();
           this.snackBar.open('Status has been updated', 'X', {
                   duration: 5000,
                   direction: "ltr",
@@ -758,6 +810,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
         if(res && res.priority_id == priority_id){
           this.ticket.priority = res;
           this.updating_priority = false;
+          this.getLastAction();
           this.snackBar.open('Priority has been updated', 'X', {
                   duration: 5000,
                   direction: "ltr",
@@ -779,6 +832,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
         if(res && res.category_id == category){
           this.ticket.category = res;
           this.updating_category = false;
+          this.getLastAction();
           this.snackBar.open('Category has been updated', 'X', {
                   duration: 5000,
                   direction: "ltr",
@@ -801,6 +855,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
         patchObj = { id:null};
       }
       this.updating_patch = true;
+      this.getLastAction();
       this.ticketService.update(this.ticket, 'patch', patchObj).subscribe( res => {
         if( patchObj.id == null || (res && res.patch_id == patch)){
           this.ticket.category = res;
@@ -846,5 +901,13 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
       mentionedMember.push(mentioned);
 
       return '@'+tag.first_name+''+tag.last_name;
+    }
+
+
+    getLastAction(){
+      this.ticketService.getLastAction(this.project_name, this.ticket.id).subscribe( (res) => {
+        console.log(res);
+        this.ticket.last_action = res;
+      });
     }
 }

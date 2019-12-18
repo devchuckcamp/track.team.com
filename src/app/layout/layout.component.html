@@ -21,7 +21,7 @@
         </div> 
     --> 
         <app-left-menu-top [auth_client]="auth_client"></app-left-menu-top>
-        <div class="col-lg-10 offset-lg-2 col-md-11 offset-md-1">
+        <div class="main-content" [ngClass]="getSidebarMenuStatus()">
             <app-dashboard *ngIf="activeURL == '/'+auth_client+'/admin'"></app-dashboard>
             <app-profile *ngIf="activeURL == '/'+auth_client+'/admin/profile'"></app-profile>
             <app-project *ngIf="activeURL == '/'+auth_client+'/admin/projects'"></app-project>
@@ -33,7 +33,8 @@
     </div>
     <div class="col-md-12 mar-0 h-100 second pad-t-10" *ngIf="activeURL !== '/'+auth_client+'/admin/news' && activeURL !== '/'+auth_client+'/admin/reports' && activeURL !== '/'+auth_client+'/admin/activity' && activeURL !== '/'+auth_client+'/admin/profile' && activeURL !== '/'+auth_client+'/admin/projects' && activeURL !== '/'+auth_client+'/admin/projects/add' && activeURL !== '/'+auth_client+'/admin/settings' && activeURL !== '/'+auth_client+'/admin'">
         <app-left-menu *ngIf="admin_sub_2" [auth_profile]="profile"  [auth_client]="auth_client" [project_name]="admin_sub_2" [admin_project_sub]="admin_project_sub"></app-left-menu>
-        <div class="col-lg-10 offset-lg-2 col-md-11 offset-md-1">
+        <!-- <div class="col-lg-10 offset-lg-2 col-md-11 offset-md-1"> -->
+        <div class="main-content" [ngClass]="getSidebarMenuStatus()">
             <!-- Breadcrumbs -->
             <app-breadcrumb [slug_list]="breadcrumb" [auth_client]="auth_client" [project_name]="admin_sub_2"></app-breadcrumb>
             <!-- Main Content -->

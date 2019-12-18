@@ -45,7 +45,9 @@ export class ThreadService {
     getAllTicketThread(ticket_id: number) {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/thread?ticket='+ticket_id, this.jt()).pipe(map( (res:any) => res));
     }
-
+    pageTicketThread(ticket_id: number, per_page:number =5, page = 1) {
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/thread?ticket='+ticket_id+'&per_page='+per_page+'&page='+page, this.jt()).pipe(map( (res:any) => res));
+    }
     send(thread: any) {
         return this.http.post(this.config.apiEndPoint()+'/api/v1/thread', thread, this.jt());
     }

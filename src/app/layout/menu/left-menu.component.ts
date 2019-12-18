@@ -5,6 +5,7 @@ import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpReques
 import { ProjectService } from '../../service/project.service';
 import { Project } from '../../model/project';
 import { UserService } from '../../service/user.service';
+import { MenuService } from '../../service/menu.service';
 import { Observable, Subscription  } from 'rxjs';
 
 @Component({
@@ -31,6 +32,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
     admin_sub_2: string;
     admin_sub_3:    string;
     onload_slug_list: any;
+    currentSideBarMenu:number;
     is_dashboard:boolean;
     constructor(
             private http: HttpClient,
@@ -38,6 +40,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
             private route: ActivatedRoute,
             private projectService: ProjectService,
             private userService:UserService,
+            private menuService:MenuService,
     ) {
         this.admin_sub_3 = '';
         this.active_menu = this.admin_project_sub;
@@ -104,6 +107,7 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setUser();
         this.setAvatar();
         this.setClientInfo();
+        this.setSideBarStatus();
         this.route.params.subscribe(params => {
             if ( (params['project_name'] !== 'add' ) && params['project_name'] !== undefined || this.project_name !== '') {
                 let project_name = this.project_name ? this.project_name : params['project_name'];
@@ -197,6 +201,24 @@ export class LeftMenuComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     setClientInfo():void {
         this.subscription = this.userService.currentClientInfo.subscribe(client_info => { this.auth_client_info = JSON.parse(client_info);  });
+    }
+    setSideBarStatus():void {
+        this.subscription = this.menuService.currentSideBarMenu.subscribe( (res:any) => { this.currentSideBarMenu = res; });
+    }
+
+    getSidebarMenuStatus(){
+        const active=this.currentSideBarMenu ==1;
+        return {'col-lg-2 col-md-1':active , 'col-lg-1 col-md-1 collapse-sidebar':!active};
+    }
+
+    collapseSidebarMenuStatus(){
+        const active=this.currentSideBarMenu ==0;
+        return {'hidden':active};
+    }
+
+    displaySidebarMenuStatus(){
+        const active=this.currentSideBarMenu ==1;
+        return {'hidden':active};
     }
 
 }

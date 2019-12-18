@@ -130,6 +130,9 @@ export class MasterNavbarComponent implements OnInit, OnDestroy  {
     return false;
   }
 
+  toggleSideNav(){
+    return false;
+  }
 
 
 }

@@ -34,7 +34,7 @@
     <!-- <a href="#" *ngIf="auth.role_id < 4 && !ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a> -->
     <a href="#" *ngIf="ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
     <a href="#" *ngIf="!ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a>
-    <a href="#" *ngIf="auth.role_id < 4 && ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
+    <!-- <a href="#" *ngIf="auth.role_id < 4 && ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a>  -->
 </div>
 <div  class="col-lg-12 content-main">
     <div class="row pad-10" *ngIf="!ticketFormShow">
@@ -57,9 +57,10 @@
                     <th scope="col">Assigned to</th>
                     <th scope="col">Patch</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Category</th>
                     <th scope="col" class="text-center">Priority</th>
                     <th scope="col">Creator</th>
-                    <th scope="col">Date</th>
+                    <th scope="col">Date Created</th>
                     <th scope="col">Last Update</th>
                     <th scope="col">Update Date</th>
                     <th scope="col">Action</th>
@@ -67,6 +68,7 @@
             </thead>
             <tbody *ngIf="loading" class="text-center">
                 <tr>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -97,6 +99,7 @@
                     <td>{{  ticket.patch ? ticket.patch.name : 'NA'  }}</td>
                     <!-- <td *ngIf="!ticket.billed_time_consumed">Stopped</td> -->
                     <td [routerLink]="[ticket.id]" [ngStyle]="{'background-color': ticket.status.color, 'color':'#fafafa'}">{{ticket.status.name | titlecase}}</td>
+                    <td [routerLink]="[ticket.id]">{{ticket.category.name | titlecase}}</td>
                     <td [routerLink]="[ticket.id]" class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
                     <td [routerLink]="[ticket.id]">{{ticket.created_by}}</td>
                     <td [routerLink]="[ticket.id]">{{ticket.created_at | date: 'medium'}}</td>

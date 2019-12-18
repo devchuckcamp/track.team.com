@@ -6,6 +6,7 @@ import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
 import { ProjectService } from '../service/project.service';
 import { SettingService } from '../service/setting.service';
+import { MenuService } from '../service/menu.service';
 import { User } from '../model/user';
 import { Observable, Subscription  } from 'rxjs';
 
@@ -32,12 +33,14 @@ export class LayoutComponent implements OnInit {
   profile:any;
   breadcrumb:any;
   projectsList:any[] =[];
+  currentSideBarMenu:number;
 
   constructor(
     private authService: AuthService,
     private userService: UserService,
     private projectService: ProjectService,
     private settingService:SettingService,
+    private menuService:MenuService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     ) {
@@ -90,6 +93,7 @@ export class LayoutComponent implements OnInit {
         
       });
       this.setUser();
+      this.setSideBarStatus();
     }
   ngOnInit() {
     const id = this.activatedRoute.snapshot.params['filter'];
@@ -117,6 +121,20 @@ export class LayoutComponent implements OnInit {
 
   setClient():void {
     this.subscription = this.userService.currentClient.subscribe(client => { this.auth_client = client;  });
+  }
+
+  setSideBarStatus():void {
+    this.subscription = this.menuService.currentSideBarMenu.subscribe( (res:any) => { this.currentSideBarMenu = res; });
+  }
+
+  getSidebarMenuStatus(){
+      const active=this.currentSideBarMenu ==1;
+      return {'col-lg-10 offset-lg-2 offset-md-1':active, 'max-main-content':!active };
+  }
+
+  toggle(){
+    const active=this.currentSideBarMenu ==1;
+    return {'col-lg-10 offset-lg-2 offset-md-1':active, 'col-lg-11 offset-lg-1':!active };
   }
 
 }

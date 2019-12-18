@@ -15,18 +15,21 @@ import { LeftMenuComponent } from '../layout/menu/left-menu.component';
 import { LeftMenuTopComponent } from '../layout/menu/left-menu-top.component';
 import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
 import { UnderConstructionComponent } from '../share/under-construction.component';
+
 import { ActivityLogComponent } from '../share/activity-log.component';
 import { ReportProjectComponent } from '../report/project/report-project.component';
 import { TicketPatchSettingComponent } from '../project/setting/ticket/patch/ticket-patch-setting.component';
 import { ProjectSettingModule } from '../project/setting/project-setting.module';
 // Services
 import { SettingService } from '../service/setting.service';
+import { MenuService } from '../service/menu.service';
 import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
 import { ProjectService } from '../service/project.service';
 import { TicketService } from '../service/ticket.service';
 import { ThreadService } from '../service/thread.service';
 import { ActivityService } from '../service/activity.service';
+// import { ChatService } from '../service/chat.service';
 
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { FormsModule,ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators, EmailValidator,
@@ -142,12 +145,14 @@ import { MentionModule } from 'angular-mentions';
   ],
   providers: [
     AuthService,
+    MenuService,
     SettingService,
     UserService,
     ProjectService,
     TicketService,
     ThreadService,
     ActivityService,
+    // ChatService,
   ],
   bootstrap: [LayoutComponent]
 })

@@ -1,6 +1,6 @@
 <div *ngIf="ticket" class="col-lg-12">
     <div class="thread-container col-lg-12">
-        <h2>{{ticket.title}}</h2>
+        <h2>{{ticket.title}} - </h2>
         <div class="row  mat-0 pad-0">
             <div class="col-lg-12 mat-0 pad-0">
                 <h2 *ngIf="total_time_consumed"><b>Progress time:</b> {{ total_time_consumed }} <label *ngIf="is_ongoing"> and running.</label></h2>
@@ -62,10 +62,20 @@
                         <span class="pad-l-10"><img *ngIf="updating_patch" src="../../assets/icon/loading.gif" width="20"
                                 height="20"></span>
                     </div>
+                    <!-- Created -->
+                    <div class="form-group" *ngIf="ticket">
+                        <label class="mar-r-10" for="ticket-patch">Created</label>
+                        <label  for="ticket_last_action" ><strong *ngIf="ticket.created_at">{{ ticket.created_at }}</strong></label>
+                    </div>
+                    <!-- Last Update -->
+                    <div class="form-group" *ngIf="ticket.last_action">
+                        <label class="mar-r-10" for="ticket-patch">Last Update</label>
+                        <label for="ticket_last_action"><strong *ngIf="ticket.last_action.created_at" [innerHTML]="ticket.last_action.created_at +' '+ticket.last_action.message"></strong></label>
+                    </div>
                     <!-- Assignees -->
-                    <div *ngIf="ticket.assignees.length" class="row form-group">
+                    <div *ngIf="ticket.assignees" class="row form-group">
                         <div  class="col-lg-12">
-                            <label *ngIf="ticket.assignees.length == 1" for="tag_users">Assignee:</label>
+                            <label *ngIf="ticket.assignees.length == 1 || ticket.assignees.length == 0" for="tag_users">Assignee:</label>
                             <label *ngIf="ticket.assignees.length > 1" for="tag_users">Assignees:</label>
                         </div>
                         <div class="col-lg-12">
@@ -150,9 +160,17 @@
         <img *ngIf="loading" src="../../assets/icon/loading.gif">
     </div>
     <div class="thread-container col-lg-12">
-        <div *ngIf="thread" class="thread-list-container row mar-0 text-center">
-            <div>
-                <label for="no-list" class="label text-info">Ticket has {{ticket.thread.length}} discussions</label>
+        <div *ngIf="ticket.thread.length" class="thread-list-container row mar-0 text-center">
+            <div class="col-12 text-left pad-l-0">
+                <label for="no-list" class="label text-info">Showing {{ticket.thread.length}} of {{ticket.thread_pager.total}} ticket discussions</label>
+            </div>
+            <div class="col-12 text-center" >
+                <div class="row" >
+                    <div class="col-12 text-center" *ngIf="ticket.thread_pager.total > 5">
+                        <a href="#" *ngIf="ticket.thread_pager.current_page < ticket.thread_pager.total_page" (click)="showMore()" title="Show more">Show more</a>
+                        <a href="#" *ngIf="ticket.thread_pager.current_page >= ticket.thread_pager.total_page"(click)="showLess()" title="Show less">Show less</a>
+                    </div>
+                </div>
             </div>
             <div *ngFor="let thread of ticket.thread; let i = index" [attr.data-index]="i" class="thread-message mar-y-10 full-w pad-0">
                 <div class="card thread-message-content text-left">
@@ -166,7 +184,7 @@
                         <div [ngClass]="{'comment-own order-md-2': thread.user_id == auth.id}"
                             class="col card-header thread-message-head q-width border-rad-10 pad-20 mar-r-10"> <label
                                 for="">{{thread.user_id == auth.id ? 'You' : thread.message_by.name }}</label>
-                            : <label class="message-create">{{thread.created_at | date: 'medium' }}</label></div>
+                            : <label  class="message-create">{{thread.created_at | date: 'medium' }}</label></div>
                         <div [ngClass]="{'text-left': thread.user_id == auth.id, 'text-left': thread.message_by.username != loggedin_user}"
                             class="col-lg-9 card-body thread-message-wrapper">{{thread.message}}</div>
                     </div>
