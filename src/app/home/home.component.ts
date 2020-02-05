@@ -49,7 +49,6 @@ export class HomeComponent implements OnInit {
 
   getClient(client_name:any, redirect:boolean = false){
     this.clientService.validate(client_name).subscribe( (res:any) => {
-      console.log(res,'client validated');
       if(res.id){
         this.valid_client = true;
         this.clientService.setClient(res);

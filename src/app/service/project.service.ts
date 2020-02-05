@@ -161,7 +161,13 @@ export class ProjectService {
             ticket_id:ticket.id,
             project_id:ticket.project_id
         });
-        return this.http.post(this.config.apiEndPoint()+'/api/v1/ticket-download-token', data,this.jt());
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/ticket-download-token', data, this.jt());
+    }
+
+    // Settings
+    getETAAccess(project:any = null, meta:any = null, sub_meta:any = null){
+        let vars = '?project='+project+'&meta='+meta+'&sub_meta='+sub_meta;
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/meta'+vars, this.jt()).pipe(map( (res:any) => res));
     }
 
     private jt() {

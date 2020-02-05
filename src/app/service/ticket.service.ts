@@ -129,6 +129,11 @@ export class TicketService {
                 patch_id:customData.id
             });
         }
+        if(type == 'eta'){
+            data = JSON.stringify({
+                eta:customData.eta
+            });
+        }
         return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets/'+ticket.id, data, this.jt());
     }
 

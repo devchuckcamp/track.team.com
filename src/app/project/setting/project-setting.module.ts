@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { ProjectSettingComponent } from './project-setting.component';
 import { TicketPatchSettingComponent } from './ticket/patch/ticket-patch-setting.component';
+import { ProjectSecuritySettingComponent } from './project/security/project-security-setting.component';
 import { ProjectSettingRoutingModule } from './project-setting-routing.module';
 import { CommonModule } from '@angular/common';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -47,6 +48,7 @@ import {
   declarations: [
     ProjectSettingComponent,
     TicketPatchSettingComponent,
+    ProjectSecuritySettingComponent,
   ],
   imports: [
     ProjectSettingRoutingModule,
@@ -91,7 +93,8 @@ import {
     MatTreeModule,
   ],
   exports:[
-    TicketPatchSettingComponent
+    TicketPatchSettingComponent,
+    ProjectSecuritySettingComponent,
   ]
 
 })

@@ -6,15 +6,16 @@ import { ThreadService } from '../service/thread.service';
 import { AuthService } from '../service/auth.service';
 import { ProjectService } from '../service/project.service';
 import { SettingService } from '../service/setting.service';
+import { MetaService } from '../service/meta.service';
 import { GlobalRoutesService } from '../config/config';
 import { Ticket } from '../model/ticket';
 import { Thread } from '../model/thread';
 import { User } from '../model/user';
+import { FormGroup, ReactiveFormsModule, FormBuilder, FormControl, Validators, EmailValidator } from '@angular/forms';
 // File Upload
 import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { FileUploader, FileLikeObject } from 'ng2-file-upload';
 import { concat } from  'rxjs';
-import { FormsModule } from '@angular/forms';
 import {MatSnackBar, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {DialogOverviewExampleDialog} from './dialog-attachment-overview.component';
 import {DialogStatusHistoryDialog} from './dialog-status-history.component';
@@ -46,6 +47,7 @@ today.setMinutes(0);
 export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     tickets: Ticket[] = [];
     ticket: any;
+    eta:any = 0;
     thread:Thread[];
     thread_pager:any;
     auth:any;
@@ -63,7 +65,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     ticket_patches:any =  [];
     ticketStatusList: TicketStatusType = [];
     mentionConfig:any;
-
+   
     // Consumed Time
     is_ongoing:boolean = false;
     total_time_consumed:any;
@@ -80,12 +82,14 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     seconds:any;
     //Ticket Logs
     ticket_logs:any =  [];
-
+    // Form Group
+    ticketDetailForm :FormGroup;
     project_name:string;
     loggedin_user:string;
     replyView:boolean;
     loading:    boolean;
     updating_status:boolean = false;
+    updating_eta:boolean  = false;
     updating_priority:boolean = false;
     updating_category:boolean = false;
     updating_patch:boolean = false;
@@ -93,7 +97,8 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     animal: string;
     name: string;
     selectedFile: ImageSnippet;
-
+    //ETA
+    etaAccess:boolean = false;
     //Report
     download_report_url:any;
     public uploader: FileUploader = new FileUploader({});
@@ -109,13 +114,15 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
         private authService:    AuthService,
         private projectService: ProjectService,
         private settingService: SettingService,
+        private metaService:MetaService,
         private router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
         private dialog: MatDialog,
         private http: HttpClient,
         private globalRoutesService:GlobalRoutesService,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
+        private formBuilder: FormBuilder,
     ) {
         this.auth = this.authService.getAuthUser();
         this.loggedin_user = "";
@@ -265,6 +272,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     }
 
     ngOnInit() {
+      
       this.settingService.statusSettings.subscribe( (res:any) =>{
         //console.log(res,'status list');
         this.ticketStatusList = res;
@@ -277,7 +285,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
       // Tickets Category
       this.settingService.categorySettings.subscribe( (res:any) =>{
         this.ticketCategories = res;
-
       });
       // this.ticketService.ticketsCategory.subscribe( (res:any) => {
       //   this.ticketCategories = res;
@@ -316,8 +323,11 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
                 this.loading = true;
                 this.ticketService.getProjectTicket(params['project_name'],params['ticket_id']).subscribe( (res:any) => {
                   if(res){
-
+                      this.ticketDetailForm = this.formBuilder.group({
+                        'eta': new FormControl(res.eta, []),
+                      });
                         if(res.ticket_status_logs){
+                          this.eta = res.eta;
                           this.ticket_logs = res.ticket_status_logs.reverse();
                         }
                         today.setSeconds(0);
@@ -353,6 +363,15 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
                       this.format_billed_time();
                       res.thread = res.thread.reverse();
                       this.ticket = res;
+
+                      // ETA Permission
+                      //getMetaValue(){
+                        this.metaService.getMetaValue(this.project_name,'project','eta_access', 'auth_user_meta','auth_user_meta').subscribe((res)=>{
+                          if(res){
+                            this.etaAccess = res.value == 1? true : false;
+                          }
+                        });
+                      //}
                       this.thread_pager = res.thread_pager;
 
                       this.assigned_user = res.assignees.map(assgn => {
@@ -774,7 +793,26 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     public fileLeave(event){
 
     }
+    public updateTicketEta(eta:any = null){
+      this.updating_eta = true;
+      let etaObj :any;
+      etaObj = { eta : this.ticketDetailForm.value.eta };
 
+      this.ticketService.update(this.ticket,'eta', etaObj).subscribe( res => {
+          this.ticket_logs = res.ticket_status_logs.reverse();
+          this.updating_eta = false;
+          this.getLastAction();
+          this.snackBar.open('ETA has been updated', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "success-snack"
+              }
+          );
+      });
+      return false;
+    }
     public updateTicketStatus(status:number){
       this.ticket.status_id = status;
       let data = {

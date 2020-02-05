@@ -29,6 +29,7 @@ import { ProjectService } from '../service/project.service';
 import { TicketService } from '../service/ticket.service';
 import { ThreadService } from '../service/thread.service';
 import { ActivityService } from '../service/activity.service';
+import { MetaService } from '../service/meta.service';
 // import { ChatService } from '../service/chat.service';
 
 import { SlickCarouselModule } from 'ngx-slick-carousel';
@@ -152,6 +153,7 @@ import { MentionModule } from 'angular-mentions';
     TicketService,
     ThreadService,
     ActivityService,
+    MetaService,
     // ChatService,
   ],
   bootstrap: [LayoutComponent]

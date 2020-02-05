@@ -15,4 +15,10 @@
 .side-nav-toggler-btn{
     position: absolute;
     left: 275px;
+    transition-duration: 0.1s;
+    transition-delay: 0.0s;
+}
+.side-nav-toggler-btn.menu_open{
+    left: 5%;
+    top: 35%;
 }

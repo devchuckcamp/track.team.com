@@ -4,7 +4,8 @@ import { TicketDetailComponent } from './ticket-detail.component';
 import { TicketDetailRoutingModule } from './ticket-detail-routing.module';
 import { DialogOverviewExampleDialog } from './dialog-attachment-overview.component';
 import { DialogStatusHistoryDialog } from './dialog-status-history.component';
-import { FormsModule } from '@angular/forms';
+import { FormGroup , FormControl , ReactiveFormsModule , FormsModule } from '@angular/forms';
+
 import { UserService } from '../service/user.service';
 import { ClientGlobalRoutesService } from '../config/client';
 import { GlobalRoutesService } from '../config/config';
@@ -63,6 +64,7 @@ import {
     SafeHtml,
   ],
   imports: [
+    CommonModule,
     MatAutocompleteModule,
     MatBadgeModule,
     MatBottomSheetModule,
@@ -104,6 +106,7 @@ import {
     FileUploadModule,
     SlickCarouselModule,
     FormsModule,
+    ReactiveFormsModule,
     MentionModule,
   ],
   exports: [DialogOverviewExampleDialog, DialogStatusHistoryDialog],

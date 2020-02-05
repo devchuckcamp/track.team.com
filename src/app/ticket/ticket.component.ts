@@ -5,6 +5,7 @@ import { ProjectService } from '../service/project.service';
 import { SettingService } from '../service/setting.service';
 import { ThreadService } from '../service/thread.service';
 import { AuthService } from '../service/auth.service';
+import { MetaService } from '../service/meta.service';
 import { Ticket } from '../model/ticket';
 import { Thread } from '../model/thread';
 import { User } from '../model/user';
@@ -67,6 +68,7 @@ export class TicketComponent implements OnInit, OnDestroy {
     tagged_members = new FormControl();
     assignees = new FormControl();
     ticketToAdd:any = new Object();
+    selectedEndDate:any;
     ticket: any;
     thread:any;
     auth:any;
@@ -106,6 +108,8 @@ export class TicketComponent implements OnInit, OnDestroy {
       'Check e-mail',
       'Walk dog'
     ];
+    //ETA
+    etaAccess:boolean = false;
 
     constructor(
         private ticketService: TicketService,
@@ -113,6 +117,7 @@ export class TicketComponent implements OnInit, OnDestroy {
         private threadService:  ThreadService,
         private authService:    AuthService,
         private settingService:SettingService,
+        private metaService:MetaService,
         private router: Router,
         private route: ActivatedRoute,
         private formBuilder: FormBuilder,
@@ -125,6 +130,7 @@ export class TicketComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+     
       this.statusFilter.length =0;
       this.auth = this.authService.getAuthUser();
       this.settingService.settings.subscribe( (res:any) => {
@@ -133,6 +139,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.route.params.subscribe(params => {
         if (params['project_name'] !== undefined) {
             this.project_name = params['project_name'];
+            
         }
       });
       this.ticketToAdd.title = '';
@@ -141,6 +148,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.ticketToAdd.assigned_to = null;
       this.ticketToAdd.assignees = null;
       this.ticketToAdd.status_id = null;
+      this.ticketToAdd.selectedEndDate = null;
       this.replayText = "";
       this.ticketFormShow = false;
       this.ticketForm = new FormGroup({
@@ -148,6 +156,7 @@ export class TicketComponent implements OnInit, OnDestroy {
         'description': new FormControl('', [Validators.required,]),
         'category': new FormControl('', [Validators.required,]),
         'priority': new FormControl('', [Validators.required,]),
+        'selectedEndDate': new FormControl('', ),
         'assigned_to': new FormControl('', []),
         'assignees': new FormControl('', []),
       });
@@ -280,6 +289,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.ticketService.getProjectTicketFilter(project_name, filter, this.statusFilter).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
+        this.getMetaValue();
         this.length = res.total;
         this.tag_users = res.data.tag_users;
       });
@@ -288,8 +298,17 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.ticketService.getProjectTicketAll(project_name, this.pageNum, this.pageSize, '', this.statusFilter).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
+        this.getMetaValue();
         this.length = res.total;
         this.tag_users = res.data.tag_users;
+      });
+    }
+
+    getMetaValue(){
+      this.metaService.getMetaValue(this.project_name,'project','eta_access', 'auth_user_meta','auth_user_meta').subscribe((res)=>{
+        if(res){
+          this.etaAccess = res.value == 1? true : false;
+        }
       });
     }
 
@@ -468,6 +487,7 @@ export class TicketComponent implements OnInit, OnDestroy {
           category_id:this.ticketForm.value.category,
           project_id: this.project_id,
           priority_id:this.ticketToAdd.priority,
+          eta:this.ticketForm.value.selectedEndDate
         };
 
         this.submitting= true;
@@ -541,7 +561,8 @@ export class TicketComponent implements OnInit, OnDestroy {
     deleteTicket(ticket_id:number){
       this.ticketService.delete(ticket_id).subscribe( res => {
         if(res == null){
-          this.getTicket(this.project_name);
+          this.pageNum = 1;
+          this.getFilterTicket(this.project_name, this.statusFilter);
           this.snackBar.open('Ticket has been deleted', 'X', {
                 duration: 5000,
                 direction: "ltr",

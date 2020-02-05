@@ -5,6 +5,7 @@ export class Ticket {
     description: string;
     status_id: number;
     assigned_to: number;
+    eta:string;
     created_by: string;
     created: number;
     modified: number;
