@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Pipe } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd  } from '@angular/router';
 import Chart from 'chart.js';
 import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
@@ -15,6 +15,7 @@ import { Observable, Subscription  } from 'rxjs';
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']
 })
+
 export class LayoutComponent implements OnInit {
   avatar:any;
   auth_client:any;
@@ -47,7 +48,7 @@ export class LayoutComponent implements OnInit {
       this.setClient();
       // Settings
       this.settingService.loadAll();
-      this.settingService.loadAllProjectStatus();
+      this.settingService.loadAllProjectStatus('');
       this.settingService.loadAllTicketCategory();
       this.profile = this.authService.getAuthUser();
       this.admin_sub_1 = "";

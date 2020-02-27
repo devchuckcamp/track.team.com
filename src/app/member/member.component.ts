@@ -115,7 +115,7 @@ export class MemberComponent implements OnInit {
     dialogRef.componentInstance.confirmMessage = "Are you sure you want to remove "+member_info.user.user_details.first_name+" "+ member_info.user.user_details.last_name +"'s account from this project.";
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result,'closed dialog');
+      //console.log(result,'closed dialog');
       if(result){
         // this.removeUser(user);
         this.removeUserFromProject(member_info);
@@ -125,12 +125,8 @@ export class MemberComponent implements OnInit {
   ngOnInit() {
     this.auth = this.authService.getAuthUser();
     this.setClient();
-
+   
     this.projectService.loadAll();
-    this.projectService.projects.subscribe( (res:any) => {
-      this.projects = res;
-    });
-
     this.memberFormShow = false;
     this.showMemberSearchForm = false;
 
@@ -169,7 +165,12 @@ export class MemberComponent implements OnInit {
               });
               this.project = res;
               projectsInvitationList.push(pid);
-              this.projectsSearchable = this.filterProjectInvite();
+              this.projectService.projects.subscribe( (res:any) => {
+                this.projects = res;
+
+                this.projectsSearchable = this.filterProjectInvite(res);
+
+              });
             }
           });
           this.getMember();
@@ -178,13 +179,13 @@ export class MemberComponent implements OnInit {
     });
     this.dataSource.paginator = this.paginator;
   }
-  onlyUniqueProjectID(value, index, self) { 
+  onlyUniqueProjectID(value, index, self) {
     return self.indexOf(value) === index;
   }
 
 
-  filterProjectInvite(){
-    return this.projects.filter((project:any) =>{
+  filterProjectInvite(projects:any){
+    return projects.filter((project:any) =>{
       return !projectsInvitationList.includes(project.id)
     });
   }
@@ -314,11 +315,13 @@ export class MemberComponent implements OnInit {
     return false;
   }
   inviteAccountToProjects(){
-    console.log(projectsInvitationList,'projectsInvitationList');
+   
     let projects_val = projectsInvitationList;
+   
     if(this.memberInviteForm.value.projects){
       let distinct_project_id = projectsInvitationList.filter( this.onlyUniqueProjectID );
       projects_val = distinct_project_id.concat(this.memberInviteForm.value.projects).filter(this.onlyUniqueProjectID);
+      
     }
     if(this.memberInviteForm.valid){
       this.submittingInvitation = true;
@@ -330,7 +333,7 @@ export class MemberComponent implements OnInit {
 
       this.clientService.createActivationToken(inviteObj).subscribe( (res:any) => {
         if(res.token){
-          console.log(res);
+          //console.log(res);
           this.submittingInvitation = false;
           this.snackBar.open('Invite has been sent.', 'X', {
                   duration: 5000,

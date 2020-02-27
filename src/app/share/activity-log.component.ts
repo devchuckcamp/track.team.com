@@ -46,10 +46,11 @@ export class ActivityLogComponent implements OnInit {
     ngOnInit() {
         this.route.params.subscribe(params => {
             if ( (params['project_name'] !== 'add' ) && params['project_name'] !== undefined) {
+                this.project_name = params['project_name'];
                 let project_name = this.project_name ? this.project_name : params['project_name'];
-                this.getAllProjectActivity(project_name);
+                this.getAllProjectActivity(project_name,1, 25);
             } else {
-                this.getAllActivity();
+                this.getAllActivity(1, 25);
             }
             this.router.events.subscribe(path =>{
                 if(path instanceof NavigationEnd ){
@@ -59,13 +60,18 @@ export class ActivityLogComponent implements OnInit {
         });
     }
 
-    getAllProjectActivity(project_name:string, page_number:number =1){
-        console.log(project_name);
-        this.loadingProgress = false;
-    }
-    getAllActivity(page_number:number = 1){
+    getAllProjectActivity(project_name:string, page_number:number =1, per_page:number = 25 ){
         this.loadingProgress= true;
-        this.activityService.getAll(page_number).subscribe( (res:any) => {
+        this.activityService.getProjectAllActivity(project_name, page_number, per_page).subscribe( (res:any) => {
+            this.dataSource = new MatTableDataSource(res.data);
+            this.logs = res.data;
+            this.length = res.total;
+            this.loadingProgress = false;
+        });
+    }
+    getAllActivity(page_number:number = 1, per_page:number = 25){
+        this.loadingProgress= true;
+        this.activityService.getAll(page_number, per_page).subscribe( (res:any) => {
             this.dataSource = new MatTableDataSource(res.data);
             this.logs = res.data;
             this.length = res.total;
@@ -74,8 +80,12 @@ export class ActivityLogComponent implements OnInit {
     }
 
     onPageChange(event){
+        let per_page = event.pageSize;
         let page_number = event.pageIndex <= 0 ? 1 : event.pageIndex+1;
-        console.log(page_number);
-        this.getAllActivity(page_number);
+        if(this.project_name){
+            this.getAllProjectActivity(this.project_name, page_number, per_page);
+        }else{
+            this.getAllActivity(page_number, per_page);
+        }
     }
 }

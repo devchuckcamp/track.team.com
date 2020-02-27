@@ -169,7 +169,7 @@ export class ProjectService {
         let vars = '?project='+project+'&meta='+meta+'&sub_meta='+sub_meta;
         return this.http.get(this.config.apiEndPoint()+'/api/v1/meta'+vars, this.jt()).pipe(map( (res:any) => res));
     }
-
+    
     private jt() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer '+this.Bearer,

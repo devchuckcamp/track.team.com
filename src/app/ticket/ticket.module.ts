@@ -48,12 +48,13 @@ import {
   MatTreeModule,
 } from '@angular/material';
 
-import { EllipsisPipe } from '../component/pipe/ellipses.pipe';
+
+// Pipe
+import { ApplicationPipesModule } from '../component/pipe/pipe.module';
 
 @NgModule({
   declarations: [
     TicketComponent,
-    EllipsisPipe,
   ],
   imports: [
     MatAutocompleteModule,
@@ -97,6 +98,7 @@ import { EllipsisPipe } from '../component/pipe/ellipses.pipe';
     FormsModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     DragDropModule,
+    ApplicationPipesModule,
   ],
   exports:[
     FormsModule,

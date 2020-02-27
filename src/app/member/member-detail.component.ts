@@ -73,9 +73,9 @@ export class MemberDetailComponent implements OnInit {
 
   updateMemberProfile(){
     if(this.userProfileForm.valid){
-      console.log('Valid');
+      //console.log('Valid');
     } else {
-      console.log('Not Valid');
+      //console.log('Not Valid');
     }
 
     return false;

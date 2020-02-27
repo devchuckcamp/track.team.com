@@ -7,7 +7,11 @@ import { AuthService } from '../service/auth.service';
 import { ProjectService } from '../service/project.service';
 import { SettingService } from '../service/setting.service';
 import { MetaService } from '../service/meta.service';
+import { TaskService } from '../service/task.service';
 import { GlobalRoutesService } from '../config/config';
+//Pipes
+
+// Model
 import { Ticket } from '../model/ticket';
 import { Thread } from '../model/thread';
 import { User } from '../model/user';
@@ -17,8 +21,12 @@ import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry 
 import { FileUploader, FileLikeObject } from 'ng2-file-upload';
 import { concat } from  'rxjs';
 import {MatSnackBar, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+
+// Dialog
 import {DialogOverviewExampleDialog} from './dialog-attachment-overview.component';
 import {DialogStatusHistoryDialog} from './dialog-status-history.component';
+import {TaskDetailDialog} from './modal/dialog-ticket-task.component';
+// import {CloneTaskDialog} from './modal/dialog-clone-task.component';
 import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase } from '@angular/common/http';
 import { projection } from '@angular/core/src/render3';
 import { WebSocketSubject } from 'rxjs/webSocket';
@@ -36,15 +44,13 @@ today.setDate(0);
 today.setHours(0);
 today.setMinutes(0);
 
-
 @Component({
   selector: 'app-ticket-detail',
   templateUrl: './ticket-detail.component.html',
   styleUrls: ['./ticket.component.scss']
 })
 
-@Pipe({ name: 'safeHtml' })
-export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
+export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     tickets: Ticket[] = [];
     ticket: any;
     eta:any = 0;
@@ -66,6 +72,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     ticketStatusList: TicketStatusType = [];
     mentionConfig:any;
    
+    showAddCheckListForm:boolean = true;
     // Consumed Time
     is_ongoing:boolean = false;
     total_time_consumed:any;
@@ -84,6 +91,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     ticket_logs:any =  [];
     // Form Group
     ticketDetailForm :FormGroup;
+    addTaskForm: FormGroup;
     project_name:string;
     loggedin_user:string;
     replyView:boolean;
@@ -99,13 +107,16 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     selectedFile: ImageSnippet;
     //ETA
     etaAccess:boolean = false;
+    //Task
+    selectedTask:any;
     //Report
     download_report_url:any;
     public uploader: FileUploader = new FileUploader({});
     public hasBaseDropZoneOver: boolean = false;
     download_auth_token:any = ""
     download_report:any = "";
-
+    //Global
+    processingRequest:boolean = false
     private socket$: WebSocketSubject<any>;
 
     constructor(
@@ -115,6 +126,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
         private projectService: ProjectService,
         private settingService: SettingService,
         private metaService:MetaService,
+        private taskService:TaskService,
         private router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
@@ -248,7 +260,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        this.animal = result;
+        // this.animal = result;
       });
     }
     openStatusHistoryDialog(logs:any){
@@ -257,12 +269,60 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
         height: '50%',
         data: {ticket_logs: logs}
       });
-      return false;
+
       statusDialogRef.afterClosed().subscribe(result => {
-        this.animal = result;
+        // this.animal = result;
       });
 
       return false;
+    }
+    openTaskDetailDialog(task:any):void{
+      const taskDetailDialogRef = this.dialog.open(TaskDetailDialog, {
+        width: '50%',
+        height: '50%',
+        data: task
+      });
+      taskDetailDialogRef.afterClosed().subscribe(task => {
+        if(task){
+          // console.log(task);
+          this.ticket.ticket_task.find( ({ id }, index) => {
+            if(id === task.id){
+              this.ticket.ticket_task[index] = task;
+            }
+          });
+          this.snackBar.open('Task has been updated', 'X', {
+              duration: 5000,
+              direction: "ltr",
+              verticalPosition:"top",
+              horizontalPosition: "right",
+              panelClass: "success-snack"
+          });
+        }
+      });
+    }
+    openCloneTaskDialog(task:any): void {
+      // const cloneTaskDialogRef = this.dialog.open(CloneTaskDialog, {
+      //   width: '50%',
+      //   height: '50%',
+      //   data: task
+      // });
+      // cloneTaskDialogRef.afterClosed().subscribe(task => {
+      //   if(task){
+      //     console.log(task);
+      //     this.ticket.ticket_task.find( ({ id }, index) => {
+      //       if(id === task.id){
+      //         this.ticket.ticket_task[index] = task;
+      //       }
+      //     });
+      //     this.snackBar.open('Task has been updated', 'X', {
+      //         duration: 5000,
+      //         direction: "ltr",
+      //         verticalPosition:"top",
+      //         horizontalPosition: "right",
+      //         panelClass: "success-snack"
+      //     });
+      //   }
+      // });
     }
     getSantizeUrl(url : string) { 
       if(url.includes("application/pdf")){
@@ -273,14 +333,18 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
 
     ngOnInit() {
       
-      this.settingService.statusSettings.subscribe( (res:any) =>{
-        //console.log(res,'status list');
-        this.ticketStatusList = res;
-      });
       this.assignableMembersFiltered = false;
       // Settings
       this.settingService.settings.subscribe( (res:any) => {
         this.settings = res;
+      });
+      this.ticketDetailForm = this.formBuilder.group({
+                      'eta': new FormControl('', []),
+                      'status': new FormControl('', []),
+      });
+      this.addTaskForm = this.formBuilder.group({
+        'title': new FormControl('', [Validators.required,]),
+        'description': new FormControl('', [Validators.required,]),
       });
       // Tickets Category
       this.settingService.categorySettings.subscribe( (res:any) =>{
@@ -293,6 +357,11 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
         this.route.params.subscribe(params => {
             if (params['ticket_id'] !== undefined) {
                 this.project_name = params['project_name'];
+                this.settingService.loadAllProjectStatus(this.project_name);
+                this.settingService.statusSettings.subscribe( (res:any) =>{
+                  // console.log(res,'status list');
+                  this.ticketStatusList = !res.data ? res : res.data;
+                });
                 this.auth = this.authService.getAuthUser();
 
                 // this.socket$ = new WebSocketSubject('ws://192.168.10.10:6001/app/12345');
@@ -323,17 +392,15 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
                 this.loading = true;
                 this.ticketService.getProjectTicket(params['project_name'],params['ticket_id']).subscribe( (res:any) => {
                   if(res){
-                      this.ticketDetailForm = this.formBuilder.group({
-                        'eta': new FormControl(res.eta, []),
-                      });
-                        if(res.ticket_status_logs){
-                          this.eta = res.eta;
-                          this.ticket_logs = res.ticket_status_logs.reverse();
-                        }
-                        today.setSeconds(0);
-                        today.setMinutes(this.seconds_minutes(0));
-                        today.setHours(this.seconds_hours(0));
-                        today.setDate(this.seconds_days(0));
+                      if(res.ticket_status_logs){
+                        this.eta = res.eta;
+                        this.ticketDetailForm.value.eta = res.eta;
+                        this.ticket_logs = res.ticket_status_logs.reverse();
+                      }
+                      today.setSeconds(0);
+                      today.setMinutes(this.seconds_minutes(0));
+                      today.setHours(this.seconds_hours(0));
+                      today.setDate(this.seconds_days(0));
                       setInterval(() => this.run(), 1000);
                       this.process_time_consumption(res.progress_time_consumed);
                       if(res.billed_time_consumed){
@@ -363,7 +430,8 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
                       this.format_billed_time();
                       res.thread = res.thread.reverse();
                       this.ticket = res;
-
+                      this.ticketDetailForm.value.status = res.status_id;
+                      //console.log(res);
                       // ETA Permission
                       //getMetaValue(){
                         this.metaService.getMetaValue(this.project_name,'project','eta_access', 'auth_user_meta','auth_user_meta').subscribe((res)=>{
@@ -393,9 +461,10 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
             }
         });
 
-        this.projectService.loadAllPatches(this.project_name, 1, 15, 1);
+        this.projectService.loadAllPatches(this.project_name, 1, 15, 0);
         this.projectService.projectsPatches.subscribe( (res:any)=> {
           this.ticket_patches = res;
+          // console.log('ticket_patches', this.ticket_patches);
         });
 
         this.mentionConfig = {
@@ -600,11 +669,11 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
     onReplayKey(text:string){
         this.replayText = text;
         var result = '';
-      while (text.length > 0) {
-        result += text.substring(0, 200) + '\n';
-        text = text.substring(200);
-      }
-      this.replayText  = result;
+      // while (text.length > 0) {
+      //   result += text.substring(0, 200) + '\n';
+      //   text = text.substring(200);
+      // }
+      this.replayText  = text;
     }
 
     auto_grow(element) {
@@ -941,10 +1010,104 @@ export class TicketDetailComponent implements OnInit, OnDestroy, PipeTransform {
       return '@'+tag.first_name+''+tag.last_name;
     }
 
+    toggleCheckListForm(){
+      this.showAddCheckListForm = !this.showAddCheckListForm;
 
+      return false;
+    }
+    addTicketTask(){
+      var form = this.addTaskForm;
+      if(form.valid){
+
+        this.processingRequest = true;
+        var task = {
+          ticket_id: this.ticket.id,
+          title: this.addTaskForm.value.title,
+          description: this.addTaskForm.value.description,
+        };
+        this.taskService.create(task).subscribe( (res:any)=>{
+          this.processingRequest = false;
+          if(res.id){
+            this.getLastAction();
+            this.ticket.ticket_task.push(res);
+            this.snackBar.open('Task added', 'X', {
+              duration: 5000,
+              direction: "ltr",
+              verticalPosition:"top",
+              horizontalPosition: "right",
+              panelClass: "success-snack"
+          }
+      );
+            form.reset();
+          }
+        });
+      }
+      return false;
+    }
+    getTaskMenu(id){
+      return 'task_'+id;
+    }
+    selectTask(task:any){
+      this.selectedTask = task;
+    }
+    removeTask(id){
+      this.processingRequest = true;
+      this.taskService.remove(id).subscribe( (res:any)=>{
+        this.processingRequest = false;
+        this.getLastAction();
+        this.snackBar.open('Task has been removed', 'X', {
+                duration: 5000,
+                direction: "ltr",
+                verticalPosition:"top",
+                horizontalPosition: "right",
+                panelClass: "danger-snack"
+            }
+        );
+        this.ticket.ticket_task = this.ticket.ticket_task.filter(function(el) { return el.id != id; });
+      });
+    }
+    updateTaskStatus(ev, selectedTask){
+      var task = {
+        status: ev.checked ? 1 : 0,
+        title: selectedTask.Title,
+        description: selectedTask.description,
+        task_id: selectedTask.id,
+      };
+      this.processingRequest = true;
+      this.taskService.update(task).subscribe( (res:any)=>{
+
+        this.ticket.ticket_task.find( ({ id }, index) => {
+          if(id === selectedTask.id){
+            this.processingRequest = false;
+            this.ticket.ticket_task[index] = res;
+          }
+        });
+        this.snackBar.open('Task has been updated', 'X', {
+            duration: 5000,
+            direction: "ltr",
+            verticalPosition:"top",
+            horizontalPosition: "right",
+            panelClass: "success-snack"
+        });
+      });
+    }
+    calculateTaskCompletionRate( index:number){
+      var rate =  0;
+      var count = 0;
+      var completedTasks = 0;
+      if(this.ticket.ticket_task){
+          for(var i=0;i < this.ticket.ticket_task.length; i++){
+              if(this.ticket.ticket_task[i].status == 1){
+                  completedTasks++;
+              }
+          }
+          count = completedTasks;
+          rate = completedTasks > 0 ? (completedTasks*100)/this.ticket.ticket_task.length : 0;
+      }
+      return rate;
+  }
     getLastAction(){
       this.ticketService.getLastAction(this.project_name, this.ticket.id).subscribe( (res) => {
-        console.log(res);
         this.ticket.last_action = res;
       });
     }

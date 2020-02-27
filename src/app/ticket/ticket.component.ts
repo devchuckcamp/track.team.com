@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, Inject , Optional } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, Inject , Optional, Pipe } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TicketService } from '../service/ticket.service';
 import { ProjectService } from '../service/project.service';
@@ -37,6 +37,8 @@ interface Members {
   project_member_info: ProjectMemberInfo;
   user: User;
 }
+
+
 
 @Component({
   selector: 'app-ticket',
@@ -86,6 +88,7 @@ export class TicketComponent implements OnInit, OnDestroy {
     filter:any;
     initialFilter:any = [];
     statusFilter:any = [];
+    statusFilterName:string;
     // Search
     searchText:any = '';
     // Paginator
@@ -130,7 +133,7 @@ export class TicketComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-     
+      this.filter = '';
       this.statusFilter.length =0;
       this.auth = this.authService.getAuthUser();
       this.settingService.settings.subscribe( (res:any) => {
@@ -165,7 +168,7 @@ export class TicketComponent implements OnInit, OnDestroy {
         this.ticketsCategory = res;
       });
       // Tickets Status
-      this.ticketService.loadAllTicketStatuses(1);
+      this.ticketService.loadAllTicketStatuses(1, this.project_name);
       this.projectService.getAllMemberFullList(this.project_name).subscribe( res => {
         if(res){
           this.members = res;
@@ -182,12 +185,15 @@ export class TicketComponent implements OnInit, OnDestroy {
           this.loading = true;
           if (params['filter_type'] !== undefined) {
             this.filter = params['filter_type'];
+            // console.log(this.filter, 'filter name');
             this.getFilterTicket(params['project_name'],params['filter_type']);
           } else {
             this.getTicket(params['project_name']);
           }
           this.ticketService.ticketStatus.subscribe( (res:any) => {
             this.ticketStatuses = res.data;
+            
+            // console.log(this.ticketStatuses);
             filteredStats = res.data;
             if(res.data){
               this.statusFilter = [];
@@ -202,7 +208,7 @@ export class TicketComponent implements OnInit, OnDestroy {
                     this.statusFilter.push(stat.id);
                   }
                 });
-                console.log(this.statusFilter,'this.statusFilter');
+                // console.log(this.statusFilter,'this.statusFilter');
               // } else {
               //   res.data.forEach(stat => {
               //     if(stat.id !==5){
@@ -221,7 +227,9 @@ export class TicketComponent implements OnInit, OnDestroy {
         }
       });
     }
-
+    transform(value) {
+      return value.replace('-', ' ');
+    }
     drop(event: CdkDragDrop<any[]>) {
       let swap = false;
       //If they're on the same priority order swap their sub order

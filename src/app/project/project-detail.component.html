@@ -18,7 +18,7 @@
     </div>
     <div class="row border-b-gray" *ngIf="ticketStatusList && !ticketStatusListLoading">
         <div class="col-lg-4 clickable mar-y-10" *ngFor="let status of ticketStatusList" (click)="goToFilterTicket( status.slug);">
-            <mat-card class="font-white"  [ngStyle]="{'background-color': status.color, 'color':'#fafafa'}">{{ status.name }} Tickets <span class="badge"> ({{ status.count.length }})</span></mat-card>
+            <mat-card class="font-white"  [ngStyle]="{'background-color': status.color, 'color':'#fafafa'}">{{ status.name }} {{ project.active_custom_status !== null && project.active_custom_status.value.value == 1 ? '':'Tickets' }} <span class="badge"> ({{ status.count.length }})</span></mat-card>
         </div>
     </div>
 

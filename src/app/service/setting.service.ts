@@ -74,8 +74,9 @@ export class SettingService {
     }
 
 
-    loadAllProjectStatus() {
-        this.http.get(this.config.apiEndPoint()+'/api/v1/ticket_statuses?all=1', this.jt()).subscribe( (res :any)=> {
+    loadAllProjectStatus(project:any = '') {
+        var vars = project  !== ''? '&project='+project : '';
+        this.http.get(this.config.apiEndPoint()+'/api/v1/ticket_statuses?all=1'+vars, this.jt()).subscribe( (res :any)=> {
           this.statusSettingsDataStore.statusSettings = res;
           this._statusSettings.next(Object.assign({}, this.statusSettingsDataStore).statusSettings);
         }, error => console.log('Could not load projects.'));

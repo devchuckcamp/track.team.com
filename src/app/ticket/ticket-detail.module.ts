@@ -2,8 +2,12 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TicketDetailComponent } from './ticket-detail.component';
 import { TicketDetailRoutingModule } from './ticket-detail-routing.module';
+// Dialog
 import { DialogOverviewExampleDialog } from './dialog-attachment-overview.component';
 import { DialogStatusHistoryDialog } from './dialog-status-history.component';
+import {TaskDetailDialog} from './modal/dialog-ticket-task.component';
+// import {CloneTaskDialog} from './modal/dialog-clone-task.component';
+
 import { FormGroup , FormControl , ReactiveFormsModule , FormsModule } from '@angular/forms';
 
 import { UserService } from '../service/user.service';
@@ -14,9 +18,7 @@ import { FileUploadModule } from 'ng2-file-upload';
 // Import your library
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { MentionModule } from 'angular-mentions';
-
-
-import { SafeHtml } from '../component/pipe/sanitize.pipe';
+import { TaskService } from '../service/task.service';
 // Material
 import {
   MatAutocompleteModule,
@@ -56,12 +58,14 @@ import {
   MatTreeModule,
 } from '@angular/material';
 
+import { ApplicationPipesModule } from '../component/pipe/pipe.module';
+
 @NgModule({
   declarations: [
     TicketDetailComponent,
     DialogOverviewExampleDialog,
     DialogStatusHistoryDialog,
-    SafeHtml,
+    TaskDetailDialog,
   ],
   imports: [
     CommonModule,
@@ -108,16 +112,19 @@ import {
     FormsModule,
     ReactiveFormsModule,
     MentionModule,
+    ApplicationPipesModule
   ],
-  exports: [DialogOverviewExampleDialog, DialogStatusHistoryDialog],
+  exports: [DialogOverviewExampleDialog, DialogStatusHistoryDialog, TaskDetailDialog],
   entryComponents: [
     DialogOverviewExampleDialog,
-    DialogStatusHistoryDialog
+    DialogStatusHistoryDialog,
+    TaskDetailDialog,
   ],
   providers:[
     UserService,
     GlobalRoutesService,
     ClientGlobalRoutesService,
+    TaskService,
   ]
 
 })
