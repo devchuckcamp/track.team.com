@@ -82,6 +82,8 @@ THE SOFTWARE.
 
 @angular/material/list
 
+@angular/material/menu
+
 @angular/material/paginator
 
 @angular/material/progress-bar

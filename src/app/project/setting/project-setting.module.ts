@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { ProjectSettingComponent } from './project-setting.component';
 import { TicketPatchSettingComponent } from './ticket/patch/ticket-patch-setting.component';
+import { TicketStatusSettingComponent } from './ticket/status/ticket-status-setting.component';
 import { ProjectSecuritySettingComponent } from './project/security/project-security-setting.component';
 import { ProjectSettingRoutingModule } from './project-setting-routing.module';
 import { CommonModule } from '@angular/common';
@@ -48,6 +49,7 @@ import {
   declarations: [
     ProjectSettingComponent,
     TicketPatchSettingComponent,
+    TicketStatusSettingComponent,
     ProjectSecuritySettingComponent,
   ],
   imports: [
@@ -94,6 +96,7 @@ import {
   ],
   exports:[
     TicketPatchSettingComponent,
+    TicketStatusSettingComponent,
     ProjectSecuritySettingComponent,
   ]
 

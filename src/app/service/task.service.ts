@@ -6,11 +6,12 @@ import { catchError, retry } from 'rxjs/operators'
 import { map, take } from 'rxjs/operators';
 import { Project } from '../model/project';
 import { Patch } from '../model/patch';
+import { Task } from '../model/task';
 import { Meta } from '../model/meta';
 import { GlobalRoutesService } from '../config/config';
 
 @Injectable({ providedIn: 'root' })
-export class MetaService {
+export class TaskService {
     apiEndpoint:string;
     Bearer:any;
     // Logged in user avatar
@@ -27,10 +28,22 @@ export class MetaService {
     projectsPatches: Observable<Project[]>
         private _projectPatch: BehaviorSubject<Project[]>;
         private projectPatchBaseUrl: string;
+        private ticketTaskBaseUrl: string;
+        public ticketTaskDataStore: {
+            ticketTask: any[]
+        };
         public projectPatchDataStore: {
             projectPatches: any[]
         };
     ProjectPatches: Patch[]= [];
+    
+    ticketTask: Observable<Task[]>
+    _ticketTask: BehaviorSubject<Task[]>;
+    ticketTaskStore: {
+        ticketTask: any
+    };
+    ticketTaskList: Task;
+
 
     constructor(
         private config: GlobalRoutesService,
@@ -50,6 +63,11 @@ export class MetaService {
             this.projectPatchDataStore = { projectPatches: [] };
             this._projectPatch = <BehaviorSubject<any[]>>new BehaviorSubject([]);
             this.projectsPatches = this._projectPatch.asObservable();
+
+            this.ticketTaskBaseUrl = this.config.apiEndPoint()+'/api/v1/ticket-task';
+            this.ticketTaskDataStore = { ticketTask: [] };
+            this._ticketTask = <BehaviorSubject<any[]>>new BehaviorSubject([]);
+            this.ticketTask = this._ticketTask.asObservable();
         }
     setIsMember(valid:boolean){
         this.isAMember.next(valid);
@@ -65,43 +83,34 @@ export class MetaService {
         }, error => console.log('Could not load projects.'));
     }
 
-    create(project: Project) {
-        this.http.post(this.config.apiEndPoint()+'/api/v1/projects', JSON.stringify(project)).subscribe( (data:any) => {
-            this.dataStore.projects.push(data);
-            this._projects.next(Object.assign({}, this.dataStore).projects);
-          }, error => console.log('Could not create todo.'));
-      }
-
+    create(task) {
+        var data = JSON.stringify({
+            ticket_id:task.ticket_id,
+            title: task.title,
+            description: task.description
+        });
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/ticket-task', data, this.jt());
+    }
+    update(task:any){
+        var data = JSON.stringify({
+            title:task.title,
+            description:task.description,
+            status:task.status
+        });
+        return this.http.put(this.config.apiEndPoint()+'/api/v1/ticket-task/'+task.task_id, data, this.jt());
+    }
+    remove(taskid){
+        return this.http.delete(this.config.apiEndPoint()+'/api/v1/ticket-task/'+taskid, this.jt());
+    }
 
     // Settings
     getETAAccess(project:any = null, meta:any = null, sub_meta:any = null){
         let vars = '?project='+project+'&meta='+meta+'&sub_meta='+sub_meta;
         return this.http.get(this.config.apiEndPoint()+'/api/v1/meta'+vars, this.jt()).pipe(map( (res:any) => res));
     }
-    getMeta(project:any = null, meta:any = null, sub_meta:any = null){
-        let vars = '?project='+project+'&meta='+meta+'&sub_meta='+sub_meta;
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/meta'+vars, this.jt()).pipe(map( (res:any) => res));
-    }
     getMetaValue(project:any = null, meta:any = null, sub_meta:any = null, resource_id:any = null, type:any=null){
         let vars = '?project='+project+'&meta='+meta+'&sub_meta='+sub_meta+'&type='+type;
         return this.http.get(this.config.apiEndPoint()+'/api/v1/meta/'+resource_id+vars, this.jt()).pipe(map( (res:any) => res));;
-    }
-    createMeta(project:any = null, meta:any = null, sub_meta:any = null, value:any = null){
-        let data = JSON.stringify({
-            project:project,
-            meta: meta,
-            sub_meta:sub_meta,
-            meta_value:value
-        });
-        return this.http.post(this.config.apiEndPoint()+'/api/v1/meta', data, this.jt());
-    }
-    updateDefaultStatus(project:any = null, statusID:any = null,  custom_status:any = 'update_default_custom_status'){
-        let data = JSON.stringify({
-            resource_id: statusID,
-            project:project,
-            action: custom_status
-        });
-        return this.http.post(this.config.apiEndPoint()+'/api/v1/meta', data, this.jt());
     }
     updateMetaValue(metaid, val){
         let data = JSON.stringify({

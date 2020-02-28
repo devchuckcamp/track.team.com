@@ -50,7 +50,7 @@ export class ProjectStatusComponent implements OnInit {
 
   addTicketStatusSetting(){
     this.settingService.saveTicketStatus(this.ticketSettingToAdd).subscribe( (res:any) => {
-      this.settingService.loadAllProjectStatus();
+      this.settingService.loadAllProjectStatus('');
       this.snackBar.open('New Status has been added', 'X', {
         duration: 5000,
         direction: "ltr",

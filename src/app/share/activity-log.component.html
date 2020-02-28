@@ -47,11 +47,12 @@
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
             <div *ngIf="!logs.length && !loadingProgress" class="text-center pad-y-20">
-              <label for="" class="text-danger">No Activity</label>
-              <p>Stay tuned. This feature is under development <i class="fa fa-wrench"></i></p>
+              <!-- <label for="" class="text-danger">No Activity</label> -->
+              <p>No Activities</p>
+              <!-- <img src="../../../assets/icon/loading.gif"> -->
             </div>
             <div *ngIf="loadingProgress" class="col-lg-12 text-center">
-              <img  [src]="loading" alt="Please wait...">
+              <img src="../../../assets/icon/loading.gif">
             </div>
             <mat-paginator *ngIf="logs.length" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
               (page)="onPageChange($event)">

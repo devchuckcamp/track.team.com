@@ -45,7 +45,7 @@ export class ProjectNewComponent implements OnInit, AfterViewInit {
     addNewProject(){
       if(this.projectForm.valid){
         let exist = this.projectsList.some(proj => proj.name.toLowerCase() == this.projectForm.value.name.toLowerCase());
-        console.log(exist,'exist');
+        // console.log(exist,'exist');
         if(!exist){
           this.projectToAdd.client_id = this.auth_client_info.id;
           this.projectService.save(this.projectToAdd).subscribe( res => {
@@ -56,10 +56,11 @@ export class ProjectNewComponent implements OnInit, AfterViewInit {
               horizontalPosition: "right",
               panelClass: "success-fail"
             });
+            this.projectForm.reset();
             this.projectService.loadAll();
 
           });
-          console.log(this.projectToAdd,'projectToAdd');
+          // console.log(this.projectToAdd,'projectToAdd');
         } else {
             this.snackBar.open('Project name '+this.projectForm.value.name+' already exist', 'X', {
                   duration: 5000,

@@ -30,7 +30,7 @@
           </mat-expansion-panel>
         </mat-accordion>
       </div>
-  </div>
+    </div>
     <!-- Ticket Settings-->
     <div *ngIf="ticketPriorityList && ticketOptionLoaded" class="row">
       <h2 class="ticket-settings-title pad-20">Ticket</h2>
@@ -59,7 +59,7 @@
                 Status Options
               </mat-panel-description>
             </mat-expansion-panel-header>
-            <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
+            <ticket-status-setting></ticket-status-setting>
           </mat-expansion-panel>
   
           <mat-expansion-panel [expanded]="step == 4" (opened)="panelOpenState = true" (opened)="setStep(4)" (closed)="panelOpenState = false">

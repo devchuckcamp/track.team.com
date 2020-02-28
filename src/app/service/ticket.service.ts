@@ -59,8 +59,8 @@ export class TicketService {
     getAll() {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets', this.jt()).pipe(map( (res:any) => res));
     }
-    loadAllTicketStatuses(client:any){
-        this.http.get(this.config.apiEndPoint()+'/api/v1/ticket_statuses?client='+client, this.jt()).subscribe( (data :any)=> {
+    loadAllTicketStatuses(client:any, project:any = ''){
+        this.http.get(this.config.apiEndPoint()+'/api/v1/ticket_statuses?all='+1+'&project='+project, this.jt()).subscribe( (data :any)=> {
             this.ticketStatusStore.ticketStatus = data;
             this._ticketStatus.next(Object.assign({}, this.ticketStatusStore).ticketStatus);
           }, error => console.log('Could not load Categories.'));
