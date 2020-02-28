@@ -54,6 +54,7 @@ export class ProjectSecuritySettingComponent implements OnInit {
   error:any;
   project:any;
   active_custom_status:number = 0;
+  crud_access_custom_status:boolean = false;
   active_custom_status_loaded:boolean = false;
   // Paginator
   // MatPaginator Inputs
@@ -92,6 +93,7 @@ export class ProjectSecuritySettingComponent implements OnInit {
         this.projectService.getProject(params['project_name']).subscribe( res => {
           // console.log('Active Custom Status', res);
           this.project = res;
+          this.crud_access_custom_status = res.crud_access_custom_status;
           this.active_custom_status_loaded =true;
           // console.log('Active Custom Status', this.project);
           if(res.active_custom_status !== null){
@@ -219,19 +221,28 @@ export class ProjectSecuritySettingComponent implements OnInit {
   }
 
   toggleAccess(metaid, val){
-    this.metaService.updateMetaValue(metaid,val).subscribe((res)=>{
-
-    });
+    if(this.project.crud_access_custom_status){
+      this.metaService.updateMetaValue(metaid,val).subscribe((res:any)=>{
+        if(res.id){
+          this.eta.map((el, index)=>{
+            if(el.id == res.id){
+              //console.log(this.eta[index]);
+              this.eta[index].value = res.value;
+            }
+          });
+        }
+      });
+    }
   }
   // Status
   toggleActiveCustomStatus(val){
-    this.active_custom_status = (val == true ? 1 :0);
-    // console.log(this.active_custom_status);
-    this.metaService.createMeta(this.project_name, 'project', 'setting_active_custom_status', this.active_custom_status).subscribe((res) => {
-      // console.log(res);
-    });
-    // project_39_setting_active_custom_status
-    return false;
+    if(this.project.crud_access_custom_status){
+      this.active_custom_status = (val == true ? 1 :0);
+      this.metaService.createMeta(this.project_name, 'project', 'setting_active_custom_status', this.active_custom_status).subscribe((res:any) => {
+        // console.log(res);
+      });
+      return false;
+    }
   }
 
 }
