@@ -35,7 +35,7 @@ export class GlobalRoutesService {
         private clientGlobalRoutesService:ClientGlobalRoutesService
     ) {
         if(localStorage.getItem("currentUser")){
-            this.Bearer = localStorage.getItem("currentUser");  
+            this.Bearer = localStorage.getItem("currentUser");
         }
     }
 
