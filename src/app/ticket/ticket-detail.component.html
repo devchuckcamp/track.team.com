@@ -288,7 +288,7 @@
                                 <img (click)="openDialog(thread.uploads)"  class="mar-x-30 full-w full-h" [src]="getSantizeUrl(upload.url)">
                             </div>
                         </div>
-                        <div class="card-body row">
+                        <div class="card-body row" id="thread-{{thread.id}}">
                             <div [ngClass]="{'comment-own order-md-2': thread.user_id == auth.id}"
                                 class="col card-header thread-message-head q-width border-rad-10 pad-20 mar-r-10"> <label
                                     for="">{{thread.user_id == auth.id ? 'You' : thread.message_by.name }}</label>

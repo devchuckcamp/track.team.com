@@ -87,6 +87,8 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     hours:any;
     minutes:any;
     seconds:any;
+    // Comment
+    comment_id:any= null;
     //Ticket Logs
     ticket_logs:any =  [];
     // Form Group
@@ -355,11 +357,11 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       // });
         this.replayText = "";
         this.route.params.subscribe(params => {
+            
             if (params['ticket_id'] !== undefined) {
                 this.project_name = params['project_name'];
                 this.settingService.loadAllProjectStatus(this.project_name);
                 this.settingService.statusSettings.subscribe( (res:any) =>{
-                  // console.log(res,'status list');
                   this.ticketStatusList = !res.data ? res : res.data;
                 });
                 this.auth = this.authService.getAuthUser();
@@ -429,23 +431,26 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                       }
                       this.format_billed_time();
                       res.thread = res.thread.reverse();
+
                       this.ticket = res;
                       this.ticketDetailForm.value.status = res.status_id;
-                      //console.log(res);
-                      // ETA Permission
-                      //getMetaValue(){
-                        this.metaService.getMetaValue(this.project_name,'project','eta_access', 'auth_user_meta','auth_user_meta').subscribe((res)=>{
-                          if(res){
-                            this.etaAccess = res.value == 1? true : false;
-                          }
-                        });
-                      //}
+                      this.metaService.getMetaValue(this.project_name,'project','eta_access', 'auth_user_meta','auth_user_meta').subscribe((res)=>{
+                        if(res){
+                          this.etaAccess = res.value == 1? true : false;
+                        }
+                      });
+
                       this.thread_pager = res.thread_pager;
 
                       this.assigned_user = res.assignees.map(assgn => {
                         return assgn.user_id;
                       });
                       this.loading = false;
+                      
+                      if (params['comment_id'] !== undefined) {
+                        this.comment_id = params['comment_id'];
+                        this.scrollToCommentDiv(params['comment_id']);
+                      }
                   }
 
                   // this.threadService.getAllTicketThread(res.id).subscribe(  res => {
@@ -500,6 +505,17 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       today.setDate(this.seconds_days(0));
     }
 
+
+    scrollToCommentDiv(comment_id){
+      if(this.ticket.thread){
+        setTimeout(() => {
+          var el = document.getElementById("thread-"+comment_id);
+          let yOffset = -60;
+          let yPos = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          if(el !== null) window.scrollTo({ behavior: 'smooth', top: yPos });
+        }, 500);
+      }
+    }
     process_time_consumption(data:any){
       let time_consumed = 0;
       this.is_ongoing = false;

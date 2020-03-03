@@ -50,7 +50,12 @@ const routes:   Routes = [
 
 @NgModule({
     imports:[RouterModule.forRoot(
-        routes, { useHash: true }
+        routes, { useHash: true,
+            
+                scrollPositionRestoration: 'enabled',
+                anchorScrolling: 'enabled'
+            
+        }
         // { enableTracing: true }
         )],
     exports:[RouterModule],

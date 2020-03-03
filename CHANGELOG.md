@@ -6,6 +6,11 @@ The format is based on and adheres to [Semantic Versioning](https://semver.org/s
 
 ##  [Unreleased]
 
+##  [2.0.5] - 2020-02-04
+
+### Added
+- Comment notfication include link to ticket and auto scroll on page load
+
 ##  [2.0.4.1] - 2020-02-03
 
 ### Added
