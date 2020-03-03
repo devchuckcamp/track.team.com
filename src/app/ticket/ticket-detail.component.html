@@ -195,16 +195,16 @@
                                 <!-- <label for="task">{{ task.title }}</label> -->
                                 <!-- <input type="checkbox"  > -->
                                 <div class="col">
-                                    <mat-checkbox [checked]="task.status == 1" (change)="updateTaskStatus($event, task)">{{ task.title }}</mat-checkbox>
+                                    <mat-checkbox [checked]="task.status == 1" (change)="updateTaskStatus($event, task)">{{ task.title | ellipsis:15 }}</mat-checkbox>
                                 </div>
                                 <div class="col">
                                     <p>{{ task.description | ellipsis:30}}</p>
                                 </div>
                                 <div class="col">
-                                    <button mat-icon-button (click)="selectTask(task)" [matMenuTriggerFor]="task_info"  aria-label="Example icon-button with a menu">
+                                    <button class="pull-right" mat-icon-button (click)="selectTask(task)" [matMenuTriggerFor]="task_info"  aria-label="Example icon-button with a menu">
                                         <mat-icon>more_vert</mat-icon>
                                     </button>
-                                    <mat-menu #task_info="matMenu">
+                                    <mat-menu #task_info="matMenu" backdropClass="task-menu-pull-right">
                                         <button mat-menu-item (click)="openTaskDetailDialog(selectedTask)">
                                             <mat-icon>edit</mat-icon>
                                             <span>Edit</span>
