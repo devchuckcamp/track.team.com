@@ -3,11 +3,12 @@ import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from
 import { AuthService } from '../service/auth.service';
 @Injectable()
 export class AuthGuard implements CanActivate {
-
+    returnUrl:any = '';
     constructor(
         private router: Router,
         private authService:AuthService,
         ) {
+            this.returnUrl = window.location.href;
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
@@ -18,6 +19,8 @@ export class AuthGuard implements CanActivate {
                 localStorage.setItem('authUser',JSON.stringify(res));
             });
             return true;
+        } else {
+            localStorage.setItem('returnUrl',JSON.stringify({url:this.returnUrl}));
         }
         
         this.router.navigate(['/login']);

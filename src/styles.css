@@ -261,6 +261,10 @@ li.active{
 .cdk-overlay-pane{
   margin: 0 auto!important;
 }
+.task-menu-pull-right+* .cdk-overlay-pane{
+  margin:0!important;
+}
+
 /* Position */
 .pos-rel{
   position: relative;

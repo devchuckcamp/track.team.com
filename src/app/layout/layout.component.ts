@@ -64,7 +64,17 @@ export class LayoutComponent implements OnInit {
           let indexActUrl = indexActUrlParam == -1 ? currentURL : currentURL.slice(0, indexActUrlParam );
           //Assign to our private activeUrl
           this.activeURL = indexActUrl;
-          let slug_list = this.activeURL.split('/');
+          let slug_list = [];
+          slug_list = this.activeURL.split('/');
+          if(slug_list.includes("comment") || slug_list[7] == 'comment'){
+            delete slug_list[7];
+            delete slug_list[8];
+            slug_list.splice(-2,2);
+            slug_list = slug_list;
+        
+            slug_list = slug_list;
+          }
+          console.log('slug_list', slug_list);
           this.breadcrumb = slug_list;
           let isSubRoute = (this.activeURL.match(/\//g) || []).length;
           if(slug_list.includes("projects") || slug_list[3] == 'projects'){
