@@ -1,1 +1,268 @@
-Ticket
+<div class="col-lg-12 content-header text-center">
+    <h2 class="header-title" *ngIf="project_name">{{project_name | uppercase | replaceHypen}} Ticket</h2>
+    <!-- <div class="example-container">
+        <h2>To do</h2>
+      
+        <div
+          cdkDropList
+          #todoList="cdkDropList"
+          [cdkDropListData]="todo"
+          [cdkDropListConnectedTo]="[doneList]"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)">
+          <div class="example-box" *ngFor="let item of todo" cdkDrag>{{item}}</div>
+        </div>
+      </div>
+      
+      <div class="example-container">
+        <h2>Done</h2>
+      
+        <div
+          cdkDropList
+          #doneList="cdkDropList"
+          [cdkDropListData]="done"
+          [cdkDropListConnectedTo]="[todoList]"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)">
+          <div class="example-box" *ngFor="let item of done" cdkDrag>{{item}}</div>
+        </div>
+      </div> -->
+
+</div>
+<div  *ngIf="auth" class="col-lg-12 content-option text-right mar-10 pad-10">
+    <!-- <a href="#"  *ngIf="auth.username == 'chuckiedev'" (click)="reOrderTickets()" class="btn btn-success mar-r-20 q-width">Reorder</a> -->
+    <!-- <a href="#" *ngIf="auth.role_id < 4 && !ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a> -->
+    <a href="#" *ngIf="ticketFormShow" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
+    <a href="#" *ngIf="!ticketFormShow" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a>
+    <!-- <a href="#" *ngIf="auth.role_id < 4 && ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a>  -->
+</div>
+<div  class="col-lg-12 content-main">
+    <div class="row pad-10" *ngIf="!ticketFormShow">
+        <div class="col-3">
+            <input  type="search" class="search-field" placeholder="Search..." [(ngModel)]="searchText" >
+            <button mat-button color="primary"  class="search-btn" (click)="searchTicket()"><mat-icon>search</mat-icon></button>
+        </div>
+        <div class="col" *ngIf="ticketStatuses">
+            <p class="mar-0"><b>Filters:</b></p>
+            <p class="mar-0">Status</p>
+            <mat-checkbox class="mar-x-10" *ngFor="let stat of ticketStatuses" [checked]="isSelected(stat.id)"  (change)="checkStatusFilter(stat.id)"   >{{ stat.name }}</mat-checkbox>
+            <p class="mar-0">Category</p>
+            <mat-checkbox class="mar-x-10" *ngFor="let cat of ticketsCategory" [checked]="isSelectedCategory(cat.id)"  (change)="checkCategoryFilter(cat.id)"   >{{ cat.name }}</mat-checkbox>
+        </div>
+    </div>
+    <div *ngIf="!ticketFormShow" class="table-responsive table-striped">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <!-- <th scope="col">Description</th> -->
+                    <th scope="col">Assigned to</th>
+                    <th scope="col">Patch</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Category</th>
+                    <th scope="col" class="text-center">Priority</th>
+                    <th scope="col">Creator</th>
+                    <td>ETA(Hourly)</td>
+                    <th scope="col">Date Created</th>
+                    <th scope="col">Last Update</th>
+                    <th scope="col">Update Date</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="loading" class="text-center">
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="text-center"><img src="../../assets/icon/loading.gif"></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+            <tbody *ngIf="tickets && !loading" 
+                cdkDropList
+                #ticketsList="cdkDropList"
+                [cdkDropListData]="tickets"
+                (cdkDropListDropped)="drop($event)"
+            >
+                <tr class="clickable" *ngFor="let ticket of tickets" cdkDrag>
+                    <td scope="row">{{ticket.id}}</td>
+                    <td [routerLink]="[ticket.id]">{{ticket.title}}</td>
+                    <!-- <td [routerLink]="[ticket.id]">{{ticket.description | ellipsis:30}}</td> -->
+                    <td [routerLink]="[ticket.id]" *ngIf="ticket.assigned_to && !ticket.assignees" [attr.data-user-id]="ticket.assigned_to.id">{{ticket.assigned_to.name}}</td>
+                    <td [routerLink]="[ticket.id]" *ngIf="ticket.assignees" >
+                        <a *ngFor="let assgn of ticket.assignees;let i = index">{{assgn.user.username}}{{ i >= 0 && i < (ticket.assignees.length-1) ? ', ': ''}}</a>
+                    </td>
+                    <td>{{  ticket.patch ? ticket.patch.name : 'NA'  }}</td>
+                    <!-- <td *ngIf="!ticket.billed_time_consumed">Stopped</td> -->
+                    <td [routerLink]="[ticket.id]" [ngStyle]="{'background-color': ticket.status.color, 'color':'#fafafa'}">{{ticket.status.name | titlecase}}</td>
+                    <td [routerLink]="[ticket.id]">{{ticket.category.name | titlecase}}</td>
+                    <td [routerLink]="[ticket.id]" class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
+                    <td [routerLink]="[ticket.id]">{{ticket.created_by}}</td>
+                    <td [routerLink]="[ticket.id]">{{!ticket.eta ? '-' : ticket.eta}}</td>
+                    <td [routerLink]="[ticket.id]">{{ticket.created_at | date: 'medium'}}</td>
+                    <td [routerLink]="[ticket.id]" *ngIf="ticket.last_action" [innerHTML]="ticket.last_action.message"></td>
+                    <td [routerLink]="[ticket.id]" *ngIf="ticket.last_action">{{ticket.last_action.created_at | date: 'medium'}}</td>
+                    <td *ngIf="!ticket.last_action">-</td>
+                    <td *ngIf="!ticket.last_action">-</td>
+                    <!-- <td [routerLink]="[ticket.id]">{{ ticket.updated_at == ticket.created_at ? '' : ticket.updated_at}}</td> -->
+                    <td>
+                        <!-- <a href="#"
+                            [routerLink]="[ticket.id]"
+                            class="btn btn-success mar-r-5"><i
+                                class="fa fa-eye"></i></a> -->
+                        <a href="#" (click)="deleteTicket(ticket.id)" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody *ngIf="!tickets && !loading">
+                <tr>
+                    <td>No Ticket</td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="tickets && !loading" class="col-lg-12">
+            <mat-paginator  [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+                (page)="onPageChange($event)">
+                ></mat-paginator>
+        </div>
+    </div>
+
+    <form  *ngIf="ticketFormShow"  
+        [@enterAnimation] mat-form 
+        [formGroup]="ticketForm" id="ticketForm" 
+        (submit)="addNewTicket()"
+        novalidate>
+        <!-- <div class="inline-block pull-left half-width text-left">
+                <img class=""   *ngIf="(uploadedImage || defaultImage != null) && !loadingImage" ngShow="!loadingImage" [src]="defaultImage ? defaultImage : uploadedImage" width="100" height="100">
+                <img class="rounded-circle" *ngIf="loadingImage" src="../../assets/icon/loading.gif"  width="50" height="50" alt="loading logo">
+                <div>
+                    <label for="file">Update</label>
+                    <button mat-button color="accent" 
+                            mat-mini-fab (click)="imgFileInput.click();">
+                        <mat-icon>attachment</mat-icon>
+                    </button> 
+                    <input hidden type='file'#imgFileInput (change)="readUrl($event)">
+                </div>
+        </div> -->
+
+        <!-- <div class="inline-block pull-left half-width">
+            
+        </div> -->
+        <!-- Title -->
+        <div class="half-width row">
+            <div class="form-group half-width">
+                <mat-form-field class="full-w">
+                    <input matInput formControlName="title" placeholder="Title" [(ngModel)]="ticketToAdd.title" required>
+                </mat-form-field>
+            </div>
+            <!-- Description -->
+            <div class="form-group full-w">
+                <mat-form-field class="full-w">
+                    <textarea matInput formControlName="description" matTextareaAutosize matAutosizeMinRows=5  matAutosizeMaxRows=6 placeholder="Description" [(ngModel)]="ticketToAdd.description" required></textarea>
+                </mat-form-field>
+            </div>
+
+            <!-- Category -->
+            <div class="form-group half-width">
+                <p *ngIf="!ticketsCategory.length " class="text-danger">No priority options found. Please check account settings -
+                    admin/settings.</p>
+                <mat-form-field>
+                    <mat-label>Category</mat-label>
+                    <select matNativeControl #category formControlName="category" [(ngModel)]="ticketToAdd.category" name="category">
+                        <option *ngFor="let cat of ticketsCategory;let i = index" [value]="cat.id">
+                            {{cat.name }}
+                        </option>
+                    </select>
+                </mat-form-field>
+            </div>
+
+            <!-- Priority -->
+            <div class="form-group half-width">
+                <p *ngIf="!ticketPriorities.length " class="text-danger">No priority options found. Please check account settings -
+                    admin/settings.</p>
+                <mat-form-field>
+                    <mat-label>Priority</mat-label>
+                    <select matNativeControl #priority formControlName="priority" [(ngModel)]="ticketToAdd.priority" name="priority">
+                        <option *ngFor="let prio of ticketPriorities;let i = index" [value]="prio.id">
+                            {{prio.name }}
+                        </option>
+                    </select>
+                </mat-form-field>
+            </div>
+
+            <!-- ETA -->
+            <div class="form-group half-width" *ngIf="etaAccess">
+                <mat-form-field>
+                    <!-- <input matInput [matDatepicker]="picker" formControlName="selectedEndDate"  [(ngModel)]="ticketToAdd.selectedEndDate" placeholder="Estimated Date of Completion">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker startView="year"  [startAt]="startDate"></mat-datepicker> -->
+                    <input matInput formControlName="selectedEndDate" placeholder="Estimated Hour/s" [(ngModel)]="ticketToAdd.selectedEndDate">
+                </mat-form-field>
+            </div>
+
+             <!-- Assignee -->
+             <div class="form-group half-width">
+                 <p *ngIf="!members " class="text-danger">This project has no member yet. Consider adding one first.</p>
+                <mat-form-field>
+                    <mat-label>Assign to </mat-label>
+                    <mat-select  matNativeControl #assignedTo  formControlName="assignees"  [(ngModel)]="ticketToAdd.assignees" name="assigned_to" multiple>
+                      <mat-option value="" selected>None</mat-option>
+                      <mat-option *ngFor="let member of members;let i = index" [value]="member.user" [disabled]="isTagged(member.user_id)">
+                        {{member.user.user_details.first_name }} {{ member.user.user_details.last_name }} ({{member.user.username}})
+                      </mat-option>
+                    </mat-select>
+                    <!-- <mat-select [formControl]="assigned_to" #assignedTo (change)="assignTo(assignedTo.value)" [(ngModel)]="ticketToAdd.assigned_to" name="assigned_to" multiple>
+                        <mat-option *ngFor="let member of members;let i = index" [attr.data-index]="i" [value]="member.user.id" [disabled]="isTagged(member.user_id)">
+                            {{member.user.user_details.first_name }} {{ member.user.user_details.last_name }} ({{member.user.username}})
+                        </mat-option>
+                    </mat-select> -->
+                </mat-form-field>
+            </div>
+
+            <!-- Tagged members -->
+            <div class="form-group half-width">
+                <p *ngIf="!taggable_members" class="text-danger">This project has no member yet. Consider adding one first.</p>
+               <mat-form-field *ngIf="taggable_members">
+                    <mat-label>Tag Member</mat-label>
+                    <mat-select [formControl]="tagged_members" #tgbl_member (change)="tagTo(tgbl_member.value)"  multiple>
+                        <mat-option *ngFor="let tgbl_member of taggable_members" [attr.data-index]="i" [value]="tgbl_member" >
+                            {{tgbl_member.user.user_details.first_name }} {{ tgbl_member.user.user_details.last_name }} ({{tgbl_member.user.username}})
+                        </mat-option>
+                    </mat-select>
+               </mat-form-field>
+           </div>
+
+             <!-- Action -->
+             <div class="form-group full-w">
+                <mat-action-row>
+                    <button mat-button color="primary" [disabled]="(!ticketForm.valid && !ticketForm.touched ) || submitting" (click)="addNewTicket()" >Create</button>
+                </mat-action-row>
+            </div>
+            <!-- <mat-form-field class="">
+                <input matInput [matDatepicker]="picker" (blur)="setAge()" (input)="setAge()" formControlName="birth_date" placeholder="Birth Date" [matDatepicker]="picker" (focus)="picker.open()" [(ngModel)]="ticketToAdd.title" required [readonly]="!canEditData">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker touchUi="true" #picker (closed)="setAge()"></mat-datepicker>
+                <mat-hint align="end">
+                    <mat-icon class="mat-icon">schedule</mat-icon>
+                    <span aria-live="polite">Age: {{ age ? age : 0}} </span>
+                </mat-hint>
+            </mat-form-field> -->
+
+            <!-- <mat-form-field class="">
+                <input matInput [(ngModel)]="ticketToAdd.title" formControlName="zip" #postalCode maxLength="4" placeholder="Postal Code" pattern="[0-9]{4}" required [readonly]="!canEditData">
+                <mat-hint align="end">
+                    <mat-icon>mode_edit</mat-icon>
+                    <span aria-live="polite">{{postalCode.value.length}} / 4</span>
+                </mat-hint>
+            </mat-form-field> -->
+        </div>
+    </form>
+</div>

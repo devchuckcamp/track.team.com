@@ -1,0 +1,10 @@
+<ul id="breadcrumb" class="mar-t-20">
+    <li *ngFor="let br of breadcrumbs;let i = index">
+        <a *ngIf="i >= 2 || br == auth_client " href="#"
+                [routerLink]="[getRouterLink(i)]"
+        ><span 
+            class="fa "
+            [ngClass]="[( i == 0 || i == 1 || i == 2 ) && br == auth_client ? 'fa-home' : '']"
+            >{{ br !== auth_client ? br : ''}}</span></a>
+    </li>
+</ul>

@@ -1,5 +1,216 @@
-<div class="col-12">
-  <div class="mx-auto pad-20 text-center" style="width:280px">
-    Settings page works!
+<div class="col-lg-12">
+  <h2>Settings</h2>
+  <!-- Ticket Settings-->
+  <div *ngIf="ticketPriorityList && ticketOptionLoaded" class="row">
+    <h2 class="ticket-settings-title pad-20">Ticket</h2>
+    <div class="col-lg-12">
+      <mat-accordion>
+
+        <mat-expansion-panel [expanded]="step == 0" (opened)="setStep(0)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>low_priority</mat-icon>
+            </mat-panel-title>
+            <mat-panel-description>
+              Ticket Priority Options
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+            <div class="row">
+              <!-- Existing Ticket Setting Options -->
+              <div class="col-lg-6">
+                <div *ngFor="let setting of ticketPriorityList;index as i" class="pad-0 mar-0 row">
+                  <div class="form-group half-width">
+                    <div class="form-group full-width">
+                      <!-- <label for="setting.name" class="w-limit-60p"> {{setting.name}}</label> -->
+                      <div class="form-group">
+                        <label for="setting.name" class="w-limit-60p">Name</label>
+                        <input [(ngModel)]="setting.name" name="setting-{{setting.id}}-name" />
+                      </div>
+                      <div class="form-group">
+                        <label for="setting.name" class="w-limit-60p">Order</label>
+                        <input [(ngModel)]="setting.order" name="setting-{{setting.id}}-order" />
+                      </div>
+                      <div class="form-group">
+                        <input (colorPickerSelect)="updateColorOption(setting.color)" name="setting-{{setting.id}}-color"
+                        [(colorPicker)]="setting.color" [style.background]="setting.color" [(ngModel)]="setting.color" />
+                      </div>
+                      <button mat-button color="primary" (click)="updateTicketPrioritySetting(setting)">Update</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div *ngIf="ticketPriorityList.length && ticketOptionLoaded" class="form-group half-width">
+                            <mat-action-row>
+                                <button mat-button color="primary" (click)="updateTicketSetting()" >Update</button>
+                            </mat-action-row>
+                        </div> -->
+              </div>
+              <!-- Add New Ticket Setting Options -->
+              <div class="col-lg-6" *ngIf="ticketSettingToAdd">
+                <div class="form-group half-width">
+                  <div class="form-group full-width">
+                    <label for="setting.name" class="w-limit-60p">Name</label>
+                    <input name="ticket-setting-name" [(ngModel)]="ticketSettingToAdd.name" placeholder="Name" />
+                  </div>
+                  <div class="form-group full-width">
+                    <label for="setting.order" class="w-limit-60p">Order</label>
+                    <input name="ticket-setting-order" [(ngModel)]="ticketSettingToAdd.order" placeholder="Order" />
+                  </div>
+                  <div class="form-group full-width">
+                    <label for="setting.name" class="w-limit-60p">Indicator</label>
+                    <input name="ticket-setting-color" placeholder="Select color"
+                      (colorPickerSelect)="updateColorOption(ticketSettingToAdd.color)"
+                      [(colorPicker)]="ticketSettingToAdd.color" [style.background]="ticketSettingToAdd.color"
+                      [(ngModel)]="ticketSettingToAdd.color" />
+                    <div class="form-group full-width">
+                      <button mat-raised-button color="primary" (click)="addTicketPrioritySetting()">Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="step == 1" (opened)="panelOpenState = true" (opened)="setStep(1)" (closed)="panelOpenState = false">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>subject</mat-icon>
+            </mat-panel-title>
+            <mat-panel-description>
+              <!-- Status Options {{panelOpenState ? 'open' : 'closed'}} -->
+              Status Options
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <!-- <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p> -->
+          <project-status-setting></project-status-setting>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="step == 2" (opened)="panelOpenState = true" (opened)="setStep(2)" (closed)="panelOpenState = false">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>category</mat-icon>
+            </mat-panel-title>
+            <mat-panel-description>
+              Category Options
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <project-category-setting></project-category-setting>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </div>
+  <!-- Project Settings-->
+  <div *ngIf="ticketPriorityList && ticketOptionLoaded" class="row">
+      <h2 class="ticket-settings-title pad-20">Project</h2>
+      <div class="col-lg-12">
+        <mat-accordion>
+  
+          <mat-expansion-panel [expanded]="step == 3" (opened)="setStep(3)">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>low_priority</mat-icon>
+              </mat-panel-title>
+              <mat-panel-description>
+                  Project Priority Options
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
+          </mat-expansion-panel>
+  
+          <mat-expansion-panel [expanded]="step == 4" (opened)="panelOpenState = true" (opened)="setStep(4)" (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                  <i class="material-icons">security</i>
+              </mat-panel-title>
+              <mat-panel-description>
+                Project Security
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+  </div>
+  <!-- Access Settings-->
+  <div *ngIf="ticketPriorityList && ticketOptionLoaded" class="row">
+      <h2 class="ticket-settings-title pad-20">Access</h2>
+      <div class="col-lg-12">
+        <mat-accordion>
+  
+          <mat-expansion-panel [expanded]="step == 5" (opened)="setStep(5)">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>accessibility</mat-icon>
+              </mat-panel-title>
+              <mat-panel-description>
+                  Access Level Options
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
+          </mat-expansion-panel>
+  
+          <mat-expansion-panel [expanded]="step == 6" (opened)="panelOpenState = true" (opened)="setStep(6)" (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                  <i class="material-icons">security</i>
+              </mat-panel-title>
+              <mat-panel-description>
+                  Action Action
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+  </div>
+  <!-- Notification Settings-->
+  <div *ngIf="ticketPriorityList && ticketOptionLoaded" class="row">
+      <h2 class="ticket-settings-title pad-20">Notification</h2>
+      <div class="col-lg-12">
+        <mat-accordion>
+  
+          <mat-expansion-panel [expanded]="step == 7" (opened)="setStep(7)">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>email</mat-icon>
+              </mat-panel-title>
+              <mat-panel-description>
+                  Email
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
+          </mat-expansion-panel>
+  
+          <mat-expansion-panel [expanded]="step == 7" (opened)="panelOpenState = true" (opened)="setStep(7)" (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                  <i class="material-icons">sms</i>
+              </mat-panel-title>
+              <mat-panel-description>
+                  Text Message
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+  </div>
+  <!-- Activity Log Settings-->
+  <div *ngIf="ticketPriorityList && ticketOptionLoaded" class="row">
+      <h2 class="ticket-settings-title pad-20">Notification</h2>
+      <div class="col-lg-12">
+        <mat-accordion>
+          <mat-expansion-panel [expanded]="step == 8" (opened)="setStep(8)">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>local_activity</mat-icon>
+              </mat-panel-title>
+              <mat-panel-description>
+                  Activity Log
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
   </div>
 </div>

@@ -1,0 +1,25 @@
+<!-- <div class="chat">
+    <div class="chat-container" >
+        <div class="view-more-thread-container text-center">
+            <button  *ngIf="messages.length && messagesTotal > 11" mat-button color="accent"  (click)="viewMoreThread()">View More<i class="material-icons">arrow_drop_down</i></button>
+        </div>
+        <div class="chat-content pad-0 mar-0" *ngIf="messages.length">
+            <div #chatBox class="chat-list" *ngFor="let message of messages">
+
+                <label for=""><strong>{{message.created_by}}</strong> </label>:
+                <textarea disabled="true" class="chat-list-msg" [attr.id]="'chat-' + message.id">{{message.data}}</textarea>
+            </div>
+        </div>
+        <div class="pad-0 mar-0 text-center" *ngIf="!messages.length">
+            <label for="no-messages">No conversation</label>
+        </div>
+    </div>
+
+    <div class="chat-actions">
+        <textarea class="full-w project-message-field" [(ngModel)]="message"  placeholder="Message" ></textarea>
+        <button mat-button color="accent"
+        (click)="sendMessage()" class="chat-actions-btn"><i class="material-icons">
+            send
+            </i></button>
+    </div>
+</div> -->

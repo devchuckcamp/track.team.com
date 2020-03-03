@@ -23,13 +23,11 @@ export class GlobalRoutesService {
     private Bearer:any;
     private err:any;
     private userID = '';
-    public mimsPort='80';
-    //public apiPort='8181';
-    public apiPort = ''; //for staging 
-    //public host='167.99.106.79';
-    public host='homestead.test'; //for staging
-    public protocol='http://';
-    
+    public apiPort='';
+    //public host='192.168.10.10'; //for staging
+    public host='api-tickets-support.ecomia.com'; //for production
+    //public protocol='http://'; //for development
+    public protocol='https://'; //production
     public googleLogin=this.protocol+this.host+':'+this.apiPort+'/glogin';
 
     constructor(
@@ -39,7 +37,6 @@ export class GlobalRoutesService {
         if(localStorage.getItem("currentUser")){
             this.Bearer = localStorage.getItem("currentUser");
         }
- 
     }
 
     apiEndPoint(){
@@ -74,13 +71,13 @@ export class GlobalRoutesService {
         } else {
           // The backend returned an unsuccessful response code.
           // The response body may contain clues as to what went wrong,
-          console.error(
-            `Backend returned code ${error.status}, ` +
-            `body was: ${error.error}`);
+        //   console.error(
+        //     `Backend returned code ${error.status}, ` +
+        //     `body was: ${error.error}`);
         }
         // return an observable with a user-facing error message
         return throwError(
-          'Something bad happened; please try again later.');
+            error.error);
       };
     loginAuth (username:string,password:string): Observable<any> {
         var body = JSON.stringify({
@@ -115,95 +112,6 @@ export class GlobalRoutesService {
         return this.protocol+this.host+':'+this.apiPort+'/api/v1/users';
     }
 
-    // Employee
-    getAllEmployeesURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/employee';
-    }
-
-    getPatientVitalURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/patient-physical-exam';
-    }
-
-    // Doctors
-    getAllDoctorsURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/doctors';
-    }
-    //Specialty
-    getAllDoctorsSpecialtyURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/specialty';
-    }
-    getDoctorURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/doctors';
-    }
-    // All Departments
-    getAllDepartmentsURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/department';
-    }
-    // Specific Department
-    getDepartmentURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/department'
-    }
-    //Availability Time
-    getDoctorAvailabilityTimeURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/doctor-availability-time';
-    }
-    //Availability Day
-    getDoctorAvailabilityDayURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/doctor-availability-day';
-    }
-
-    // Patient
-    getAllPatientsURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/patients';
-    }
-    getPatientURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/patients';
-    }
-
-    // Secretaries
-    getAllSecretariesURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/secretaries';
-    }
-    getSecretaryURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/secretaries';
-    }
-
-    // Pharmacists
-    getAllPharmacistsURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/pharmacists';
-    }
-    getPharmacistURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/pharmacists';
-    }
-
-    // Pharmacy
-    getAllPharmaciesURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/pharmacies';
-    }
-    getPharmacyURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/pharmacies';
-    }
-
-    // CLinic
-    getClinicURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/clinics';
-    }
-
-    // Appointments
-    getAppointmentURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/appointments';
-    }
-    getAppointmentDetailURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/appointment-details';
-    }
-
-    // Audit Trail
-    getAuditURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/audit-trail';
-    }
-    getAuditsURI(){
-        return this.protocol+this.host+':'+this.apiPort+'/api/v1/audit-trail';
-    }
 
     // Authentication
     getLoginURI(){

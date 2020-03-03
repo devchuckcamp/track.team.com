@@ -1,0 +1,3 @@
+<mat-list role="list">
+    <mat-list-item role="listitem" *ngFor="let log of data.ticket_logs" ><span [innerHtml]="log.created_at | date: 'medium'"></span> - <span [innerHtml]="log.message"></span></mat-list-item>
+</mat-list>

@@ -7,38 +7,68 @@ import { LoginComponent } from '../login/login.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { NavbarModule } from '../navbar/navbar.module';
 import { LayoutComponent } from './layout.component';
+import { ProjectNewComponent } from '../project/project-new.component';
+import { UnderConstructionComponent } from '../share/under-construction.component';
+import { TicketPatchSettingComponent } from '../project/setting/ticket/patch/ticket-patch-setting.component';
+import { ActivityLogComponent } from '../share/activity-log.component';
+import { ProfileComponent } from '../profile/profile.component';
+import { ReportProjectComponent } from '../report/project/report-project.component';
+import { MasterComponent } from '../master/master.component';
 import { AuthGuard } from '../guard/auth';
-
+import { MasterGuard } from '../guard/master';
+import { NonMasterGuard } from '../guard/non-master';
+import { ProjectMemberGuard } from '../guard/project-member-guard';
 const routes:   Routes = [
     {
-        path: 'admin/fund',
-        redirectTo:'/admin/fund/current',
+        path: ':auth_client',
+        redirectTo:':auth_client/admin',
         pathMatch:'full',
     },
     {
-        path: 'admin', component:LayoutComponent,
-        canActivate:[AuthGuard],
+        path: ':auth_client/admin', component:LayoutComponent,
+        canActivate:[NonMasterGuard, AuthGuard],
         children:[
-            { path: 'projects', loadChildren:'../project/project.module#ProjectModule'},
-            { path: 'projects/:project_name', loadChildren:'../project/project-detail.module#ProjectDetailModule'},
-            { path: 'projects/:project_name/tickets', loadChildren:'../ticket/ticket.module#TicketModule'},
-            { path: 'projects/:name/tasks', loadChildren:'../project/project-detail.module#ProjectDetailModule'},
+            { path: 'projects',  component:LayoutComponent },
+            { path: 'projects/add', component:ProjectNewComponent},
+            { path: 'projects/:project_name',canActivate:[ProjectMemberGuard], loadChildren:'../project/project-detail.module#ProjectDetailModule'},
+            { path: 'projects/:project_name/tickets',canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket.module#TicketModule'},
+            // { path: 'projects/:project_name/tickets/filter', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket.module#TicketModule'},
+            {   path: 'projects/:project_name/tickets/filter',
+                canActivate:[ProjectMemberGuard],
+                redirectTo:'projects/:project_name/tickets',
+                pathMatch:'full',
+            },
+            { path: 'projects/:project_name/tickets/filter/:filter_type', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket.module#TicketModule'},
+            { path: 'projects/:project_name/tickets/filter/:filter_type', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket.module#TicketModule'},
+            { path: 'projects/:project_name/tickets/:ticket_id', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
+            { path: 'projects/:project_name/tickets/:ticket_id/comment', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
+            { path: 'projects/:project_name/tickets/:ticket_id/comment/:comment_id', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
+            { path: 'projects/:project_name/tickets/filter/:filter_type/:ticket_id', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
+            { path: 'projects/:project_name/members', canActivate:[ProjectMemberGuard], loadChildren:'../member/member.module#MemberModule'},
+            { path: 'projects/:project_name/members/:user_id', canActivate:[ProjectMemberGuard], loadChildren:'../member/member-detail.module#MemberDetailModule'},
+            { path: 'projects/:project_name/settings', canActivate:[ProjectMemberGuard], loadChildren:'../project/setting/project-setting.module#ProjectSettingModule',},
+            { path: 'projects/:project_name/patches', canActivate:[ProjectMemberGuard],  component:TicketPatchSettingComponent},
+            { path: 'projects/:project_name/patches/:patch_id', canActivate:[ProjectMemberGuard],  component:TicketPatchSettingComponent},
+            { path: 'projects/:project_name/activity', canActivate:[ProjectMemberGuard], component:ActivityLogComponent},
             { path: 'fund/current', loadChildren:'../fund/fund.module#FundModule'},
             { path: 'fund/incoming', loadChildren:'../fund/fund-incoming.module#FundIncomingModule'},
             { path: 'fund/pending', loadChildren:'../fund/fund-pending.module#FundPendingModule'},
-            { path: 'investor', loadChildren:'../investor/investor.module#InvestorModule', },
+            { path: 'news', loadChildren:'../investor/investor.module#InvestorModule', },
             { path: 'member', loadChildren:'../member/member.module#MemberModule', },
             { path: 'member/:username', loadChildren:'../member/member-detail.module#MemberDetailModule', },
-            { path: 'rollin', loadChildren:'../rollin/rollin.module#RollinModule', },
-            { path: 'profile', loadChildren:'../profile/profile.module#ProfileModule'},
-            { path: 'setting', loadChildren:'../setting/setting.module#SettingModule'},
+            { path: 'activity', component:ActivityLogComponent,},
+            { path: 'activity/:filter', component:ActivityLogComponent,},
+            { path: 'profile', component:ProfileComponent},
+            { path: 'settings', loadChildren:'../setting/setting.module#SettingModule'},
+            { path: 'reports', loadChildren:'../report/report.module#ReportModule'},
+            { path: 'reports/:project_name', component:ReportProjectComponent},
         ]
     },
 ];
 
 @NgModule({
     imports:[RouterModule.forRoot(
-        routes,
+        routes, 
         // { enableTracing: true }
         )],
     exports:[RouterModule]

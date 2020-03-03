@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
-
+import { Observable, Subscription  } from 'rxjs';
 import { AuthService } from '../service/auth.service';
-
+import { UserService } from '../service/user.service';
+import { ClientService } from '../service/client.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -14,34 +15,56 @@ export class LoginComponent implements OnInit {
     loginForm: FormGroup;
     loading = false;
     submitted = false;
-    returnUrl: string;
+    returnUrl: any;
+    auth_client:any;
+    subscription:Subscription;
+    client:any;
 
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
         private authenticationService: AuthService,
-        //private alertService: AlertService
+        private userService: UserService,
+        private clientService: ClientService
     ) {
+        this.subscription = this.clientService.currentClient.subscribe( client => { this.client = client });
         //redirect to home if already logged in
         // get return url from route parameters or default to '/'
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-        if(localStorage.getItem('currentUser') && JSON.parse(this.authenticationService.Bearer).access_token !== ''){
-            this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin'] );
+        //this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+       
+        if (localStorage.getItem('client')) {
+            this.auth_client = localStorage.getItem('client');
+
+            this.clientService.validate(this.auth_client).subscribe( (res:any) => {
+                this.client = res;
+                localStorage.setItem('client_info',JSON.stringify(res));
+
+                // this.userService.setClientInfo(this.client);
+                // this.clientService.setClient(res);
+                this.auth_client = this.client.slug;
+            }, error=>{
+                console.log('error:'+error);
+
+            });
+        }
+        if(localStorage.getItem('currentUser') && this.authenticationService.Bearer !== ''){
+            this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? this.auth_client+'/admin': '/' : this.auth_client+'/admin'] );
         }
     }
 
     ngOnInit() {
+        this.returnUrl = JSON.parse(localStorage.getItem('returnUrl'));
         this.loginForm = this.formBuilder.group({
             username: ['', Validators.required],
             password: ['', Validators.required]
         });
-        
     }
 
     // convenience getter for easy access to form fields
     get f() { return this.loginForm.controls; }
-
+    public u:any;
+    public avatar:any;
     onSubmit() {
         this.submitted = true;
 
@@ -55,15 +78,39 @@ export class LoginComponent implements OnInit {
             .pipe(first())
             .subscribe(
                 data => {
-
+                    let user_id:number;
                     localStorage.setItem('currentUser',JSON.stringify(data));
-                    if(data.access_token)
-                        this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);
-
+                    this.authenticationService.getAuthenticatedUser().subscribe( res => {
+                        localStorage.setItem('authUser',JSON.stringify(res));
+                        localStorage.setItem('csrf_token',JSON.stringify({'token':'lkcc371220183d'}));
+                        user_id = JSON.parse(localStorage.getItem('authUser')).id;
+                        this.authenticationService.getAuthenticatedUserProfile(user_id).subscribe( response => {
+                            this.avatar = response;
+                            if(this.avatar.avatar !== null){
+                                localStorage.setItem('avatar',this.avatar.avatar.data);
+                            }
+                            let auth_client= '';
+                            this.loading = false;
+                            if (!this.auth_client) {
+                                auth_client = localStorage.getItem('client');
+                            }
+                            //console.log(localStorage.getItem('client'),'auth_client');
+                            if(localStorage.getItem('client') && data.access_token && !this.loading){
+                                // this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);
+                                if(this.returnUrl){
+                                    localStorage.removeItem('returnUrl');
+                                    window.location.href = this.returnUrl.url;
+                                } else {
+                                    window.location.href=localStorage.getItem('client')+'/admin';
+                                }
+                            }
+                        });
+                    });
                 },
                 error => {
                     // this.alertService.error(error);
                     this.loading = false;
                 });
+        return false;
     }
 }

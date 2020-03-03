@@ -1,0 +1,38 @@
+<div class="col-lg-12 content-header text-center pad-20">
+    <h2 class="header-title">Add Project</h2>
+</div>
+<div class="col-lg-12 content-main">
+    <div class="row">
+        <div class="col-lg-12">
+            <form  *ngIf="projectForm"
+                [formGroup]="projectForm" id="projectForm"
+                (submit)="addNewProject()"
+                novalidate>
+                <!-- Title -->
+                <div class="half-width row">
+                    <div class="form-group half-width">
+                        <mat-form-field class="full-w">
+                            <input matInput formControlName="name" placeholder="Name" [(ngModel)]="projectToAdd.name" required>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <!-- <div class="half-width row">
+                    <div class="form-group half-width">
+                        <mat-form-field class="full-w">
+                            <input matInput formControlName="slug" placeholder="Slug" [(ngModel)]="projectToAdd.slug" required>
+                        </mat-form-field>
+                    </div>
+                </div> -->
+                <div class="half-width row">
+                    <!-- Action -->
+                    <div class="form-group full-w">
+                        <mat-action-row>
+                            <button mat-button color="primary" [disabled]="(!projectForm.valid && !projectForm.touched ) || submitting" (click)="addNewProject()" >Save</button>
+                        </mat-action-row>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

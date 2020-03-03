@@ -1,0 +1,13 @@
+.decline-project-invite{
+    position: absolute;
+    top: -12px;
+    right: -10px;
+    background-color: red;
+    border-radius: 50%;
+    padding: 5px 10px;
+}
+.project-invited-to{
+    -webkit-animation: fadeOut 500ms;
+    -moz-animation: fadeOut 500ms;
+    animation: fadeOut 500ms;
+}

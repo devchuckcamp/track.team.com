@@ -1,5 +1,195 @@
-<div class="col-12">
-  <div class="mx-auto pad-20 text-center" style="width:280px">
-    Profile page works!
-  </div>
+<div class="col-lg-12">
+    <!-- Profile Form -->
+
+    <form *ngIf="userProfileForm && auth_user"
+            class="row"
+            [formGroup]="userProfileForm" id="userProfileForm" 
+            (submit)="updateProfile()"
+            novalidate>
+        <div class="col-lg-12 text-center form-header-title mar-y-15">
+            <h2>Profile</h2>
+        </div>
+        <div class="divider mar-y-15"></div>
+        <!-- Account Avatar -->
+        <!-- Profile Info -->
+        <div class="half-width col-2">
+            <!-- Avatar -->
+            <div class="form-group full-w">
+                    <img class="rounded-circle" *ngIf="user_avatar || default_avatar" [src]="userAvatar ? userAvatar : default_avatar" width="100" height="100">
+                    <!-- <img class="rounded-circle" *ngIf="loadingImage" src="../../assets/icon/loading.gif"  width="50" height="50" alt="loading logo"> -->
+                    <div>
+                        <!-- <label for="file">Update</label><mat-icon>attachment</mat-icon> -->
+                        <!-- <button mat-button color="accent" 
+                                mat-mini-fab (click)="imageInput.click() return false;">
+                            <mat-icon>attachment</mat-icon>
+                        </button>  -->
+                        <!-- <input type='file'(change)="readUrl($event)"> -->
+                        <!-- <label class="image-upload-container btn btn-bwm">
+                                <span>Select Image</span> -->
+                        <input mat-button color="accent" #imageInput type="file" accept="image/*" (change)="handleFileSelect($event)">
+                        <!-- </label> -->
+                    </div>
+            </div>
+        </div>
+        <!-- Account Info -->
+        <div class="half-width col">
+            <div class="form-group full-w">
+                <mat-form-field class="full-w">
+                    <input matInput formControlName="username" placeholder="Username" readonly [(ngModel)]="auth_user.username">
+                </mat-form-field>
+            </div>
+            <!-- Email -->
+            <div class="form-group full-w">
+                <mat-form-field class="full-w">
+                    <input matInput formControlName="email" placeholder="Email Address" [(ngModel)]="auth_user.email">
+                </mat-form-field>
+            </div>
+            <!-- Assignee -->
+            <!-- <div class="form-group full-w">
+                            <p *ngIf="!members.length " class="text-danger">This project has no member yet. Consider adding one first.</p>
+                            <mat-form-field>
+                                <mat-label>Assign to </mat-label>
+                                <select matNativeControl  formControlName="assigned_to" [(ngModel)]="auth_user.assigned_to" name="assigned_to">
+                                <option value="" selected>None</option>
+                                <option *ngFor="let member of members" [(ngModel)]="member.user.id">
+                                    {{member.user_info.first_name }} {{ member.user_info.last_name }} ({{member.user.username}})
+                                </option>
+                                </select>
+                            </mat-form-field>
+                        </div> -->
+            <!-- <mat-form-field class="">
+                            <input matInput [matDatepicker]="picker" (blur)="setAge()" (input)="setAge()" formControlName="birth_date" placeholder="Birth Date" [matDatepicker]="picker" (focus)="picker.open()" [(ngModel)]="auth_user.title" required [readonly]="!canEditData">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #picker (closed)="setAge()"></mat-datepicker>
+                            <mat-hint align="end">
+                                <mat-icon class="mat-icon">schedule</mat-icon>
+                                <span aria-live="polite">Age: {{ age ? age : 0}} </span>
+                            </mat-hint>
+                        </mat-form-field> -->
+            <!-- <mat-form-field class="">
+                            <input matInput [(ngModel)]="auth_user.title" formControlName="zip" #postalCode maxLength="4" placeholder="Postal Code" pattern="[0-9]{4}" required [readonly]="!canEditData">
+                            <mat-hint align="end">
+                                <mat-icon>mode_edit</mat-icon>
+                                <span aria-live="polite">{{postalCode.value.length}} / 4</span>
+                            </mat-hint>
+                        </mat-form-field> -->
+        </div>
+        <!-- Profile Info -->
+        <div class="half-width col">
+            <!-- First Name -->
+            <div class="form-group full-w">
+                <mat-form-field class="full-w">
+                    <input matInput formControlName="first_name" placeholder="First Name"
+                        [(ngModel)]="auth_user.user_details.first_name">
+                </mat-form-field>
+            </div>
+            <!-- Last Name -->
+            <div class="form-group full-w">
+                <mat-form-field class="full-w">
+                    <input matInput formControlName="last_name" placeholder="Last Name" [(ngModel)]="auth_user.user_details.last_name">
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- Action -->
+        <div class="full-w col-lg-12 text-center">
+            <div class="form-group full-w">
+                <mat-action-row>
+                    <button mat-button color="primary"
+                        [disabled]="(!userProfileForm.valid && !userProfileForm.touched ) || submitting"
+                        (click)="updateProfile()">Update</button>
+                </mat-action-row>
+            </div>
+        </div>
+    </form>
+    <!-- User Project -->
+    <form *ngIf="!userProfileForm && !auth_user"
+            class="row"
+            [formGroup]="userProfileForm" id="userProfileForm"
+            (submit)="updateProfile()"
+            novalidate>
+        <div class="col-lg-12 text-center form-header-title mar-y-15">
+            <h2>Projects</h2>
+        </div>
+        <div class="divider mar-y-15"></div>
+        <!-- Account Info -->
+        <div class="half-width col">
+            <div class="form-group full-w">
+                <mat-form-field class="full-w">
+                    <input matInput formControlName="username" placeholder="Username" readonly [(ngModel)]="auth_user.username">
+                </mat-form-field>
+            </div>
+            <!-- Email -->
+            <div class="form-group full-w">
+                <mat-form-field class="full-w">
+                    <input matInput formControlName="email" placeholder="Email Address" [(ngModel)]="auth_user.email">
+                </mat-form-field>
+            </div>
+            <!-- Assignee -->
+            <!-- <div class="form-group full-w">
+                            <p *ngIf="!members.length " class="text-danger">This project has no member yet. Consider adding one first.</p>
+                            <mat-form-field>
+                                <mat-label>Assign to </mat-label>
+                                <select matNativeControl  formControlName="assigned_to" [(ngModel)]="auth_user.assigned_to" name="assigned_to">
+                                <option value="" selected>None</option>
+                                <option *ngFor="let member of members" [(ngModel)]="member.user.id">
+                                    {{member.user_info.first_name }} {{ member.user_info.last_name }} ({{member.user.username}})
+                                </option>
+                                </select>
+                            </mat-form-field>
+                        </div> -->
+            <!-- <mat-form-field class="">
+                            <input matInput [matDatepicker]="picker" (blur)="setAge()" (input)="setAge()" formControlName="birth_date" placeholder="Birth Date" [matDatepicker]="picker" (focus)="picker.open()" [(ngModel)]="auth_user.title" required [readonly]="!canEditData">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker touchUi="true" #picker (closed)="setAge()"></mat-datepicker>
+                            <mat-hint align="end">
+                                <mat-icon class="mat-icon">schedule</mat-icon>
+                                <span aria-live="polite">Age: {{ age ? age : 0}} </span>
+                            </mat-hint>
+                        </mat-form-field> -->
+            <!-- <mat-form-field class="">
+                            <input matInput [(ngModel)]="auth_user.title" formControlName="zip" #postalCode maxLength="4" placeholder="Postal Code" pattern="[0-9]{4}" required [readonly]="!canEditData">
+                            <mat-hint align="end">
+                                <mat-icon>mode_edit</mat-icon>
+                                <span aria-live="polite">{{postalCode.value.length}} / 4</span>
+                            </mat-hint>
+                        </mat-form-field> -->
+        </div>
+        <!-- Profile Info -->
+        <div class="half-width col">
+            <!-- First Name -->
+            <div class="form-group full-w">
+                <mat-form-field class="full-w">
+                    <input matInput formControlName="first_name" placeholder="First Name"
+                        [(ngModel)]="auth_user.user_details.first_name">
+                </mat-form-field>
+            </div>
+            <!-- Last Name -->
+            <div class="form-group full-w">
+                <mat-form-field class="full-w">
+                    <input matInput formControlName="last_name" placeholder="Last Name" [(ngModel)]="auth_user.user_details.last_name">
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- Action -->
+        <div class="full-w col-lg-12 text-center">
+            <div class="form-group full-w">
+                <mat-action-row>
+                    <button mat-button color="primary"
+                        [disabled]="(!userProfileForm.valid && !userProfileForm.touched ) || submitting"
+                        (click)="updateProfile()">Update</button>
+                </mat-action-row>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div *ngIf="auth_user" class="col-lg-12 text-center">
+    <div class="row">
+        <h2>Member of:</h2>
+    </div>
+    <div *ngIf="auth_user.projects" class="row">
+        <div *ngFor="let project of auth_user.projects" class="col-lg-2 text-center bg-success mar-x-5 pad-y-5 font-white font-bold border-rad-5 clickable">
+            {{project.project.name | titlecase}}
+        </div>
+    </div>
 </div>

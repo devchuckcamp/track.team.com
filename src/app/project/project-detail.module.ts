@@ -5,6 +5,8 @@ import { ProjectDetailRoutingModule } from './project-detail-routing.module';
 import { UserService } from '../service/user.service';
 import { ClientGlobalRoutesService } from '../config/client';
 import { GlobalRoutesService } from '../config/config';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators, EmailValidator,
+  FormGroupDirective, NgForm, } from '@angular/forms';
 // Material
 import {
   MatAutocompleteModule,
@@ -43,10 +45,11 @@ import {
   MatTooltipModule,
   MatTreeModule,
 } from '@angular/material';
-
+// import { ChatComponent } from '../component/chat/chat.component';
 @NgModule({
   declarations: [
     ProjectDetailComponent,
+    // ChatComponent,
   ],
   imports: [
     MatAutocompleteModule,
@@ -86,6 +89,8 @@ import {
     MatTreeModule,
     CommonModule,
     ProjectDetailRoutingModule,
+    FormsModule,
+    ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
   ],
   providers:[
     UserService,

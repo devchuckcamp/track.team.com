@@ -1,0 +1,133 @@
+.hidden{
+    display: none;
+}
+
+.area {
+    width: 77%;
+    padding: 15px;
+    margin: 15px;
+    border: 1px solid #333;
+    background: rgba(0,0,0,0.7);
+}
+
+#dropZone {
+    border: 2px dashed #bbb;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    padding: 50px;
+    text-align: center;
+    font: 21pt bold arial;
+    color: #bbb;
+}
+
+.drop-file-over{
+  background: #333;
+}
+.search-result-container{
+    background-color: lightgrey;
+    margin-left: -4px;
+    min-width: 235px!important;
+}
+div.search-member-row-result-container:nth-child(1){
+    margin-top: 30px!important;
+}
+.close-search-result-btn{
+    right: 0;
+    color: #fafafa!important;
+    padding: 5px 10px;
+}
+
+.ticket-description-info{
+    resize: none;
+    overflow-y: scroll;
+    // min-height: 50px;
+    // max-height: 100px;
+}
+.mar-l-10{
+    margin-left: 10px;
+}
+.thread-message-head{
+    max-height: 60px;
+}
+.thread-message-wrapper{
+    white-space: pre-line;
+}
+// .replayTextArea{
+//     white-space: pre;
+// }
+// .replayTextArea{
+//     overflow-x: unset;
+// }
+.search-field{
+    font-size: 20px;
+    padding: 15px;
+}
+.search-btn{
+    margin-left: 0;
+}
+.search-field,
+.search-btn{
+    height: 44px;
+}
+
+
+
+.example-container {
+    width: 400px;
+    max-width: 100%;
+    margin: 0 25px 25px 0;
+    display: inline-block;
+    vertical-align: top;
+  }
+  
+  .example-list {
+    border: solid 1px #ccc;
+    min-height: 60px;
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    display: block;
+  }
+  
+  .example-box {
+    padding: 20px 10px;
+    border-bottom: solid 1px #ccc;
+    color: rgba(0, 0, 0, 0.87);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    cursor: move;
+    background: white;
+    font-size: 14px;
+  }
+  
+  .cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+                0 8px 10px 1px rgba(0, 0, 0, 0.14),
+                0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  }
+  
+  .cdk-drag-placeholder {
+    opacity: 0;
+  }
+  
+  .cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+  
+  .example-box:last-child {
+    border: none;
+  }
+  
+  .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .sg-vertical-pull-right .cdk-overlay-pane{
+    margin:0 !important;
+  }
+  

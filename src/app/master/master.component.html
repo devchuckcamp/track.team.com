@@ -1,0 +1,17 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div class="navbar-container">
+    <app-master-navbar></app-master-navbar>
+</div>
+<div class="col-md-12 pad-0">
+    <div class="col-md-12 mar-0 h-100 pad-t-10">
+
+        <app-master-sidebar></app-master-sidebar>
+        <div class="col-lg-10 offset-lg-2 col-md-11 offset-md-1">
+            <app-master-breadcrumb [slug_list]="breadcrumb" [auth_client]="auth_client" [project_name]="admin_sub_2"></app-master-breadcrumb>
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+
+</div>
+
+<div id="footer"><p>Footer</p></div>

@@ -1,0 +1,71 @@
+<!-- <div class="col-lg-2 col-md-1 left-nav-bar pad-0"> -->
+<!-- <div  class="left-nav-bar pad-0" [class.col-lg-2]="currentSideBarMenu==1" [class.col-md-1]="currentSideBarMenu==1" [class.hidden]="currentSideBarMenu==0"> -->
+<div class="left-nav-bar pad-0" [ngClass]="getSidebarMenuStatus()">
+    <div class="col-md-12 pad-0">
+                <div class="row text-center" >
+                    <div class="col-lg-12 pad-10">
+                        <a href="#" [routerLink]="['/', auth_client_info.slug,'admin','profile']" class="border-rad-5">
+                            <img *ngIf="!user_avatar" class="rounded-circle border-1-white" [src]="default_avatar" height="50" width="50"
+                                alt="profile">
+                                <img *ngIf="user_avatar" class="rounded-circle border-1-white" [src]="user_avatar" height="50" width="50"
+                        alt="profile">
+                        </a>
+                    </div>
+                    <div class="col-lg-12" [ngClass]="collapseSidebarMenuStatus()">
+                        <label *ngIf="auth_user" for="profile-name" class="font-white">{{ auth_user.user_details.first_name }} {{ auth_user.user_details.last_name }}</label>
+                    </div>
+                </div>
+        <div  *ngIf="project || auth_profile" class="parent-left-menu">
+            <ul class="parent-left-menu-ul pad-0">
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': ( is_dashboard == true || admin_project_sub == active_menu || project_name == active_menu) && onload_slug_list.length <= 5}"
+                >
+                    <a [ngClass]="collapseSidebarMenuStatus()" href="#" [routerLink]="['projects',project_name]"><i
+                            class="fa fa-home mar-r-5"></i>Dashboard</a>
+                    <a  [ngClass]="displaySidebarMenuStatus()" href="#" [routerLink]="['projects',project_name]"><i
+                                class="fa fa-home mar-r-5"></i></a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active':admin_project_sub == 'tickets' || admin_sub_3 == 'tickets' || onload_slug_list[5] == 'tickets'}"
+                >
+                    <a [ngClass]="collapseSidebarMenuStatus()" href="#" [routerLink]="['projects', project_name , 'tickets'] "><i
+                            class="fa fa-ticket mar-r-5"></i>Ticket</a>
+                    <a  [ngClass]="displaySidebarMenuStatus()" href="#" [routerLink]="['projects',project_name, 'tickets']"><i
+                            class="fa fa-ticket mar-r-5"></i></a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active':admin_project_sub == 'patches' || admin_sub_3 == 'patches' || onload_slug_list[5] == 'patches'}"
+                >
+                    <a [ngClass]="collapseSidebarMenuStatus()" href="#" [routerLink]="['projects', project_name , 'patches']"><i
+                            class="fa fa-code-fork mar-r-5"></i>Patch</a>
+                    <a [ngClass]="displaySidebarMenuStatus()" href="#" [routerLink]="['projects', project_name , 'patches']"><i
+                            class="fa fa-code-fork mar-r-5"></i></a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': admin_project_sub == 'members' || admin_sub_3 == 'members'}"
+                >
+                    <a  [ngClass]="collapseSidebarMenuStatus()" href="#" [routerLink]="['projects',project_name,'members']"><i
+                            class="fa fa-users mar-r-5"></i>Member</a>
+                    <a  [ngClass]="displaySidebarMenuStatus()" href="#" [routerLink]="['projects',project_name,'members']"><i
+                            class="fa fa-users mar-r-5"></i></a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': admin_project_sub == 'settings' || admin_sub_3 == 'settings'}"
+                >
+                    <a  [ngClass]="collapseSidebarMenuStatus()" href="#" [routerLink]="['projects',project_name,'settings']"><i
+                            class="fa fa-gears mar-r-5"></i>Project Setting</a>
+                    <a  [ngClass]="displaySidebarMenuStatus()" href="#" [routerLink]="['projects',project_name,'settings']"><i
+                            class="fa fa-gears mar-r-5"></i></a>
+                </li>
+                <li class="parent-left-menu-item"
+                    [ngClass]="{'active': admin_project_sub == 'activity' || admin_sub_3 == 'activity'}"
+                >
+                    <a  [ngClass]="collapseSidebarMenuStatus()" href="#" [routerLink]="['projects',project_name,'activity']"><i
+                            class="fa fa-file-text-o mar-r-5"></i>Activity Log</a>
+                    <a  [ngClass]="displaySidebarMenuStatus()" href="#" [routerLink]="['projects',project_name,'activity']"><i
+                            class="fa fa-file-text-o mar-r-5"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

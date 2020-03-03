@@ -1,0 +1,50 @@
+<div class="col-lg-2 col-md-1 left-nav-bar pad-0">
+    <div class="col-md-12 pad-0">
+            <div class="row text-center">
+                <div class="col-lg-12 pad-10">
+                    <a href="#" [routerLink]="['/master','profile']" class="border-rad-5">
+                        <img *ngIf="!user_avatar" class="rounded-circle border-1-white" [src]="default_avatar" height="50" width="50"
+                            alt="profile">
+                            <img *ngIf="user_avatar" class="rounded-circle border-1-white" [src]="user_avatar" height="50" width="50"
+                    alt="profile">
+                    </a>
+                </div>
+                <div class="col-lg-12">
+                    <label *ngIf="auth_user" for="profile-name" class="font-white">{{ auth_user.user_details.first_name }} {{ auth_user.user_details.last_name }}</label>
+                </div>
+            </div>
+    <div  *ngIf="project" class="parent-left-menu">
+        <ul class="parent-left-menu-ul pad-0">
+            <li class="parent-left-menu-item"
+                [ngClass]="{'active':activeURL == '/master'}"
+            >
+                <a href="#" [routerLink]="['/master']"><i
+                        class="fa fa-home mar-r-5"></i>Dashboard</a>
+            </li>
+            <li class="parent-left-menu-item"
+            [ngClass]="{'active':activeURL == '/master/clients' || admin_sub_1 == 'clients' || admin_sub_2 == 'clients' || onload_slug_list[2] == 'clients'}"
+            >
+                <a href="#" [routerLink]="['clients']"><i
+                        class="fa fa-ticket mar-r-5"></i>Client</a>
+            </li>
+            <!-- <li class="parent-left-menu-item"
+            >
+                <a href="#" [routerLink]="['projects',project.slug,'members']"><i
+                        class="fa fa-users mar-r-5"></i>Member</a>
+            </li>
+            <li class="parent-left-menu-item"
+                [ngClass]="{'active': admin_project_sub == 'settings' || admin_sub_3 == 'settings'}"
+            >
+                <a href="#" [routerLink]="['projects',project.slug,'settings']"><i
+                        class="fa fa-gears mar-r-5"></i>Setting</a>
+            </li>
+            <li class="parent-left-menu-item"
+                [ngClass]="{'active': admin_project_sub == 'activity' || admin_sub_3 == 'activity'}"
+            >
+                <a href="#" [routerLink]="['projects',project.slug,'activity']"><i
+                        class="fa fa-file-text-o mar-r-5"></i>Activity Log</a>
+            </li> -->
+        </ul>
+    </div>
+</div>
+</div>

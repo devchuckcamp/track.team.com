@@ -5,6 +5,10 @@ import { TicketRoutingModule } from './ticket-routing.module';
 import { UserService } from '../service/user.service';
 import { ClientGlobalRoutesService } from '../config/client';
 import { GlobalRoutesService } from '../config/config';
+import { FileDropModule } from 'ngx-file-drop';
+import { FormsModule,ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators, EmailValidator,
+  FormGroupDirective, NgForm, } from '@angular/forms';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 // Material
 import {
   MatAutocompleteModule,
@@ -43,6 +47,10 @@ import {
   MatTooltipModule,
   MatTreeModule,
 } from '@angular/material';
+
+
+// Pipe
+import { ApplicationPipesModule } from '../component/pipe/pipe.module';
 
 @NgModule({
   declarations: [
@@ -86,6 +94,15 @@ import {
     MatTreeModule,
     CommonModule,
     TicketRoutingModule,
+    FileDropModule,
+    FormsModule,
+    ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
+    DragDropModule,
+    ApplicationPipesModule,
+  ],
+  exports:[
+    FormsModule,
+    CommonModule,
   ],
   providers:[
     UserService,

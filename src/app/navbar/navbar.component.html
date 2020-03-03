@@ -1,72 +1,62 @@
 <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
-  <a class="nav-link" [routerLink]="['/admin']">Logo</a>
+  <a class="nav-link" style="position: relative" [routerLink]="['/',auth_client,'admin']"><img width="40px" height="40px" style="position: absolute;top:-10px;" [src]="logo" alt="Ecomia"/></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topmenu-nav" aria-controls="topmenu-nav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-
+  <a href="#" (click)="toggleSideNav()" class="side-nav-toggler-btn" [ngClass]="[ currentSideBarMenu === 1 ? 'menu': 'menu_open']"><mat-icon>{{ currentSideBarMenu == 1? 'menu' :'menu_open' }}</mat-icon></a>
   <div class="collapse navbar-collapse justify-content-md-center" id="topmenu-nav">
   <!-- <div class="collapse navbar-collapse" id="topmenu-nav"> -->
     <ul class="navbar-nav  ml-auto">
       <!-- Dropdown -->
-      <li class="nav-item dropdown" 
+      <li class="nav-item dropdown"
       [ngClass]="{'active':activeURL === '/admin/projects' || parentUrl === 'projects' || activeURL === '/admin/projects/all' || activeURL === '/admin/projects/pending' || activeURL === '/admin/fund/pending'}"
       >
         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
           Projects
         </a>
         <div *ngIf="projects" class="dropdown-menu">
-          
-          <a  *ngFor="let proj of projects"  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/'+proj.slug }" [routerLink]="['/admin/projects', proj.slug]">{{proj.name}}</a>
-          <!-- <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/incoming' }" [routerLink]="['/admin/fund/{{proj.name}}']">Mass Depot</a> -->
+          <a  *ngFor="let proj of projects"  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/'+proj.slug }" [routerLink]="['projects', proj.slug]">{{proj.name | titlecase}}</a>
+          <a  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/add' || activeURL === '/admin/projects' }" [routerLink]="['projects','add']">Add Project</a>
         </div>
         <div *ngIf="!projects" class="dropdown-menu">
-          
-            <a  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/new' || activeURL === '/admin/projects' }" [routerLink]="['/admin/projects/new']">Add Project</a>
+            <a  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/add' || activeURL === '/admin/projects' }" [routerLink]="['projects','add']">Add Project</a>
             <!-- <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/incoming' }" [routerLink]="['/admin/fund/{{proj.name}}']">Mass Depot</a> -->
           </div>
       </li>
-      <li class="nav-item dropdown" 
-      [ngClass]="{'active':activeURL === '/admin/fund' || activeURL === '/admin/fund/current' || activeURL === '/admin/fund/incoming' || activeURL === '/admin/fund/pending'}"
-      >
-        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-          My Task
-        </a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/current' || activeURL === '/admin/fund' }" [routerLink]="['/admin/fund/current']">Assigned to me</a>
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">Open</a>
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">In Progress</a>
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/incoming' }" [routerLink]="['/admin/fund/incoming']">Completed</a>
-          <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/fund/pending' }" [routerLink]="['/admin/fund/pending']">All</a>
-        </div>
+
+      <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/news' }">
+        <a class="nav-link" [routerLink]="['news']">News</a>
       </li>
-      <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/investor' }">
-        <a class="nav-link" [routerLink]="['/admin/investor']">User</a>
-      </li>
-      <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/member' || this.activeURL.split('admin/member').length - 1 }">
-        <a class="nav-link" [routerLink]="['/admin/member']">User Role</a>
-      </li>
-      <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/rollin' || this.activeURL.split('admin/rollin').length - 1}">
-        <a class="nav-link" [routerLink]="['/admin/rollin']">Activity Logs</a>
+
+      <li class="nav-item" [ngClass]="{'active': activeURL === '/admin/activity' }">
+        <a class="nav-link" [routerLink]="['activity']">Activity Logs</a>
       </li>
     </ul>
 
     <ul class="navbar-nav ml-auto">
       <!-- Dropdown -->
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle pad-x-40 pad-x-sm-0" href="#" id="navbardrop" data-toggle="dropdown"
-        [ngClass]="{'active':activeURL === '/admin/profile' || activeURL === '/admin/setting' || this.activeURL.split('admin/profile').length - 1 || this.activeURL.split('admin/setting').length - 1}"
-        >
-          Account
+        <a class="nav-link dropdown-toggle pad-x-40 pad-x-sm-0" href="#" id="navbardrop" data-toggle="dropdown">
+          <mat-icon *ngIf="unread_notification_count" [matBadge]="unread_notification_count" matBadgeColor="warn" class="material-icons notification-bell-icon">notifications</mat-icon>
+          <mat-icon *ngIf="!unread_notification_count" matBadgeColor="warn" class="material-icons notification-bell-icon">notifications</mat-icon>
+        </a>
+        <div *ngIf="notification.length" class="dropdown-menu notification-navbar-panel">
+          <a *ngFor="let ntf of notification;let i = index" [href]="ntf.app_link" (click)="read(ntf.app_link,i)" class="dropdown-item" [ngClass]="{'unread': ntf.read }" target="_blank" >{{ntf.data.message}}</a>
+          <div class="text-center"><a href="#" (click)="readAll()">Mark all as read</a></div>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle pad-x-40 pad-x-sm-0" href="#" id="navbardrop" data-toggle="dropdown">
+          <img *ngIf="user_avatar" class="rounded-circle" [src]="user_avatar" height="22" width="22" alt="Account">
+          <img *ngIf="!user_avatar" class="rounded-circle" [src]="default_avatar" height="22" width="22" alt="Account">
         </a>
         <div class="dropdown-menu">
-          <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/profile' || this.activeURL.split('admin/profile').length - 1}" [routerLink]="['/admin/profile']"><i class="pad-x-5 fa fa-user-circle-o"></i>Profile</a>
-          <a class="dropdown-item" [ngClass]="{'active':activeURL === '/admin/setting' || this.activeURL.split('admin/setting').length - 1}" [routerLink]="['/admin/setting']"><i class="pad-x-5 fa fa-wrench"></i>Settings</a>
+          <a class="dropdown-item"><i class="pad-x-5 fa fa-user-circle-o"></i>Profile</a>
+          <a class="dropdown-item" [routerLink]="['settings']"><i class="pad-x-5 fa fa-wrench"></i>Settings</a>
           <a href="#" class="dropdown-item" (click)="logout()"><i class="pad-x-5 fa fa-sign-out"></i>Logout</a>
         </div>
       </li>
     </ul>
 
   </div>
-
-
 </nav>

@@ -1,8 +1,42 @@
-<div class="row">
-    <div class="col-12 content-header text-center">
-        <h2 *ngIf="project">Project {{ project.name }}</h2>
+<!-- <div class="col-md-10 offset-md-2"> -->
+<div class="col-lg-12 content-header text-center">
+    <h2 class="header-title" *ngIf="project">Project {{ project.name | titlecase}}</h2>
+</div>
+<div class="col-lg-12 content-main">
+    <div class="row border-b-gray">
+        <!-- <div class="col-lg-12 text-center"><h2>Project Thread</h2></div> -->
     </div>
-    <div class="col-12 content-main">
+    <div class="row border-b-gray text-center">
+        <!-- <div class="col"><app-chat-list></app-chat-list></div> -->
+    </div>
+    
+    <div class="row border-b-gray">
+        <div class="col-lg-12 text-center"><h2>Status</h2></div>
+    </div>
+    <div class="row border-b-gray text-center" *ngIf="ticketStatusListLoading">
+        <div class="col"><img src="../../assets/icon/loading.gif"></div>
+    </div>
+    <div class="row border-b-gray" *ngIf="ticketStatusList && !ticketStatusListLoading">
+        <div class="col-lg-4 clickable mar-y-10" *ngFor="let status of ticketStatusList" (click)="goToFilterTicket( status.slug);">
+            <mat-card class="font-white"  [ngStyle]="{'background-color': status.color, 'color':'#fafafa'}">{{ status.name }} {{ project.active_custom_status !== null && project.active_custom_status.value.value == 1 ? '':'Tickets' }} <span class="badge"> ({{ status.count.length }})</span></mat-card>
+        </div>
+    </div>
 
+    <div class="row border-b-gray">
+        <div class="col-lg-12 text-center"><h2>Patches</h2></div>
+    </div>
+
+    <div class="row border-b-gray text-center" *ngIf="ticketPatchListloading">
+        <div class="col"><img src="../../assets/icon/loading.gif"></div>
+    </div>
+    <div class="row border-b-gray" *ngIf="ticketPatchList && !ticketPatchListloading">
+        <div class="col-lg-4 clickable mar-y-10" *ngFor="let patch of ticketPatchList; let i = index" (click)="showPatch( patch.id);">
+            <mat-card class="font-white" #completion  [ngStyle]="{'background-color': patch.color, 'background-color':'rgb(40, 167, 69)'}">Patch {{ patch.name }} 
+                <span class="badge"> ({{ patch.tickets.length }})</span>
+                <span class="badge">{{calculateCompletionRate(patch.id, i)  | number:'1.2-2' }}% completion</span>
+                <mat-progress-bar mode="determinate" [bufferValue]="100" [value]="calculateCompletionRate(patch.id, i)"></mat-progress-bar>
+            </mat-card>
+        </div>
     </div>
 </div>
+<!-- </div> -->

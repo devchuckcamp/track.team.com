@@ -1,24 +1,10 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<app-navbar></app-navbar>
-<div class="col-md-12">
-    <div class="row" *ngIf="activeURL == '/admin'">
-        <div class="col-md-3 pad-20 text-center">
-            <div class="col">
-                <div class="row">
-                    <label>Recent Activity</label>
-                    <div class="panel">
-                        <ul>
-                            <li>
-                                <a href="#">
-                                    Chuckie added $500 for next rollin
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+<div *ngIf="profile.role_id !==9001"class="navbar-container">
+    <app-navbar></app-navbar>
+</div>
+<div *ngIf="profile.role_id !==9001"class="col-md-12 pad-0">
+    <div class="col-md-12 mar-0 h-100 pad-t-10" *ngIf="activeURL == '/'+auth_client || activeURL == '/'+auth_client+'/admin/reports'  || activeURL == '/'+auth_client+'/admin/profile' || activeURL == '/'+auth_client+'/admin/news' || activeURL == '/'+auth_client+'/admin/activity' || activeURL == '/'+auth_client+'//admin/profile' || activeURL == '/'+auth_client+'/admin/settings' || activeURL == '/'+auth_client+'/admin/projects' || activeURL == '/'+auth_client+'/admin' || activeURL == '/'+auth_client+'/admin/projects/add'">
+    <!--
         <div class="col-md-6 pad-20 text-center">
             <canvas id="chart-content" #chart></canvas>
         </div>
@@ -32,7 +18,38 @@
                     <label>Event of the month</label>
                 </div>
             </div>
+        </div> 
+    --> 
+        <app-left-menu-top [auth_client]="auth_client"></app-left-menu-top>
+        <div class="main-content" [ngClass]="getSidebarMenuStatus()">
+            <app-dashboard *ngIf="activeURL == '/'+auth_client+'/admin'"></app-dashboard>
+            <app-profile *ngIf="activeURL == '/'+auth_client+'/admin/profile'"></app-profile>
+            <app-project *ngIf="activeURL == '/'+auth_client+'/admin/projects'"></app-project>
+            <app-project-new  *ngIf="activeURL == '/'+auth_client+'/admin/projects/add'" [projectsList]="projectsList"></app-project-new>
+            <!-- <app-profile *ngIf="activeURL == '/admin/profile' && activeURL !== '/admin/projects' && activeURL !== '/admin/settings'"></app-profile> -->
+            <!-- <router-outlet *ngIf="profile || activeURL == '/admin/settings'  && (!admin_project_sub && !admin_sub_2)"></router-outlet> -->
+            <router-outlet *ngIf="activeURL == '/'+auth_client+'/admin/reports' || activeURL == '/'+auth_client+'/admin/news' || activeURL == '/'+auth_client+'/admin/settings' || activeURL === '/'+auth_client+'/admin/activity'"></router-outlet>
         </div>
     </div>
-    <router-outlet></router-outlet>
+    <div class="col-md-12 mar-0 h-100 second pad-t-10" *ngIf="activeURL !== '/'+auth_client+'/admin/news' && activeURL !== '/'+auth_client+'/admin/reports' && activeURL !== '/'+auth_client+'/admin/activity' && activeURL !== '/'+auth_client+'/admin/profile' && activeURL !== '/'+auth_client+'/admin/projects' && activeURL !== '/'+auth_client+'/admin/projects/add' && activeURL !== '/'+auth_client+'/admin/settings' && activeURL !== '/'+auth_client+'/admin'">
+        <app-left-menu *ngIf="admin_sub_2" [auth_profile]="profile"  [auth_client]="auth_client" [project_name]="admin_sub_2" [admin_project_sub]="admin_project_sub"></app-left-menu>
+        <!-- <div class="col-lg-10 offset-lg-2 col-md-11 offset-md-1"> -->
+        <div class="main-content" [ngClass]="getSidebarMenuStatus()">
+            <!-- Breadcrumbs -->
+            <app-breadcrumb [slug_list]="breadcrumb" [auth_client]="auth_client" [project_name]="admin_sub_2"></app-breadcrumb>
+            <!-- Main Content -->
+            <router-outlet></router-outlet>
+            <!-- <div *ngIf="1==1">
+                <h2 *ngIf="admin_sub_2">{{admin_sub_2 | titlecase }} project exist but you're not a member!</h2>
+            </div> -->
+        </div>
+    </div>
 </div>
+<!-- For Site Master -->
+<div *ngIf="profile.role_id == 9001"class="navbar-container">
+    <!-- <app-master-navbar></app-master-navbar> -->
+</div>
+<div *ngIf="profile.role_id == 9001"class="col-md-12 pad-0">
+    <!-- <app-master></app-master> -->
+</div>
+<div id="footer"><p>Footer</p></div>

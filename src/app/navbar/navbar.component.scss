@@ -1,0 +1,24 @@
+.navbar.navbar-expand-lg.sticky-top{
+    position: fixed;
+    width: 100%!important;
+}
+.notification-bell-icon{
+    font-size: 22px;
+}
+.notification-navbar-panel{
+    width: 300px;
+    margin-left:-60px;
+}
+.unread{
+    color:lightblue;
+}
+.side-nav-toggler-btn{
+    position: absolute;
+    left: 275px;
+    transition-duration: 0.1s;
+    transition-delay: 0.0s;
+}
+.side-nav-toggler-btn.menu_open{
+    left: 5%;
+    top: 35%;
+}

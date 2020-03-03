@@ -1,0 +1,44 @@
+.chat{
+    position: relative;
+}
+.chat-container{
+    //position: fixed;
+    bottom: 30px;
+    right: 0;
+    background-color: #fafafa;
+    min-height: 200px;
+    max-height: 260px;
+    text-align: left;
+    overflow-y: auto;
+    width: 100%;
+}
+.chat-list{
+    color: #044220;
+    margin: 10px 0;
+    border: 1px solid darkgray;
+    padding: 5px;
+}
+.chat-list .chat-list-msg{
+    width: 100%;
+    background-color: #fafafa;
+    border: 0;
+    resize: none;
+    overflow: hidden;
+}
+.chat-actions{
+    resize: none;
+    min-height: 200px;
+}
+.chat-actions-btn{
+    position: absolute;
+    right: 0;
+    bottom: 21px;
+    background-color: blue;
+    border-radius: 0%;
+}
+.project-message-field{
+    resize: none;
+    min-height: 180px;
+    max-height: 180px;
+    overflow-y: auto;
+}
