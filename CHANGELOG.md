@@ -6,6 +6,11 @@ The format is based on and adheres to [Semantic Versioning](https://semver.org/s
 
 ##  [Unreleased]
 
+##  [2.0.7] - 2020-02-04
+
+### Added
+- Additional Ticket Filter by assigned to logged in user
+
 ##  [2.0.6.1] - 2020-02-04
 ### Fixed
 -	Anchor link included  in comment notification messag removed

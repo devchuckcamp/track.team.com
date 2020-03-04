@@ -86,6 +86,7 @@ export class TicketComponent implements OnInit, OnDestroy {
     ticketForm: FormGroup;
     //Filter
     filter:any;
+    myTicketsFilter:any = 0;
     initialFilter:any = [];
     statusFilter:any = [];
     statusFilterName:string;
@@ -261,7 +262,20 @@ export class TicketComponent implements OnInit, OnDestroy {
         alert('Swapping of priority order are only exclusive to tickets of the same priority group.');
       }
     }
-
+    // myTicketsSelected(event){
+    //   if(event) console.log(event.target.checked);
+    //   // this.myTickets  = val;
+    // }
+    toggleMyTicketsSelected(event){
+      console.log(event.checked);
+      this.myTicketsFilter = event.checked ? 1 : 0;
+      this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter, this.myTicketsFilter).subscribe( (res:any) =>{
+        this.tickets = res.data;
+        this.length = res.total;
+        this.loading = false;
+        this.tag_users = res.data.tag_users;
+      });
+    }
     isSelected(id:any){
       let index: number = this.statusFilter.indexOf(id);
       let found = false;
@@ -327,7 +341,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       });
     }
     getTicket(project_name:any){
-      this.ticketService.getProjectTicketAll(project_name, this.pageNum, this.pageSize, '', this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter).subscribe(res => {
+      this.ticketService.getProjectTicketAll(project_name, this.pageNum, this.pageSize, '', this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter, this.myTicketsFilter).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
         this.getMetaValue();
@@ -348,7 +362,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.pageSize = setPageSizeOptionsInput.pageSize;
       let pageSize = setPageSizeOptionsInput.pageSize;
       this.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
-      this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, this.pageSize, '', this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter).subscribe(res => {
+      this.ticketService.getProjectTicketAll(this.project_name, this.pageNum, this.pageSize, '', this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter, this.myTicketsFilter).subscribe(res => {
         this.loading = false;
         this.tickets = res.data;
         this.length = res.total;
@@ -372,7 +386,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       //   this.length = res.total;
       //   this.tag_users = res.data.tag_users;
       // });
-      this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter).subscribe( (res:any) =>{
+      this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter, this.myTicketsFilter).subscribe( (res:any) =>{
         this.tickets = res.data;
         this.length = res.total;
         this.loading = false;
@@ -618,7 +632,7 @@ export class TicketComponent implements OnInit, OnDestroy {
 
     searchTicket(){
       // if(this.searchText !== ''){
-        this.ticketService.filterTicketByKeyword(this.project_name, 1, this.pageSize, this.searchText, this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter).subscribe( (res:any) =>{
+        this.ticketService.filterTicketByKeyword(this.project_name, 1, this.pageSize, this.searchText, this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter, this.myTicketsFilter).subscribe( (res:any) =>{
           this.tickets = res.data;
           this.length = res.total;
           this.pageNum = 1;
@@ -637,7 +651,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       }
       // console.log(this.statusFilter,'statusFilter');
       this.pageNum = 1;
-      this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter).subscribe( (res:any) =>{
+      this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter, this.myTicketsFilter).subscribe( (res:any) =>{
         this.tickets = res.data;
         this.length = res.total;
         this.loading = false;
@@ -655,7 +669,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       }
       console.log(this.categoryFilter,'categoryFilter');
       this.pageNum = 1;
-      this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter).subscribe( (res:any) =>{
+      this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter, this.categoryFilter, this.ticketPrioritiesFilter, this.myTicketsFilter).subscribe( (res:any) =>{
         this.tickets = res.data;
         this.length = res.total;
         this.loading = false;
@@ -673,7 +687,7 @@ export class TicketComponent implements OnInit, OnDestroy {
       }
       console.log(this.ticketPrioritiesFilter,'ticketPrioritiesFilter');
       this.pageNum = 1;
-      this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter, this.categoryFilter,  this.ticketPrioritiesFilter).subscribe( (res:any) =>{
+      this.ticketService.filterTicketByKeyword(this.project_name, this.pageNum, this.pageSize, this.searchText, this.statusFilter, this.categoryFilter,  this.ticketPrioritiesFilter, this.myTicketsFilter).subscribe( (res:any) =>{
         this.tickets = res.data;
         this.length = res.total;
         this.loading = false;

@@ -71,13 +71,13 @@ export class TicketService {
           this._ticketsCategory.next(Object.assign({}, this.ticketsCategoryStore).ticketsCategory);
         }, error => console.log('Could not load Categories.'));
     }
-    getProjectTicketAll(project_name: string, page:number = 1, per_page:number = 25, filter:any = '', filterStatus:any = '', categoryFilter:any = null, priorityFilter:any = null){
+    getProjectTicketAll(project_name: string, page:number = 1, per_page:number = 25, filter:any = '', filterStatus:any = '', categoryFilter:any = null, priorityFilter:any = null, authTicketFilter:any){
         var page_num = '';
         var per_page_num = '';
         var filter_by = '';
         var category:any = '';
         var priority:any = '';
-
+        var authUserTicket:any = '';
         if(page != 1){
             page_num = '&page='+page;
         }
@@ -96,7 +96,10 @@ export class TicketService {
         }else if(filter !== ''){
             filter_by = '&filter_by='+filter;
         }
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name+page_num+per_page_num+filter_by+filterStatus+category+priority, this.jt()).pipe(map( (res:any) => res));
+        if(authTicketFilter == 1){
+            authUserTicket = '&auth_user_filter='+1;
+        }
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name+page_num+per_page_num+filter_by+filterStatus+category+priority+authUserTicket, this.jt()).pipe(map( (res:any) => res));
     }
     getProjectTicketFilter(project_name: string, filter: string, statusFilter:any = []){
         if(statusFilter.length){
@@ -183,13 +186,14 @@ export class TicketService {
         return this.http.put(this.config.apiEndPoint()+'/api/v1/ticket-time-billables/'+ticket.id, datas, this.jt());
     }
     //Filter Ticket
-    filterTicketByKeyword(project_name:string, page:number, per_page:number,keyword_filter:string = '', statusFilter:any= null, categoryFilter:any = null, priorityFilter:any = null){
+    filterTicketByKeyword(project_name:string, page:number, per_page:number,keyword_filter:string = '', statusFilter:any= [], categoryFilter:any = null, priorityFilter:any = null, authTicketFilter:any = 0){
         var page_num = '';
         var per_page_num = '';
         var keyword = '';
         var status:any = '';
         var category:any = '';
         var priority:any = '';
+        var authUserTicket = '';
 
         if(page){
             page_num = '&page='+page;
@@ -202,7 +206,7 @@ export class TicketService {
             keyword = '&keyword='+keyword_filter;
         }
 
-        if(statusFilter.length){
+        if(statusFilter.length > 0){
             status = '&status_filter='+statusFilter;
         }
 
@@ -213,7 +217,10 @@ export class TicketService {
         if(priorityFilter !== null){
             priority = '&priority_filter='+priorityFilter;
         }
-        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name+page_num+per_page_num+keyword+status+category+priority, this.jt()).pipe(map( (res:any) => res));
+        if(authTicketFilter == 1){
+            authUserTicket = '&auth_user_filter='+1;
+        }
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/tickets?project='+project_name+page_num+per_page_num+keyword+status+category+priority+authUserTicket, this.jt()).pipe(map( (res:any) => res));
     }
     // Mention
     mentionUser(mentionedUser:any, ticket_id:number){
