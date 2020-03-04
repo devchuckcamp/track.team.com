@@ -43,7 +43,14 @@ export class BreadcrumbComponent implements OnInit {
                 this.activeURL = indexActUrl;
 
                 let slug_list = this.activeURL.split('/');
-                this.breadcrumbs = slug_list;
+                if(slug_list.includes("comment") || slug_list[7] == 'comment'){
+                    delete slug_list[7];
+                    delete slug_list[8];
+                    slug_list.splice(-2,2);
+                    this.breadcrumbs = slug_list;
+                } else {
+                    this.breadcrumbs = slug_list;
+                }
             }
         });
     }

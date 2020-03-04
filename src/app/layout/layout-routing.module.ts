@@ -41,6 +41,8 @@ const routes:   Routes = [
             { path: 'projects/:project_name/tickets/filter/:filter_type', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket.module#TicketModule'},
             { path: 'projects/:project_name/tickets/filter/:filter_type', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket.module#TicketModule'},
             { path: 'projects/:project_name/tickets/:ticket_id', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
+            { path: 'projects/:project_name/tickets/:ticket_id/comment', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
+            { path: 'projects/:project_name/tickets/:ticket_id/comment/:comment_id', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
             { path: 'projects/:project_name/tickets/filter/:filter_type/:ticket_id', canActivate:[ProjectMemberGuard], loadChildren:'../ticket/ticket-detail.module#TicketDetailModule'},
             { path: 'projects/:project_name/members', canActivate:[ProjectMemberGuard], loadChildren:'../member/member.module#MemberModule'},
             { path: 'projects/:project_name/members/:user_id', canActivate:[ProjectMemberGuard], loadChildren:'../member/member-detail.module#MemberDetailModule'},

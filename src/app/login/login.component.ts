@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
     loginForm: FormGroup;
     loading = false;
     submitted = false;
-    returnUrl: string;
+    returnUrl: any;
     auth_client:any;
     subscription:Subscription;
     client:any;
@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
         this.subscription = this.clientService.currentClient.subscribe( client => { this.client = client });
         //redirect to home if already logged in
         // get return url from route parameters or default to '/'
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        //this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
        
         if (localStorage.getItem('client')) {
             this.auth_client = localStorage.getItem('client');
@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit() {
-
+        this.returnUrl = JSON.parse(localStorage.getItem('returnUrl'));
         this.loginForm = this.formBuilder.group({
             username: ['', Validators.required],
             password: ['', Validators.required]
@@ -94,10 +94,15 @@ export class LoginComponent implements OnInit {
                             if (!this.auth_client) {
                                 auth_client = localStorage.getItem('client');
                             }
-                            console.log(localStorage.getItem('client'),'auth_client');
+                            //console.log(localStorage.getItem('client'),'auth_client');
                             if(localStorage.getItem('client') && data.access_token && !this.loading){
                                 // this.router.navigate([this.returnUrl ? this.returnUrl  == '/' ? 'admin': '/' : '/admin']);
-                                window.location.href=localStorage.getItem('client')+'/admin';
+                                if(this.returnUrl){
+                                    localStorage.removeItem('returnUrl');
+                                    window.location.href = this.returnUrl.url;
+                                } else {
+                                    window.location.href=localStorage.getItem('client')+'/admin';
+                                }
                             }
                         });
                     });
