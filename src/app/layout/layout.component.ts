@@ -74,7 +74,7 @@ export class LayoutComponent implements OnInit {
         
             slug_list = slug_list;
           }
-          console.log('slug_list', slug_list);
+          // console.log('slug_list', slug_list);
           this.breadcrumb = slug_list;
           let isSubRoute = (this.activeURL.match(/\//g) || []).length;
           if(slug_list.includes("projects") || slug_list[3] == 'projects'){
