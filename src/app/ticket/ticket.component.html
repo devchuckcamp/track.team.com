@@ -48,6 +48,8 @@
             <mat-checkbox class="mar-x-10" *ngFor="let stat of ticketStatuses" [checked]="isSelected(stat.id)"  (change)="checkStatusFilter(stat.id)"   >{{ stat.name }}</mat-checkbox>
             <p class="mar-0">Category</p>
             <mat-checkbox class="mar-x-10" *ngFor="let cat of ticketsCategory" [checked]="isSelectedCategory(cat.id)"  (change)="checkCategoryFilter(cat.id)"   >{{ cat.name }}</mat-checkbox>
+            <p class="mar-0">Priority</p>
+            <mat-checkbox class="mar-x-10" *ngFor="let prio of ticketPriorities" [checked]="isSelectedPriority(prio.id)"  (change)="checkPriorityFilter(prio.id)" >{{ prio.name }}</mat-checkbox>
         </div>
     </div>
     <div *ngIf="!ticketFormShow" class="table-responsive table-striped">
