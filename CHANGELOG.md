@@ -6,6 +6,10 @@ The format is based on and adheres to [Semantic Versioning](https://semver.org/s
 
 ##  [Unreleased]
 
+##  [2.0.6.1] - 2020-02-04
+### Fixed
+-	Anchor link included  in comment notification messag removed
+
 ##  [2.0.6] - 2020-02-04
 
 ### Added
@@ -29,3 +33,5 @@ The format is based on and adheres to [Semantic Versioning](https://semver.org/s
 ## [2.0.3]  -   2020-02-03
 ###  Added
 -   Filter Ticket by category
+
+
