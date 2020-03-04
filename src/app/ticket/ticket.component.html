@@ -39,11 +39,17 @@
 <div  class="col-lg-12 content-main">
     <div class="row pad-10" *ngIf="!ticketFormShow">
         <div class="col-3">
-            <input  type="search" class="search-field" placeholder="Search..." [(ngModel)]="searchText" >
-            <button mat-button color="primary"  class="search-btn" (click)="searchTicket()"><mat-icon>search</mat-icon></button>
+            <div class="row">
+                <input  type="search" class="search-field" placeholder="Search..." [(ngModel)]="searchText" >
+                <button mat-button color="primary"  class="search-btn" (click)="searchTicket()"><mat-icon>search</mat-icon></button>
+            </div>
+            <!-- <div class="row">
+                <mat-checkbox class="mar-x-10" id="myTicketFilter" [checked]="myTicketsFilter == 1"  (change)="toggleMyTicketsSelected($event)">My Tickets</mat-checkbox>
+            </div> -->
         </div>
         <div class="col" *ngIf="ticketStatuses">
             <p class="mar-0"><b>Filters:</b></p>
+            <p class="mar-0"><mat-checkbox class="mar-x-10" id="myTicketFilter" [checked]="myTicketsFilter == 1"  (change)="toggleMyTicketsSelected($event)">Assigned to me</mat-checkbox></p>
             <p class="mar-0">Status</p>
             <mat-checkbox class="mar-x-10" *ngFor="let stat of ticketStatuses" [checked]="isSelected(stat.id)"  (change)="checkStatusFilter(stat.id)"   >{{ stat.name }}</mat-checkbox>
             <p class="mar-0">Category</p>
