@@ -10,9 +10,6 @@ The format is based on and adheres to [Semantic Versioning](https://semver.org/s
 ### Added
 - Additional CRUD access settings for all users per client
 
-### Added
-- Additional Ticket Filter by assigned to logged in user
-
 ##  [2.0.7] - 2020-03-04
 
 ### Added
