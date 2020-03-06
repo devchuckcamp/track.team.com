@@ -88,6 +88,15 @@ export class UserService {
         return this.http.get<User[]>(this.config.apiEndPoint()+'/users');
     }
 
+    getClientUsers(client:any = null, page:number = 1, per_page:number = 25){
+        let varUrl:any = '?client=';
+        let pageNum = page !== 1 ? '&page='+page : '';
+        let per_pageNum = per_page !== 25 ? '&per_page='+per_page : '';
+        let vars = client !== null ? varUrl+client : '';
+        vars = vars+pageNum+per_pageNum;
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/users'+vars, this.jt()).pipe(map( (res:any) => res));
+    }
+
     getById(id: number) {
         return this.http.get<User>(this.config.apiEndPoint()+'/users/'+id, this.jt());
     }

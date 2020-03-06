@@ -77,8 +77,6 @@ import {
 import { MentionModule } from 'angular-mentions';
 // import { MasterComponent } from '../master/master.component';
 // import { MasterNavbarComponent } from '../master/navbar/master-navbar.component';
-
-
 @NgModule({
   declarations: [
     NavbarComponent,

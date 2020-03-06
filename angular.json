@@ -28,6 +28,7 @@
               "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "./node_modules/slick-carousel/slick/slick.scss",
               "./node_modules/slick-carousel/slick/slick-theme.scss",
+              "./node_modules/chart.js/dist/Chart.bundle.min.js",
               "src/styles.css"
             ],
             "scripts": [

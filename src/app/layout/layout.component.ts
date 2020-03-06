@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Pipe } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd  } from '@angular/router';
-import Chart from 'chart.js';
+// import Chart from 'chart.js';
 import { BreadcrumbComponent } from '../layout/component/breadcrumb.component';
 import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
@@ -19,9 +19,9 @@ import { Observable, Subscription  } from 'rxjs';
 export class LayoutComponent implements OnInit {
   avatar:any;
   auth_client:any;
-  @ViewChild("chart")
-  public refChart: ElementRef;
-  public chartData: any;
+  // @ViewChild("chart")
+  // public refChart: ElementRef;
+  // public chartData: any;
   public authUser:User;
   private viewInfoRoute : string;
   settings:any[] = [];
@@ -140,7 +140,7 @@ export class LayoutComponent implements OnInit {
 
   getSidebarMenuStatus(){
       const active=this.currentSideBarMenu ==1;
-      return {'col-lg-10 offset-lg-2 offset-md-1':active, 'max-main-content':!active };
+      return {'col-lg-10 offset-lg-2  col-md-10 offset-md-2':active, 'max-main-content':!active };
   }
 
   toggle(){

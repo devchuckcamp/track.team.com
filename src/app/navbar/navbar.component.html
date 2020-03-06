@@ -3,7 +3,7 @@
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topmenu-nav" aria-controls="topmenu-nav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a href="#" (click)="toggleSideNav()" class="side-nav-toggler-btn" [ngClass]="[ currentSideBarMenu === 1 ? 'menu': 'menu_open']"><mat-icon>{{ currentSideBarMenu == 1? 'menu' :'menu_open' }}</mat-icon></a>
+  <a href="#" (click)="toggleSideNav()" class="side-nav-toggler-btn d-none d-lg-block" [ngClass]="[ currentSideBarMenu === 1 ? 'menu': 'menu_open']"><mat-icon>{{ currentSideBarMenu == 1? 'menu' :'menu_open' }}</mat-icon></a>
   <div class="collapse navbar-collapse justify-content-md-center" id="topmenu-nav">
   <!-- <div class="collapse navbar-collapse" id="topmenu-nav"> -->
     <ul class="navbar-nav  ml-auto">

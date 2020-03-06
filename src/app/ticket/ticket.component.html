@@ -29,7 +29,7 @@
       </div> -->
 
 </div>
-<div  *ngIf="auth" class="col-lg-12 content-option text-right mar-10 pad-10">
+<div  *ngIf="auth" class="col-lg-12 content-option text-lg-right text-md-center mar-10 pad-10">
     <!-- <a href="#"  *ngIf="auth.username == 'chuckiedev'" (click)="reOrderTickets()" class="btn btn-success mar-r-20 q-width">Reorder</a> -->
     <!-- <a href="#" *ngIf="auth.role_id < 4 && !ticketFormShow && taggable_members" (click)="toggleTicketForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add New</i></a> -->
     <a href="#" *ngIf="ticketFormShow" (click)="toggleTicketForm()" class="btn btn-warning mar-r-20 q-width"><i class="fa fa-chevron-left mar-r-5 q-width"> Return</i></a> 
@@ -38,16 +38,16 @@
 </div>
 <div  class="col-lg-12 content-main">
     <div class="row pad-10" *ngIf="!ticketFormShow">
-        <div class="col-3">
+        <div class="col-xl-3 col-lg-12">
             <div class="row">
-                <input  type="search" class="search-field" placeholder="Search..." [(ngModel)]="searchText" >
+                <input  type="search" class="search-field full-w-md" placeholder="Search..." [(ngModel)]="searchText" >
                 <button mat-button color="primary"  class="search-btn" (click)="searchTicket()"><mat-icon>search</mat-icon></button>
             </div>
             <!-- <div class="row">
                 <mat-checkbox class="mar-x-10" id="myTicketFilter" [checked]="myTicketsFilter == 1"  (change)="toggleMyTicketsSelected($event)">My Tickets</mat-checkbox>
             </div> -->
         </div>
-        <div class="col" *ngIf="ticketStatuses">
+        <div class="col-xl-9 col-lg-12 text-left-lg" *ngIf="ticketStatuses">
             <p class="mar-0"><b>Filters:</b></p>
             <p class="mar-0"><mat-checkbox class="mar-x-10" id="myTicketFilter" [checked]="myTicketsFilter == 1"  (change)="toggleMyTicketsSelected($event)">Assigned to me</mat-checkbox></p>
             <p class="mar-0">Status</p>

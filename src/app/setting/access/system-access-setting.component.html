@@ -1,0 +1,52 @@
+
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-w">
+            <!--- Note that these columns can be defined in any order.
+                          The actual rendered columns are set as a property on the row definition" -->
+    
+            <!-- Avatar Column -->
+            <ng-container matColumnDef="avatar">
+              <th mat-header-cell *matHeaderCellDef>  </th>
+              <td mat-cell *matCellDef="let element"> <img class="rounded-circle" [src]="element.avatar != null ? element.avatar.data : default_avatar" height="22" width="22"  alt="element.user.username"></td>
+            </ng-container>
+    
+            <!-- Username Column -->
+            <ng-container matColumnDef="username">
+              <th mat-header-cell *matHeaderCellDef> Username </th>
+              <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+            </ng-container>
+      
+            <!-- First Name Column -->
+            <ng-container matColumnDef="first_name">
+              <th mat-header-cell *matHeaderCellDef> First Name </th>
+              <td mat-cell *matCellDef="let element"> {{element.user_details ? element.user_details.first_name : ''}} </td>
+            </ng-container>
+      
+            <!-- Last Name Column -->
+            <ng-container matColumnDef="last_name">
+              <th mat-header-cell *matHeaderCellDef> Last Name </th>
+              <td mat-cell *matCellDef="let element"> {{element.user_details ? element.user_details.last_name : ''}} </td>
+            </ng-container>
+      
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef> Email </th>
+              <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+            </ng-container>
+      
+            <!-- Options Column -->
+            <ng-container matColumnDef="action" *ngIf="auth">
+               <th mat-header-cell *matHeaderCellDef> Access </th>
+              
+              <td mat-cell class="member-action-cell" *matCellDef="let element">
+                <mat-checkbox  [checked]="element.user_crud_access.value.value == 1  ? true : false" (input)="toggleActiveCrudAccess(element.id, $event.target.checked, element.user_crud_access.id)">Access</mat-checkbox>
+                <!-- <a  class="btn btn-success mar-x-5" [routerLink]="element.id !== auth.id ?  [ '/sos/admin/projects', project_name , 'members' ,element.id ] : '/sos/admin/profile'" > <i class="fa fa-eye"></i></a> 
+                <a  *ngIf="element.id !== 1 && element.id == auth.id" [title]="element.id == auth.id ? 'Leave from Project' : 'Remove from Project'" class="btn btn-danger mar-x-5 font-white"><i class="fa fa-minus-circle"></i></a> -->
+              </td>
+            </ng-container>
+    
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+          <mat-paginator *ngIf="length" [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+            (page)="onPageChange($event)">
+            ></mat-paginator>

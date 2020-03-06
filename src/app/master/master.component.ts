@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd  } from '@angular/router';
-import Chart from 'chart.js';
+// import Chart from 'chart.js';
 import { MasterBreadcrumbComponent } from './component/master-breadcrumb.component';
 import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
@@ -17,10 +17,10 @@ import { Observable, Subscription  } from 'rxjs';
 export class MasterComponent implements OnInit {
   avatar:any;
   auth_client:any;
-  @ViewChild("chart")
-  public refChart: ElementRef;
-  public chartData: any;
-  public authUser:User;
+  // @ViewChild("chart")
+  // public refChart: ElementRef;
+  // public chartData: any;
+  // public authUser:User;
   private viewInfoRoute : string;
   settings:any[] = [];
   subscription:Subscription;

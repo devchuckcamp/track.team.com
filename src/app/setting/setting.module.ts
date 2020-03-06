@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { SettingComponent } from './setting.component';
 import { ProjectStatusComponent } from './project/status/project-status.component';
 import { ProjectCategoryComponent } from './project/category/project-category.component';
+// Access
+import { SystemAccessSettingComponent } from './access/system-access-setting.component';
 import { SettingRoutingModule } from './setting-routing.module';
 import { CommonModule } from '@angular/common';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -49,6 +51,7 @@ import {
     SettingComponent,
     ProjectStatusComponent,
     ProjectCategoryComponent,
+    SystemAccessSettingComponent,
   ],
   imports: [
     SettingRoutingModule,

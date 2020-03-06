@@ -3,3 +3,22 @@
     right: 10px;
     z-index: 99;
 }
+@media only screen and (max-width : 575px) {
+    .member-list-container-option{
+        margin:0!important;
+        padding: 0!important;
+    }
+    .member-action-cell{
+        display: inline-flex;
+        margin-top: 10px;
+        padding-bottom:20px;
+    }
+    .btn-success.q-width,
+    .btn-success i.q-width{
+        width: 100%;
+    }
+    .btn-success.q-width{
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+}

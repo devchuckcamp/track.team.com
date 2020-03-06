@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd  } from '@angular/router';
-import Chart from 'chart.js';
+// import Chart from 'chart.js';
 import {MatPaginator, MatSnackBar, MatTableDataSource, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { FormGroup, FormBuilder, FormControl, Validators, EmailValidator } from '@angular/forms';
 import { AuthService } from '../../service/auth.service';
@@ -35,9 +35,9 @@ const ELEMENT_DATA: any[] = [];
 export class MasterClientComponent implements OnInit {
     avatar:any;
     auth_client:any;
-    @ViewChild("chart")
-    public refChart: ElementRef;
-    public chartData: any;
+    // @ViewChild("chart")
+    // public refChart: ElementRef;
+    // public chartData: any;
     public authUser:User;
     private viewInfoRoute : string;
     settings:any[] = [];
