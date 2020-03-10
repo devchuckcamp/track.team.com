@@ -13,6 +13,7 @@ import { trigger, style, animate, transition } from '@angular/animations';
 import {ErrorStateMatcher} from '@angular/material';
 import { Observable, Subscription  } from 'rxjs';
 import { ConfirmDeleteDialog } from '../../share/alert/confirm-delete-dialog.component';
+import * as _ from 'lodash';
 
 const ELEMENT_DATA: User[] = [];
 const projectsInvitationList: Array<number> = [];
@@ -32,6 +33,9 @@ class CrossFieldErrorMatcher implements ErrorStateMatcher {
 })
 
 export class SystemAccessSettingComponent implements OnInit {
+    currentAutHUser:any;
+    authenticatedUser:any;
+
     settings:any[] = [];
     step:number;
     // Option Initiators
@@ -70,6 +74,14 @@ export class SystemAccessSettingComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
+        this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
+        this.authenticatedUser = res;
+        if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
+
+            } else {
+            }
+        });
         this.client_slug = localStorage.getItem('client');
         this.auth = this.authService.getAuthUser();
         this.getUsers();
@@ -86,7 +98,6 @@ export class SystemAccessSettingComponent implements OnInit {
         this.userService.getClientUsers(this.client_slug).subscribe((res:any)=>{
             this.users = res.data;
             this.dataSource = new MatTableDataSource(res.data);
-            console.log(this.dataSource);
             this.length = res.total;
             this.dataSource.paginator = this.paginator;
         });
@@ -96,13 +107,10 @@ export class SystemAccessSettingComponent implements OnInit {
     }
 
     setPageSizeOptions(setPageSizeOptionsInput: string) {
-        console.log(setPageSizeOptionsInput);
         this.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
       }
-    
       //Pagination Section
       onPageChange(event) {
-        console.log(event);
         this.per_page = event.pageSize;
         this.userService.getClientUsers(this.client_slug,event.pageIndex+1,event.pageSize).subscribe((res:any)=>{
             this.users = res.data;
@@ -117,14 +125,14 @@ export class SystemAccessSettingComponent implements OnInit {
         //    // this.config.currentPage = number;
         //    // this.getDoctors(number);
         //  this.filter = this.filter !== null ? this.filter : "";
-    
+
         //  this.userService.getEmployees(event.pageIndex+1, event.pageSize, this.filter).subscribe( 
         //    (res)  =>  {
         //      console.log(res,'new employee list');
         //      this.length = res.total;
         //      this.employees = res.data;
         //      this.dataSource = new MatTableDataSource(res.data);
-    
+
         //      this.loading =  false;
         //    },
         //    (err)  =>  {
@@ -133,12 +141,18 @@ export class SystemAccessSettingComponent implements OnInit {
         //    );
       }
 
-      toggleActiveCrudAccess(user_id:any, event, metaid){
-            console.log(user_id, event);
-            let meta_value = event ? 1 : 0;
-            this.metaService.updateMetaValue(metaid,meta_value).subscribe((res:any)=>{
-                console.log(res);
+    toggleActiveCrudAccess(user_id:any, event, metaid){
+        let meta_value = event ? 1 : 0;
+        this.metaService.updateMetaValue(metaid,meta_value).subscribe((res:any)=>{
+            console.log(res);
+            this.snackBar.open('Access has been updated', 'X', {
+                duration: 5000,
+                direction: "ltr",
+                verticalPosition:"top",
+                horizontalPosition: "right",
+                panelClass: "success-snack"
             });
-      }
+        });
+    }
 
 }

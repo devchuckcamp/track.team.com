@@ -6,6 +6,10 @@ The format is based on and adheres to [Semantic Versioning](https://semver.org/s
 
 ##  [Unreleased]
 
+##  [2.0.9] - 2020-03-10
+### Added
+- CRUD access denied sitewide notification
+
 ##  [2.0.8] - 2020-03-07
 ### Added
 - Additional CRUD access settings for all users per client

@@ -4,6 +4,8 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Task } from '../../model/task';
 import { TaskService } from '../../service/task.service';
+import { AuthService } from '../../service/auth.service';
+import * as _ from 'lodash';
 
 export interface DialogData {
     id: any;
@@ -16,7 +18,9 @@ export interface DialogData {
     selector: 'dialog-ticket-task',
     templateUrl: 'dialog-ticket-task.component.html',
   })
-  export class TaskDetailDialog {
+  export class TaskDetailDialog implements OnInit{
+    currentAutHUser:any;
+    authenticatedUser:any;
 
     taskDetailForm:FormGroup;
     task:Task;
@@ -24,6 +28,7 @@ export interface DialogData {
     constructor(
       private sanitizer: DomSanitizer,
       private formBuilder: FormBuilder,
+      private authService: AuthService,
       public dialogRef: MatDialogRef<TaskDetailDialog>,
       private taskService:TaskService,
       @Inject(MAT_DIALOG_DATA) public data: Task) {
@@ -37,7 +42,16 @@ export interface DialogData {
             'status': new FormControl(this.data.status, [])
             });
     }
+    ngOnInit(){
+      this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
+        this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
+          this.authenticatedUser = res;
+          if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
 
+            } else {
+            }
+        });
+    }
     // updateTaskDetail(){
     //     console.log(this.task);
     //     return false;

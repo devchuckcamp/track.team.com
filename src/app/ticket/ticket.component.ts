@@ -15,6 +15,7 @@ import { FormGroup, FormBuilder, FormControl, Validators, EmailValidator } from 
 import { trigger, style, animate, transition } from '@angular/animations';
 import { MatSnackBar  } from '@angular/material';
 import { Observable } from "rxjs"
+import * as _ from 'lodash';
 
 interface ProjectMemberInfo{
   id: number;
@@ -74,6 +75,8 @@ export class TicketComponent implements OnInit, OnDestroy {
     ticket: any;
     thread:any;
     auth:any;
+    authenticatedUser:any;
+    currentAutHUser:any;
     project_name:string;
     project_id: number;
     loggedin_user:string;
@@ -140,6 +143,16 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.filter = '';
       this.statusFilter.length =0;
       this.auth = this.authService.getAuthUser();
+      this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
+      this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
+        this.authenticatedUser = res;
+        if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
+
+          } else {
+
+          }
+      });
+
       this.settingService.settings.subscribe( (res:any) => {
         this.ticketPriorities = res;
       });
@@ -196,7 +209,7 @@ export class TicketComponent implements OnInit, OnDestroy {
           }
           this.ticketService.ticketStatus.subscribe( (res:any) => {
             this.ticketStatuses = res.data;
-            
+
             // console.log(this.ticketStatuses);
             filteredStats = res.data;
             if(res.data){
@@ -231,6 +244,32 @@ export class TicketComponent implements OnInit, OnDestroy {
         }
       });
     }
+
+    isEquivalent(a, b) {
+      // Create arrays of property names
+      var aProps = Object.getOwnPropertyNames(a);
+      var bProps = Object.getOwnPropertyNames(b);
+  
+      // If number of properties is different,
+      // objects are not equivalent
+      if (aProps.length != bProps.length) {
+          return false;
+      }
+  
+      for (var i = 0; i < aProps.length; i++) {
+          var propName = aProps[i];
+  
+          // If values of same property are not equal,
+          // objects are not equivalent
+          if (a[propName] !== b[propName]) {
+              return false;
+          }
+      }
+  
+      // If we made it this far, objects
+      // are considered equivalent
+      return true;
+  }
     transform(value) {
       return value.replace('-', ' ');
     }

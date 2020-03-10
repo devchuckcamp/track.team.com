@@ -12,7 +12,8 @@ import { NotificationService } from '../service/notification.service';
 import { Project } from '../model/project';
 import { Observable, Subscription  } from 'rxjs';
 import { WebSocketSubject } from 'rxjs/webSocket';
-
+import * as _ from 'lodash';
+import {MatSnackBar, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 export class Message {
   constructor(
       public sender: any,
@@ -30,6 +31,8 @@ export class Message {
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit, OnDestroy  {
+  currentAutHUser:any;
+  authenticatedUser:any;
   activeURL:string;
   parentUrl:string;
   user_avatar:string;
@@ -38,6 +41,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
   auth_client_info:any;
   currentSideBarMenu:number;
   web_app_key:any = 12345;
+  hide_user_update:boolean = false;
   subscription: Subscription;
   default_avatar = '../assets/default-profile.png';
   projects: any[] = [];
@@ -66,7 +70,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     private threadService:ThreadService,
     private memberService:MemberService,
     private menuService:MenuService,
-    private activatedRoute: ActivatedRoute,
+    private snackBar: MatSnackBar,
     private notificationService:NotificationService,
   ) {
     if(!this.user_avatar){
@@ -139,6 +143,14 @@ export class NavbarComponent implements OnInit, OnDestroy  {
 
 
   ngOnInit() {
+    this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
+      this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
+        this.authenticatedUser = res;
+        if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
+
+          } else {
+          }
+      });
     this.userService.currentAvatar.subscribe(avatar => {
       this.user_avatar = avatar ;
     });
@@ -171,6 +183,21 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     this.userService.clearClient();
     this.userService.clearUser();
     this.userService.clearClientInfo();
+  }
+  hideUserUpdatePanel(){
+    this.hide_user_update = true;
+    return false;
+  }
+  sendAccessRequest(){
+    this.snackBar.open('Request has been sent', 'X', {
+        duration: 5000,
+        direction: "ltr",
+        verticalPosition:"top",
+        horizontalPosition: "right",
+        panelClass: "success-snack"
+    });
+
+    return false;
   }
   setUser():void {
     this.subscription = this.userService.currentLoggedInUser.subscribe( (res:any) => { this.auth_user = JSON.parse(res); });

@@ -51,8 +51,8 @@
           <th mat-header-cell *matHeaderCellDef> Option </th>
           
           <td mat-cell class="member-action-cell" *matCellDef="let element"> 
-            <a  class="btn btn-success mar-x-5" [routerLink]="element.user.id !== auth.id ?  [ '/sos/admin/projects', project_name , 'members' ,element.user.id ] : '/sos/admin/profile'" > <i class="fa fa-eye"></i></a> 
-            <a  *ngIf="element.user.id !== 1 && (auth.role_id < 4 || element.user.id == auth.id)" [title]="element.user.id == auth.id ? 'Leave from Project' : 'Remove from Project'" (click)="confirmRemoveFromProject(element)" class="btn btn-danger mar-x-5 font-white"><i class="fa fa-minus-circle"></i></a>
+            <a   *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1" class="btn btn-success mar-x-5" [routerLink]="element.user.id !== auth.id ?  [ '/sos/admin/projects', project_name , 'members' ,element.user.id ] : '/sos/admin/profile'" > <i class="fa fa-eye"></i></a> 
+            <a  *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1 && element.user.id !== 1 && (auth.role_id < 4 || element.user.id == auth.id)" [title]="element.user.id == auth.id ? 'Leave from Project' : 'Remove from Project'" (click)="confirmRemoveFromProject(element)" class="btn btn-danger mar-x-5 font-white"><i class="fa fa-minus-circle"></i></a>
             <!-- Have this feature remove for the meantime, soft delete and account lock feature must be finished on API first -->
             <!-- <a (click)="confirmDeleteAccount(element.user.id)" class="btn btn-warning mar-x-5 font-white"><i class="fa fa-lock"></i></a>
             <a (click)="confirmDeleteAccount(element.user.id)" class="btn btn-danger mar-x-5 font-white"><i class="fa fa-trash"></i></a> -->

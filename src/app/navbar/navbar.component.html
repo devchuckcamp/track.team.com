@@ -16,10 +16,10 @@
         </a>
         <div *ngIf="projects" class="dropdown-menu">
           <a  *ngFor="let proj of projects"  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/'+proj.slug }" [routerLink]="['projects', proj.slug]">{{proj.name | titlecase}}</a>
-          <a  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/add' || activeURL === '/admin/projects' }" [routerLink]="['projects','add']">Add Project</a>
+          <a  *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1" class="dropdown-item font-20" [ngClass]="{'active': activeURL === '/admin/projects/add' || activeURL === '/admin/projects' }" [routerLink]="['projects','add']"><b class="font-20">Add Project</b></a>
         </div>
         <div *ngIf="!projects" class="dropdown-menu">
-            <a  class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/add' || activeURL === '/admin/projects' }" [routerLink]="['projects','add']">Add Project</a>
+            <a *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1" class="dropdown-item font-20" [ngClass]="{'active': activeURL === '/admin/projects/add' || activeURL === '/admin/projects' }" [routerLink]="['projects','add']"><b class="font-20">Add Project</b></a>
             <!-- <a class="dropdown-item" [ngClass]="{'active': activeURL === '/admin/projects/incoming' }" [routerLink]="['/admin/fund/{{proj.name}}']">Mass Depot</a> -->
           </div>
       </li>
@@ -58,5 +58,11 @@
       </li>
     </ul>
 
+    <div class="user-update-global"  *ngIf="!hide_user_update && this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">
+      <div class="col-lg-12">
+        <p>Your is currently on <b>View  Mode</b> only. Kindly contact your administrator or <a href="#" (click)="sendAccessRequest()">Request an access</a></p>
+        <a href="#" class="close-user-update-btn" (click)="hideUserUpdatePanel()">Close</a>
+      </div>
+    </div>
   </div>
 </nav>

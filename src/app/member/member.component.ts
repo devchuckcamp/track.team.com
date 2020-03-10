@@ -15,6 +15,7 @@ import { PasswordValidator } from '../component/validator/password-strong.valida
 import {ErrorStateMatcher} from '@angular/material';
 import { Observable, Subscription  } from 'rxjs';
 import { ConfirmDeleteDialog } from '../share/alert/confirm-delete-dialog.component';
+import * as _ from 'lodash';
 
 interface createdAccount {
   id: number,
@@ -56,6 +57,8 @@ class CrossFieldErrorMatcher implements ErrorStateMatcher {
   ],
 })
 export class MemberComponent implements OnInit {
+  currentAutHUser:any;
+  authenticatedUser:any;
   project_name: string;
   project_id: number;
   project:any;
@@ -125,7 +128,14 @@ export class MemberComponent implements OnInit {
   ngOnInit() {
     this.auth = this.authService.getAuthUser();
     this.setClient();
-   
+    this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
+    this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
+      this.authenticatedUser = res;
+      if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
+
+        } else {
+        }
+    });
     this.projectService.loadAll();
     this.memberFormShow = false;
     this.showMemberSearchForm = false;

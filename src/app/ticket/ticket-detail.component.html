@@ -16,19 +16,19 @@
                 <div class="col-lg-12  mat-0 pad-0">
                     <form [formGroup]="ticketDetailForm" *ngIf="ticketDetailForm">
                         <!-- ETA -->
-                        <div class="form-group"  *ngIf="(isAssignee() || ticket.created_by == auth.username) && etaAccess">
+                        <div class="form-group"  *ngIf="(isAssignee() || ticket.created_by == auth.username) && etaAccess && this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1">
                             <mat-form-field>
                                 <input matInput formControlName="eta"  ([ngModel])="ticketDetailForm.eta" placeholder="ETA(Hourly)" required>
                             </mat-form-field>
                             <a href="#"  name="eta"  class="mar-l-10"  (click)="updateTicketEta()">Update</a>
                             <span class="pad-l-10"><img *ngIf="updating_eta" src="../../assets/icon/loading.gif" width="20" height="20"></span>
                         </div>
-                        <div class="form-group"  *ngIf="etaAccess && (!isAssignee() && ticket.created_by !== auth.username)">
+                        <div class="form-group"  *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0 || etaAccess && (!isAssignee() && ticket.created_by !== auth.username)">
                             <label class="mar-r-10" for="ticket-eta">ETA:</label>
                             <span class="pad-x-10 pad-y-5">{{ ticket.eta }}</span>
                         </div>
                         <!-- Status -->
-                        <div class="form-group"  *ngIf="isAssignee() || ticket.created_by == auth.username">
+                        <div class="form-group"  *ngIf="(isAssignee() || ticket.created_by == auth.username) && this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1">
                             <label class="mar-r-10" for="ticket-status">Status  </label>
                             <select #ticketStatus (change)="updateTicketStatus(ticketStatus.value)">
                                 <option  *ngFor="let stat of ticketStatusList" [value]="stat.id" [selected]="stat.id == ticket.status_id">{{stat.name}}</option>
@@ -39,40 +39,40 @@
                                     <mat-option  *ngFor="let stat of ticketStatusList" [value]="stat.id">{{stat.name}}</mat-option>
                                 </mat-select>
                               </mat-form-field> -->
-                            <a href="#"  class="mar-l-10" (click)="openStatusHistoryDialog(ticket_logs)">Logs</a>
+                            <a href="#" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1"  class="mar-l-10" (click)="openStatusHistoryDialog(ticket_logs)">Logs</a>
                             <span class="pad-l-10"><img *ngIf="updating_status" src="../../assets/icon/loading.gif" width="20" height="20"></span>
                         </div>
-                        <!-- Assignees -->
-                        <div class="form-group" *ngIf="!isAssignee() && ticket.created_by !== auth.username" >
+                        <!-- Status -->
+                        <div class="form-group" *ngIf="(!isAssignee() && ticket.created_by !== auth.username) || this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0" >
                             <label class="mar-r-10" for="ticket-status">Status:</label>
                             <span class="pad-x-10 pad-y-5">{{ ticket.status.name | titlecase }}</span>
                         </div>
                         <!-- Priority -->
-                        <div class="form-group" *ngIf="isAssignee() || ticket.created_by == auth.username" >
+                        <div class="form-group" *ngIf="(isAssignee() || ticket.created_by == auth.username) && this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1" >
                             <label class="mar-r-10" for="ticket-status">Priority</label>
                             <select  #ticketPriority (change)="updateTicketPriority(ticketPriority.value)">
                                 <option  *ngFor="let setting of settings" [value]="setting.id" [selected]="setting.id == ticket.priority.id">{{setting.name}}</option>
                             </select>
                             <span class="pad-l-10"><img *ngIf="updating_priority" src="../../assets/icon/loading.gif" width="20" height="20"></span>
                         </div>
-                        <div class="form-group" *ngIf="!isAssignee() && ticket.created_by !== auth.username" >
+                        <div class="form-group" *ngIf="(!isAssignee() && ticket.created_by !== auth.username) || this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0" >
                             <label class="mar-r-10" for="ticket-status">Priority:</label>
                             <span [style.background-color]="ticket.priority.color" class="font-white pad-x-10 pad-y-5">{{ ticket.priority.name | titlecase }}</span>
                         </div>
                         <!-- Category -->
-                        <div class="form-group" *ngIf="isAssignee() || ticket.created_by == auth.username" >
+                        <div class="form-group" *ngIf="(isAssignee() || ticket.created_by == auth.username) && this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1" >
                             <label class="mar-r-10" for="ticket-status">Category</label>
                             <select  #ticketCategory (change)="updateTicketCategory(ticketCategory.value)">
                                 <option  *ngFor="let category of ticketCategories" [value]="category.id" [selected]="category.id == ticket.category_id">{{category.name}}</option>
                             </select>
                             <span class="pad-l-10"><img *ngIf="updating_category" src="../../assets/icon/loading.gif" width="20" height="20"></span>
                         </div>
-                        <div class="form-group" *ngIf="!isAssignee() && ticket.created_by !== auth.username" >
+                        <div class="form-group" *ngIf="(!isAssignee() && ticket.created_by !== auth.username) && this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0" >
                             <label class="mar-r-10" for="ticket-status">Category:</label>
                             <span class="pad-x-10 pad-y-5"><b>{{ ticket.category.name | titlecase }}</b></span>
                         </div>
                         <!-- Patches -->
-                        <div class="form-group" *ngIf="isAssignee() || ticket.created_by == auth.username">
+                        <div class="form-group" *ngIf="(isAssignee() || ticket.created_by == auth.username) && this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1">
                             <label class="mar-r-10" for="ticket-patch">Patch</label>
                             <select *ngIf="ticket_patches.length < 1"  #ticketPatch (change)="updateTicketPatch(ticketPatch.value)">
                                 <option value="">NA</option>
@@ -111,7 +111,7 @@
                                 </div>
                                 <div  class="row">
                                     <div class="col">
-                                        <div class="col-lg-23">
+                                        <div class="col-lg-12 pad-0" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1">
                                             <div><h2>Add Assignee</h2></div>
                                             <div class="row pad-x-10">
                                                 <input #searchMember class="half-width pad-10" type="text" placeholder="search member">
@@ -140,8 +140,8 @@
                             <div class="col-lg-12">
                                 <div class="row">
                                     <div class="col-lg-2 col-md-3 col-sm-4 border-rad-5 text-center bg-success font-white pad-5 mar-10">
-                                        <strong *ngIf="ticketAssigned(ticket.assigned_to.user_details.user_id)">Assigned to you</strong>
-                                        <strong  *ngIf="!ticketAssigned(ticket.assigned_to.user_details.user_id)">{{ticket.assigned_to.user_details.first_name}} {{ticket.assigned_to.user_details.last_name}} ({{ticket.assigned_to.username}})</strong>
+                                        <strong *ngIf="ticketAssigned(ticket.assigned_to.user_details.user_id) && this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1">Assigned to you</strong>
+                                        <strong  *ngIf="!ticketAssigned(ticket.assigned_to.user_details.user_id) && this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">{{ticket.assigned_to.user_details.first_name}} {{ticket.assigned_to.user_details.last_name}} ({{ticket.assigned_to.username}})</strong>
                                         <!-- <a href="#" class="pull-right" (click)="removeTagUser(tag)"> <i class="btn btn-danger pos-ab fa fa-remove"></i></a> -->
                                     </div>
                                 </div>
@@ -157,7 +157,7 @@
                                 <div class="row">
                                     <div *ngFor="let tag of ticket.tag_users" class="col-lg-3 col-md-4 col-sm-6 border-rad-5 bg-success font-white pad-5 mar-10">
                                         {{tag.user.user_details.first_name}} {{tag.user.user_details.last_name}} ({{tag.user.username}})
-                                        <a href="#" class="pull-right" (click)="removeTagUser(tag)"> <i class="btn btn-danger pos-ab fa fa-remove"></i></a>
+                                        <a *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1" href="#" class="pull-right" (click)="removeTagUser(tag)"> <i class="btn btn-danger pos-ab fa fa-remove"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +195,8 @@
                                 <!-- <label for="task">{{ task.title }}</label> -->
                                 <!-- <input type="checkbox"  > -->
                                 <div class="col">
-                                    <mat-checkbox [checked]="task.status == 1" (change)="updateTaskStatus($event, task)">{{ task.title | ellipsis:15 }}</mat-checkbox>
+                                    <mat-checkbox *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1" [checked]="task.status == 1" (change)="updateTaskStatus($event, task)">{{ task.title | ellipsis:15 }}</mat-checkbox>
+                                    <p *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">{{ task.title | ellipsis:15 }}</p>
                                 </div>
                                 <div class="col">
                                     <p>{{ task.description | ellipsis:30}}</p>
@@ -204,8 +205,13 @@
                                     <button class="pull-right" mat-icon-button (click)="selectTask(task)" [matMenuTriggerFor]="task_info"  aria-label="Example icon-button with a menu">
                                         <mat-icon>more_vert</mat-icon>
                                     </button>
-                                    <mat-menu #task_info="matMenu" backdropClass="task-menu-pull-right">
-                                        <button mat-menu-item (click)="openTaskDetailDialog(selectedTask)">
+
+                                    <mat-menu  #task_info="matMenu" backdropClass="task-menu-pull-right">
+                                        <button *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0" mat-menu-item (click)="openTaskDetailDialog(selectedTask)">
+                                            <mat-icon>edit</mat-icon>
+                                            <span>View</span>
+                                        </button>
+                                        <button *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1" mat-menu-item (click)="openTaskDetailDialog(selectedTask)">
                                             <mat-icon>edit</mat-icon>
                                             <span>Edit</span>
                                         </button>
@@ -213,7 +219,7 @@
                                             <mat-icon>file_copy</mat-icon>
                                             <span>Clone</span>
                                         </button> -->
-                                        <button mat-menu-item (click)="removeTask(selectedTask.id)">
+                                        <button *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1" mat-menu-item (click)="removeTask(selectedTask.id)">
                                             <mat-icon>delete</mat-icon>
                                             <span>Remove</span>
                                         </button>
@@ -247,7 +253,7 @@
                         
                     </div>
                     <div class="row">
-                        <button *ngIf="showAddCheckListForm" (click)="toggleCheckListForm(1)" mat-button mat-raised-button><i class="fa fa-plus"> Add an item</i></button>
+                        <button *ngIf="showAddCheckListForm && this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1" (click)="toggleCheckListForm(1)" mat-button mat-raised-button><i class="fa fa-plus"> Add an item</i></button>
                     </div>
                 </div>
             </div>
@@ -333,7 +339,7 @@
                 </div>
                 <!-- <input type="text" [mention]="mentions" [mentionConfig]="mentionConfig"> -->
                 <textarea *ngIf="replyView && !loading"  class="form-control replayTextArea"[mention]="items"  [mentionConfig]="mentionConfig" id="commentReplayBox" rows="5" #replyText (keyup)="onReplayKey(replyText.value)" (blur)="onReplayKey(replyText.value)"></textarea>
-                <button type="submit" (click)="submitReplyBox()" class="btn btn-info mar-0-auto pad-x-30 font-25 mar-t-20">Comment</button>
+                <button *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1" type="submit" (click)="submitReplyBox()" class="btn btn-info mar-0-auto pad-x-30 font-25 mar-t-20">Comment</button>
             </div>
         </div>
     </div>

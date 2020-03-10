@@ -49,12 +49,23 @@ export class AuthService {
     getAll(): Observable<User[]> {
         return this.http.get<User[]>(this.config.apiEndPoint()+'/users');
     }
+    currentAuthenticatedUser(){
+        if(localStorage.getItem("currentUser")){
+            this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
+        }
+        return  this.http.get(this.config.apiEndPoint()+'/api/auth-user?updated_user=1',this.jt());
+    }
+    currentLocalAuthenticatedUser(){
+        return  JSON.parse(localStorage.getItem("authUser"));
+
+    }
     getAuthenticatedUser(){
         if(localStorage.getItem("currentUser")){
             this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
         }
         return this.http.get<User[]>(this.config.apiEndPoint()+'/api/user',this.jt());
     }
+    
     getAuthenticatedUserProfile(id:number){
         if(localStorage.getItem("currentUser")){
             this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;

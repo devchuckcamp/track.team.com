@@ -9,6 +9,7 @@ import { SettingService } from '../service/setting.service';
 import { MetaService } from '../service/meta.service';
 import { TaskService } from '../service/task.service';
 import { GlobalRoutesService } from '../config/config';
+import * as _ from 'lodash';
 //Pipes
 
 // Model
@@ -51,6 +52,8 @@ today.setMinutes(0);
 })
 
 export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
+    currentAutHUser:any;
+    authenticatedUser:any;
     tickets: Ticket[] = [];
     ticket: any;
     eta:any = 0;
@@ -334,7 +337,15 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     }
 
     ngOnInit() {
-      
+      this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
+      this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
+        this.authenticatedUser = res;
+        if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
+
+          } else {
+
+          }
+      });
       this.assignableMembersFiltered = false;
       // Settings
       this.settingService.settings.subscribe( (res:any) => {

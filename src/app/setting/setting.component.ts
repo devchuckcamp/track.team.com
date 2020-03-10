@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { SettingService } from '../service/setting.service';
+import { AuthService } from '../service/auth.service';
+
+import * as _ from 'lodash';
 
 type TicketPriorityType = Array<{id: number, name: string }>;
 type TicketStatusType = Array<{id: number, name: string }>;
@@ -17,6 +20,9 @@ const add = {
 })
 
 export class SettingComponent implements OnInit {
+  currentAutHUser:any;
+  authenticatedUser:any;
+
   settings:any[] = [];
   step:number;
   // Option Initiators
@@ -26,12 +32,20 @@ export class SettingComponent implements OnInit {
   ticketSettingToAdd:TicketOptionSetting;
   constructor(
     private settingService:SettingService,
+    private authService: AuthService,
   ) {
     this.step = 0;
   }
 
   ngOnInit() {
+    this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
+    this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
+      this.authenticatedUser = res;
+      if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
 
+        } else {
+        }
+    });
     this.ticketSettingToAdd = add;
     this.ticketOptionLoaded = false;
     this.settingService.settings.subscribe( (res:any) => {
