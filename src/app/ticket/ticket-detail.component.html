@@ -88,12 +88,12 @@
                         <!-- Created -->
                         <div class="form-group" *ngIf="ticket">
                             <label class="mar-r-10" for="ticket-patch">Created</label>
-                            <label  for="ticket_last_action" ><label *ngIf="ticket.created_at">{{ ticket.created_at | date: 'medium'}}</label></label>
+                            <label  for="ticket_last_action" ><label *ngIf="ticket.created_at">{{ ticket.created_at | customdate: "MMM DD, YYYY hh:mm::ss a"}}</label></label>
                         </div>
                         <!-- Last Update -->
                         <div class="form-group" *ngIf="ticket.last_action">
                             <label class="mar-r-10" for="ticket-patch">Last Update</label>
-                            <label for="ticket_last_action"><label *ngIf="ticket.last_action.created_at" [innerHTML]="ticket.last_action.created_at | date: 'medium'"></label> <label [innerHTML]="', '+ticket.last_action.message"></label></label>
+                            <label for="ticket_last_action"><label *ngIf="ticket.last_action.created_at" [innerHTML]="ticket.last_action.created_at | customdate: 'MMM DD, YYYY hh:mm::ss a'"></label> <label [innerHTML]="', '+ticket.last_action.message"></label></label>
                         </div>
                         <!-- Assignees -->
                         <div *ngIf="ticket.assignees" class="row form-group">
@@ -298,7 +298,7 @@
                             <div [ngClass]="{'comment-own order-md-2': thread.user_id == auth.id}"
                                 class="col card-header thread-message-head q-width border-rad-10 pad-20 mar-r-10"> <label
                                     for="">{{thread.user_id == auth.id ? 'You' : thread.message_by.name }}</label>
-                                : <label  class="message-create">{{thread.created_at | date: 'medium' }}</label></div>
+                                : <label  class="message-create">{{thread.created_at | customdate: "MMM DD, YYYY hh:mm::ss a" }}</label></div>
                             <div [ngClass]="{'text-left': thread.user_id == auth.id, 'text-left': thread.message_by.username != loggedin_user}"
                                 class="col-lg-9 card-body thread-message-wrapper">{{thread.message}}</div>
                         </div>

@@ -150,7 +150,7 @@
                   <td [routerLink]="[ticket.id]" [ngStyle]="{'background-color': ticket.status.color, 'color':'#fafafa'}">{{ticket.status.name | titlecase}}</td>
                   <td [routerLink]="[ticket.id]" class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
                   <td [routerLink]="[ticket.id]">{{ticket.created_by}}</td>
-                  <td [routerLink]="[ticket.id]">{{ticket.created_at | date: 'medium'}}</td>
+                  <td [routerLink]="[ticket.id]">{{ticket.created_at | customdate: "MMM DD, YYYY hh:mm::ss a"}}</td>
                   <a href="#" (click)="viewTicket(ticket.id)" class="btn btn-success"><i class="fa fa-pencil"></i></a>
               </tr>
           </tbody>

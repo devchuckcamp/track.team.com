@@ -15,7 +15,6 @@ import { FormGroup, FormBuilder, FormControl, Validators, EmailValidator } from 
 import { trigger, style, animate, transition } from '@angular/animations';
 import { MatSnackBar  } from '@angular/material';
 import { Observable } from "rxjs"
-import * as _ from 'lodash';
 
 interface ProjectMemberInfo{
   id: number;
@@ -143,14 +142,9 @@ export class TicketComponent implements OnInit, OnDestroy {
       this.filter = '';
       this.statusFilter.length =0;
       this.auth = this.authService.getAuthUser();
-      this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
-      this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
+      this.authService.currentAuthenticatedUser();
+      this.authService.profile.subscribe((res:any) => {
         this.authenticatedUser = res;
-        if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
-
-          } else {
-
-          }
       });
 
       this.settingService.settings.subscribe( (res:any) => {

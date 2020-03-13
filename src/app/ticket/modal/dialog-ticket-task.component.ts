@@ -44,12 +44,9 @@ export interface DialogData {
     }
     ngOnInit(){
       this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
-        this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
+        this.authService.currentAuthenticatedUser();
+        this.authService.profile.subscribe(res=>{
           this.authenticatedUser = res;
-          if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
-
-            } else {
-            }
         });
     }
     // updateTaskDetail(){

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
-import { Observable, throwError, Subject } from 'rxjs';
+import { Observable, throwError, Subject, BehaviorSubject, of } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators'
 import { map, take } from 'rxjs/operators';
 import { User } from '../model/user';
@@ -13,6 +13,8 @@ export class AuthService {
     apiEndpoint:string;
     Bearer:any;
     CSRF_TOKEN:any;
+    authUserInfo:Observable<any> = JSON.parse(localStorage.getItem("authUser"));
+    profile: Subject<User> = new Subject();
     constructor(
         private config: GlobalRoutesService,
         private client:ClientGlobalRoutesService,
@@ -27,6 +29,7 @@ export class AuthService {
             } else {
                 localStorage.setItem('csrf_token',JSON.stringify({'token':'lkcc371220183d'}));
             }
+            this.currentAuthenticatedUser();
         }
 
     loginAuth (username:string,password:string): Observable<any> {
@@ -53,7 +56,18 @@ export class AuthService {
         if(localStorage.getItem("currentUser")){
             this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
         }
-        return  this.http.get(this.config.apiEndPoint()+'/api/auth-user?updated_user=1',this.jt());
+        // const authUserInfoObservable = new Observable(observer => {
+        //     setTimeout(() => {
+        //         this.authUserInfo = this.http.get(this.config.apiEndPoint()+'/api/auth-user?updated_user=1',this.jt());
+        //         console.log('from service', this.authUserInfo);
+        //         observer.next(this.authUserInfo);
+        //     }, 500);
+        // });
+        // this.authUserInfo = of(this.http.get(this.config.apiEndPoint()+'/api/auth-user?updated_user=1',this.jt()));
+        // return this.authUserInfo;
+        this.http.get<User>(this.config.apiEndPoint()+'/api/user',this.jt()).subscribe(res => {
+            this.profile.next(res);
+        });
     }
     currentLocalAuthenticatedUser(){
         return  JSON.parse(localStorage.getItem("authUser"));
@@ -64,6 +78,9 @@ export class AuthService {
             this.Bearer = JSON.parse(localStorage.getItem("currentUser")).access_token;
         }
         return this.http.get<User[]>(this.config.apiEndPoint()+'/api/user',this.jt());
+        this.http.get<User>(this.config.apiEndPoint()+'/api/user',this.jt()).subscribe(res => {
+            this.profile.next(res);
+        });
     }
     
     getAuthenticatedUserProfile(id:number){
@@ -90,7 +107,7 @@ export class AuthService {
     delete(id: number) {
         return this.http.delete(this.config.apiEndPoint()+'/users/id');
     }
-
+    
     private jt() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer '+this.Bearer,

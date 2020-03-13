@@ -34,11 +34,14 @@
             </ng-container>
       
             <!-- Options Column -->
-            <ng-container matColumnDef="action" *ngIf="auth">
-               <th mat-header-cell *matHeaderCellDef> Access </th>
+            <ng-container matColumnDef="action" *ngIf="auth" >
+               <th mat-header-cell *matHeaderCellDef class="text-center"> Access </th>
               
-              <td mat-cell class="member-action-cell" *matCellDef="let element">
-                <mat-checkbox  [checked]="element.user_crud_access.value.value == 1  ? true : false" (input)="toggleActiveCrudAccess(element.id, $event.target.checked, element.user_crud_access.id)">Access</mat-checkbox>
+              <td mat-cell class="member-action-cell config-access-column text-center" *matCellDef="let element">
+                <mat-checkbox *ngIf="element.request_user_crud_access == null" [checked]="element.user_crud_access.value.value == 1  ? true : false" (input)="toggleActiveCrudAccess(element.id, $event.target.checked, element.user_crud_access.id)">Access</mat-checkbox>
+                <a href="#" title="Accept request" *ngIf="element.request_user_crud_access !== null" (click)="acceptRequest(element)" mat-button color="primary"><mat-icon>check</mat-icon></a>
+                <a href="#" title="Decline request" *ngIf="element.request_user_crud_access !== null" (click)="declineRequest(element)" mat-button color="warn"><mat-icon>close</mat-icon></a>
+                <a href="#" *ngIf="element.request_user_crud_access !== null && element.request_user_crud_access.note" (click)="viewRequest(element)" title="{{element.request_user_crud_access.note}}" mat-button color="basic"><mat-icon>info</mat-icon></a>
                 <!-- <a  class="btn btn-success mar-x-5" [routerLink]="element.id !== auth.id ?  [ '/sos/admin/projects', project_name , 'members' ,element.id ] : '/sos/admin/profile'" > <i class="fa fa-eye"></i></a> 
                 <a  *ngIf="element.id !== 1 && element.id == auth.id" [title]="element.id == auth.id ? 'Leave from Project' : 'Remove from Project'" class="btn btn-danger mar-x-5 font-white"><i class="fa fa-minus-circle"></i></a> -->
               </td>

@@ -35,6 +35,7 @@ import { MetaService } from '../service/meta.service';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { FormsModule,ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators, EmailValidator,
   FormGroupDirective, NgForm, } from '@angular/forms';
+  import { ApplicationPipesModule } from '../component/pipe/pipe.module';
 // Material
 import {
   MatAutocompleteModule,
@@ -141,6 +142,7 @@ import { MentionModule } from 'angular-mentions';
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     MentionModule,
     ProjectSettingModule,
+    ApplicationPipesModule,
   ],
   providers: [
     AuthService,

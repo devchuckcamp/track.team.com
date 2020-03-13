@@ -9,7 +9,10 @@ import { ThreadService } from '../service/thread.service';
 import { TicketService } from '../service/ticket.service';
 import { MemberService } from '../service/member.service';
 import { NotificationService } from '../service/notification.service';
+import { RequestService} from '../service/request.service';
+
 import { Project } from '../model/project';
+import { User } from '../model/user';
 import { Observable, Subscription  } from 'rxjs';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import * as _ from 'lodash';
@@ -70,6 +73,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     private threadService:ThreadService,
     private memberService:MemberService,
     private menuService:MenuService,
+    private requestService:RequestService,
     private snackBar: MatSnackBar,
     private notificationService:NotificationService,
   ) {
@@ -84,10 +88,11 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     this.setClient();
     this.setAvatar();
     this.setUser();
-    
-    this.router.events.subscribe(path =>{
 
+    this.setAuthUser();
+    this.router.events.subscribe(path =>{
       if(path instanceof NavigationEnd ){
+        this.authService.currentAuthenticatedUser();
         //Get Url
         let currentURL = path.url;
         //Get Params
@@ -143,14 +148,6 @@ export class NavbarComponent implements OnInit, OnDestroy  {
 
 
   ngOnInit() {
-    this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
-      this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
-        this.authenticatedUser = res;
-        if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
-
-          } else {
-          }
-      });
     this.userService.currentAvatar.subscribe(avatar => {
       this.user_avatar = avatar ;
     });
@@ -183,24 +180,38 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     this.userService.clearClient();
     this.userService.clearUser();
     this.userService.clearClientInfo();
+    this.authService.profile.unsubscribe();
   }
   hideUserUpdatePanel(){
     this.hide_user_update = true;
     return false;
   }
   sendAccessRequest(){
-    this.snackBar.open('Request has been sent', 'X', {
+    let data = {type:'user_crud_access', note:'Need access to update ticket'};
+    this.requestService.save(data).subscribe((res:any)=>{
+      this.snackBar.open('Request has been sent', 'X', {
         duration: 5000,
         direction: "ltr",
         verticalPosition:"top",
         horizontalPosition: "right",
         panelClass: "success-snack"
+      });
+      this.hide_user_update = true;
     });
 
     return false;
   }
   setUser():void {
     this.subscription = this.userService.currentLoggedInUser.subscribe( (res:any) => { this.auth_user = JSON.parse(res); });
+  }
+  setAuthUser():void {
+    this.subscription = this.authService.profile.subscribe((res:User) => {
+      this.authenticatedUser = res;
+      if(this.authenticatedUser.request_user_crud_access !== null){
+        this.hide_user_update = true;
+      }
+      localStorage.setItem('authUser', JSON.stringify(res));
+    });
   }
   setClientInfo():void {
     this.subscription = this.userService.currentClientInfo.subscribe(client_info => { this.auth_client_info = client_info;  });
@@ -222,7 +233,6 @@ export class NavbarComponent implements OnInit, OnDestroy  {
         this.notification[i].read = 1;
       }
     });
-    console.log('read', this.notification);
     return false;
   }
 
@@ -255,8 +265,8 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     this.threadService.Bearer = '';
     this.ticketService.Bearer = '';
     this.memberService.Bearer = '';
+    this.subscription.unsubscribe();
 
-    window.location.href='/'
     return false;
   }
 

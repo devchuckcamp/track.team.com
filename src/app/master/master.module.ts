@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {NgbModule, NgbAlertModule} from '@ng-bootstrap/ng-bootstrap';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { MasterRoutingModule } from './master-routing.module';
+import { ApplicationPipesModule } from '../component/pipe/pipe.module';
 // Components
 import { MasterComponent } from './master.component';
 import { MasterNavbarComponent } from './navbar/master-navbar.component';
@@ -78,6 +79,7 @@ import { MentionModule } from 'angular-mentions';
     NgbModule.forRoot(),
     NgbAlertModule,
     MasterRoutingModule,
+    ApplicationPipesModule,
     SlickCarouselModule,
     MatAutocompleteModule,
     MatBadgeModule,

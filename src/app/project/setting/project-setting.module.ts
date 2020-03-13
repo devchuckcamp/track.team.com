@@ -7,6 +7,7 @@ import { ProjectSettingRoutingModule } from './project-setting-routing.module';
 import { CommonModule } from '@angular/common';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
+import { ApplicationPipesModule } from '../../component/pipe/pipe.module';
 // Material
 import {
   MatAutocompleteModule,
@@ -93,6 +94,7 @@ import {
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
+    ApplicationPipesModule,
   ],
   exports:[
     TicketPatchSettingComponent,

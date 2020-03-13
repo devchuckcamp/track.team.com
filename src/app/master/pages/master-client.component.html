@@ -36,7 +36,7 @@
                         <th mat-header-cell *matHeaderCellDef> Activated </th>
                         <td mat-cell *matCellDef="let element"> 
                             <p *ngIf="element.activated == null">{{ element.activated !== null ? unixTStoDate(element.activated)  : 'No Subscription'}}</p>
-                            <p *ngIf="element.activated">{{ unixTStoDate(element.activated) | date:'medium' }}</p>
+                            <p *ngIf="element.activated">{{ unixTStoDate(element.activated) | customdate: "MMM DDD, YYYY hh:mm::ss a" }}</p>
                         </td>
                     </ng-container>
                      <!-- Expiry Date Column -->
@@ -44,7 +44,7 @@
                         <th mat-header-cell *matHeaderCellDef> Expiration </th>
                         <td mat-cell *matCellDef="let element"> 
                             <p *ngIf="element.valid_until == null">{{ element.valid_until == null ? 'NA' : unixTStoDate(element.valid_until)  }} </p>
-                            <p *ngIf="element.valid_until">{{ unixTStoDate(element.valid_until) | date:'medium'  }} </p>
+                            <p *ngIf="element.valid_until">{{ unixTStoDate(element.valid_until) | customdate: "MMM DDD, YYYY hh:mm::ss a"  }} </p>
                         </td>
                     </ng-container>
                      <!-- Status Column -->

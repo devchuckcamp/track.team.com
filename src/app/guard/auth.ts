@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
         let domain = localStorage.getItem('domain');
 
         if (localStorage.getItem('currentUser') !== null) {
-            this.authService.getAuthenticatedUser().subscribe( res => {
+            this.authService.profile.subscribe( res => {
                 localStorage.setItem('authUser',JSON.stringify(res));
             });
             return true;

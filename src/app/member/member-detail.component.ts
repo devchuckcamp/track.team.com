@@ -16,6 +16,7 @@ import { FormGroup, FormBuilder, FormControl, Validators, EmailValidator } from 
 export class MemberDetailComponent implements OnInit {
   user:any;
   auth_user:any;
+  authenticatedUser:any;
   user_avatar:any;
   userAvatar:any;
   default_avatar = '../../assets/default-profile.png';
@@ -33,7 +34,10 @@ export class MemberDetailComponent implements OnInit {
 
   ngOnInit() {
     this.initForm();
-
+    this.authService.currentAuthenticatedUser();
+      this.authService.profile.subscribe((res:any) => {
+      this.authenticatedUser = res;
+    });
     this.route.params.subscribe(params => {
       let currentUrl = this.router.url.substring(0, this.router.url.indexOf('?'));
 

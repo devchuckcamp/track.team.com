@@ -2,6 +2,8 @@ import { Component, OnInit, Pipe, PipeTransform  } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart, NavigationEnd, NavigationError, NavigationCancel, RoutesRecognized } from '@angular/router';
 
 import { ProjectService } from '../service/project.service';
+import { AuthService } from '../service/auth.service';
+
 import { Project } from '../model/project';
 
 
@@ -18,10 +20,12 @@ export class ProjectComponent implements OnInit {
   auth_client:any = localStorage.getItem('client');
   constructor(
     private projectService: ProjectService,
+    private authService: AuthService,
     private router:Router
   ) { }
 
   ngOnInit() {
+    this.authService.currentAuthenticatedUser();
     this.projectService.projects.subscribe( (res:any) => {
       this.projects = res;
     });

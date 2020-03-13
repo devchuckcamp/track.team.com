@@ -1,8 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SettingService } from '../service/setting.service';
 import { AuthService } from '../service/auth.service';
-
-import * as _ from 'lodash';
 
 type TicketPriorityType = Array<{id: number, name: string }>;
 type TicketStatusType = Array<{id: number, name: string }>;
@@ -19,7 +17,7 @@ const add = {
   styleUrls: ['./setting.component.scss']
 })
 
-export class SettingComponent implements OnInit {
+export class SettingComponent implements OnInit, OnDestroy {
   currentAutHUser:any;
   authenticatedUser:any;
 
@@ -38,13 +36,9 @@ export class SettingComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
-    this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
+    this.authService.currentAuthenticatedUser();
+    this.authService.profile.subscribe((res:any) => {
       this.authenticatedUser = res;
-      if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
-
-        } else {
-        }
     });
     this.ticketSettingToAdd = add;
     this.ticketOptionLoaded = false;
@@ -53,7 +47,9 @@ export class SettingComponent implements OnInit {
       this.ticketOptionLoaded = true;
     });
   }
+  ngOnDestroy(){
 
+  }
   addTicketPrioritySetting(){
     this.settingService.save(this.ticketSettingToAdd).subscribe( (res:any) => {
       this.settingService.loadAll();

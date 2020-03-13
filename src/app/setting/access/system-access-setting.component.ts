@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnChanges } from '@angular/core';
 import { SettingService } from '../../service/setting.service';
 
 import { User } from '../../model/user';
 import { UserService } from '../../service/user.service';
 import { AuthService } from '../../service/auth.service';
 import { MetaService } from '../../service/meta.service';
+import { RequestService } from '../../service/request.service';
 
 
 import {MatPaginator, MatSnackBar, MatTableDataSource, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
@@ -13,7 +14,6 @@ import { trigger, style, animate, transition } from '@angular/animations';
 import {ErrorStateMatcher} from '@angular/material';
 import { Observable, Subscription  } from 'rxjs';
 import { ConfirmDeleteDialog } from '../../share/alert/confirm-delete-dialog.component';
-import * as _ from 'lodash';
 
 const ELEMENT_DATA: User[] = [];
 const projectsInvitationList: Array<number> = [];
@@ -68,19 +68,16 @@ export class SystemAccessSettingComponent implements OnInit {
         private userService:UserService,
         private authService:AuthService,
         private metaService:MetaService,
+        private requestService: RequestService,
         private snackBar: MatSnackBar,
     ) {
         this.step = 0;
     }
 
     ngOnInit() {
-        this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
-        this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
-        this.authenticatedUser = res;
-        if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
-
-            } else {
-            }
+        this.authService.currentAuthenticatedUser();
+        this.authService.profile.subscribe((res:User) => {
+            this.authenticatedUser = res;
         });
         this.client_slug = localStorage.getItem('client');
         this.auth = this.authService.getAuthUser();
@@ -144,7 +141,6 @@ export class SystemAccessSettingComponent implements OnInit {
     toggleActiveCrudAccess(user_id:any, event, metaid){
         let meta_value = event ? 1 : 0;
         this.metaService.updateMetaValue(metaid,meta_value).subscribe((res:any)=>{
-            console.log(res);
             this.snackBar.open('Access has been updated', 'X', {
                 duration: 5000,
                 direction: "ltr",
@@ -153,6 +149,69 @@ export class SystemAccessSettingComponent implements OnInit {
                 panelClass: "success-snack"
             });
         });
+    }
+
+    acceptRequest(el){
+        let reqID = el.request_user_crud_access.id;
+        let newData:any;
+        let indexToUpdate:number;
+        this.dataSource.data.find( (item,i) =>{
+            if(item.user_crud_access.value.value==0 && item.id == el.id){
+                newData = item;
+                newData.request_user_crud_access = null;
+                newData.user_crud_access.value.value =1;
+                indexToUpdate =i ;
+                return true;
+            }
+        });
+        this.metaService.updateMetaValue(newData.user_crud_access.id, newData.user_crud_access.value.value).subscribe((res:any)=>{
+            this.removeRequest(reqID);
+            this.dataSource.data[indexToUpdate] = newData;
+            this.snackBar.open('Request has been granted', 'X', {
+                duration: 5000,
+                direction: "ltr",
+                verticalPosition:"top",
+                horizontalPosition: "right",
+                panelClass: "success-snack"
+            });
+        });
+        return false;
+    }
+
+    declineRequest(el){
+        let reqID = el.request_user_crud_access.id;
+        let newData:any;
+        let indexToUpdate:number;
+        this.dataSource.data.find( (item,i) =>{
+            if(item.id == el.id){
+                newData = item;
+                newData.user_crud_access.value.value = 0
+                newData.request_user_crud_access = null;
+                indexToUpdate = i;
+                return true;
+            }
+        });
+        this.metaService.updateMetaValue(newData.user_crud_access.id, 0).subscribe((res:any)=>{
+            this.removeRequest(reqID);
+            this.dataSource.data[indexToUpdate] = newData;
+            this.snackBar.open('Request has been declined', 'X', {
+                duration: 5000,
+                direction: "ltr",
+                verticalPosition:"top",
+                horizontalPosition: "right",
+                panelClass: "warning-snack"
+            });
+        });
+        return false;
+    }
+
+    viewRequest(el){
+        return false;
+    }
+    removeRequest(id){
+        this.requestService.delete(id).subscribe((res)=>{
+
+        })
     }
 
 }

@@ -44,11 +44,11 @@
     </div>
     <div class="row pad-y-5">
         <div class="col"><label *ngIf="data.created_by" for="created_by">Created by: {{ data.created_by.username }}</label></div>
-        <div class="col"><label for="created_at">Date Created: {{ data.created_at | date:'medium'  }}</label></div>
+        <div class="col"><label for="created_at">Date Created: {{ data.created_at | customdate: "MMM DD, YYYY hh:mm::ss a"  }}</label></div>
     </div>
     <div class="row pad-y-5" *ngIf="data.updated_by">
         <div class="col"><label  *ngIf="data.updated_by" for="created_by">Updated by: {{ data.updated_by.username }}</label></div>
-        <div class="col"><label for="created_at">Date Updated: {{ data.updated_at | date:'medium'  }}</label></div>
+        <div class="col"><label for="created_at">Date Updated: {{ data.updated_at | customdate: "MMM DD, YYYY hh:mm::ss a"}}</label></div>
     </div>
     <!-- <div mat-dialog-actions>
         <button mat-button (click)="onNoClick()">Exit</button>

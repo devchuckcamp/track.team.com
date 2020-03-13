@@ -6,6 +6,17 @@ The format is based on and adheres to [Semantic Versioning](https://semver.org/s
 
 ##  [Unreleased]
 
+
+##  [2.1.0] - 2020-03-11
+### Added
+-   CRUD access request to admin feature
+##  Fixed
+-   Date formatting to human readable text
+
+##  [2.0.9.1] - 2020-03-10
+### Updated
+- IOS custom date pipe compatibility
+
 ##  [2.0.9] - 2020-03-10
 ### Added
 - CRUD access denied sitewide notification
@@ -21,7 +32,7 @@ The format is based on and adheres to [Semantic Versioning](https://semver.org/s
 
 ##  [2.0.6.1] - 2020-03-04
 ### Fixed
--	Anchor link included  in comment notification messag removed
+-	Anchor link included  in comment notification message removed
 
 ##  [2.0.6] - 2020-03-04
 

@@ -9,7 +9,6 @@ import { SettingService } from '../service/setting.service';
 import { MetaService } from '../service/meta.service';
 import { TaskService } from '../service/task.service';
 import { GlobalRoutesService } from '../config/config';
-import * as _ from 'lodash';
 //Pipes
 
 // Model
@@ -337,14 +336,9 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     }
 
     ngOnInit() {
-      this.currentAutHUser =  this.authService.currentLocalAuthenticatedUser();
-      this.authService.currentAuthenticatedUser().subscribe((res:any) =>{
+      this.authService.currentAuthenticatedUser();
+      this.authService.profile.subscribe((res:any) => {
         this.authenticatedUser = res;
-        if(_.isEqual(this.currentAutHUser, this.authenticatedUser)){
-
-          } else {
-
-          }
       });
       this.assignableMembersFiltered = false;
       // Settings

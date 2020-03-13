@@ -115,9 +115,9 @@
                     <td [routerLink]="[ticket.id]" class="text-center" [ngStyle]="{'background-color': ticket.priority.color, 'color':'#fafafa'}">{{ticket.priority.name | titlecase}}</td>
                     <td [routerLink]="[ticket.id]">{{ticket.created_by}}</td>
                     <td [routerLink]="[ticket.id]">{{!ticket.eta ? '-' : ticket.eta}}</td>
-                    <td [routerLink]="[ticket.id]">{{ticket.created_at | date: 'medium'}}</td>
+                    <td [routerLink]="[ticket.id]">{{ticket.created_at | customdate: "MMM DD, YYYY hh:mm::ss a"}}</td>
                     <td [routerLink]="[ticket.id]" *ngIf="ticket.last_action" [innerHTML]="ticket.last_action.message"></td>
-                    <td [routerLink]="[ticket.id]" *ngIf="ticket.last_action">{{ticket.last_action.created_at | date: 'medium'}}</td>
+                    <td [routerLink]="[ticket.id]" *ngIf="ticket.last_action">{{ticket.last_action.created_at | customdate: "MMM DD, YYYY hh:mm::ss a"}}</td>
                     <td *ngIf="!ticket.last_action">-</td>
                     <td *ngIf="!ticket.last_action">-</td>
                     <!-- <td [routerLink]="[ticket.id]">{{ ticket.updated_at == ticket.created_at ? '' : ticket.updated_at}}</td> -->
