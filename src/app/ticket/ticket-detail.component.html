@@ -133,8 +133,8 @@
                                                             <strong>{{ member.user.user_details.first_name }} {{ member.user.user_details.last_name }} ({{ member.user.username }})</strong>
                                                         </div>
                                                         <div class="col-3">
-                                                            <a href="#" class="font-white mar-r-5" *ngIf=(isAssignable(member)) (click)="additionalAssignee(member)">Assign</a>
-                                                            <a href="#" class="font-white" *ngIf=(isTaggable(member)) (click)="additionalTag(member)">Tag</a>
+                                                            <a href="#" class="font-white mar-r-5" *ngIf=isAssignable(member) (click)="additionalAssignee(member)">Assign</a>
+                                                            <a href="#" class="font-white" *ngIf=isTaggable(member) (click)="additionalTag(member)">Tag</a>
                                                         </div>
                                                     </div>
                                                 </div>

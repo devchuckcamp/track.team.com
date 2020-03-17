@@ -439,7 +439,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                       res.thread = res.thread.reverse();
 
                       this.ticket = res;
-                      this.tag_users = res.tag_users;
+                      this.tag_users = res.tag_users.map(res=> {return res.user_id });
                       this.ticketDetailForm.value.status = res.status_id;
                       this.metaService.getMetaValue(this.project_name,'project','eta_access', 'auth_user_meta','auth_user_meta').subscribe((res)=>{
                         if(res){
@@ -655,7 +655,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       return false;
     }
     isTaggable(member){
-      if(!this.ticket.tag_users.includes(member.user_id)){
+      if(!this.tag_users.includes(member.user_id)){
         return true;
       }
       return false;
@@ -670,6 +670,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
         if(res){
           this.ticket.tag_users.push(res);
           this.tag_users.push(res.user_id);
+          console.log(this.tag_users);
           console.log('new tags', this.ticket.tag_users);
           this.snackBar.open('Tag Members has been updated', 'X', {
             duration: 5000,
@@ -1072,6 +1073,11 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     removeTagUser(tag_info:any){
       let tag_id = tag_info.id;
       this.ticketService.removeTag(tag_id).subscribe( res => {
+        this.tag_users = this.tag_users.filter(
+          (user )=> {
+            return user !== tag_info.user_id
+          }
+        );
         this.snackBar.open('Member has been removed', 'X', {
               duration: 5000,
               direction: "ltr",
