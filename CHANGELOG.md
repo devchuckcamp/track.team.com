@@ -6,6 +6,9 @@ The format is based on and adheres to [Semantic Versioning](https://semver.org/s
 
 ##  [Unreleased]
 
+##  [2.1.1] - 2020-03-11
+### Added
+-   Assignee and taggable can be add/remove through ticket view page
 
 ##  [2.1.0] - 2020-03-11
 ### Added

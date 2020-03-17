@@ -283,7 +283,13 @@ export class TicketService {
         return forkJoin(https);
     }
 
+    addTagMember(member: any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/tickets-tag-users', member, this.jt());
+    }
 
+    removeAssignee(id:number){
+        return this.http.delete(this.config.apiEndPoint()+'/api/v1/tickets-assign-users/'+id, this.jt());
+    }
     removeTag(id: number) {
         return this.http.delete(this.config.apiEndPoint()+'/api/v1/tickets-tag-users/'+id, this.jt());
     }

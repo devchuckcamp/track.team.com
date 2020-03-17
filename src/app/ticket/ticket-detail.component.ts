@@ -64,6 +64,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     pdfImages = '../assets/pdf-file-preview.png';
     members:any[] =[];
     assigned_user:any =  [];
+    tag_users:any[] = [];
     assignableMembers:any = [];
     assignableMembersFiltered:boolean;
     settings:any[] = [];
@@ -438,6 +439,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                       res.thread = res.thread.reverse();
 
                       this.ticket = res;
+                      this.tag_users = res.tag_users;
                       this.ticketDetailForm.value.status = res.status_id;
                       this.metaService.getMetaValue(this.project_name,'project','eta_access', 'auth_user_meta','auth_user_meta').subscribe((res)=>{
                         if(res){
@@ -635,16 +637,57 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
 
     filterAssignableMember(members:any){
       this.members = members;
-      this.assignableMembers = members.filter((member:any) =>{
-        return !this.assigned_user.includes(member.user_id)
-      });
+      console.log(members);
+      this.assignableMembers = members;
+      // .filter((member:any) =>{
+      //   return !this.assigned_user.includes(member.user_id)
+      // });
+      // console.log(this.assignableMembers);
     }
 
     ticketAssigned(user_id:number){
       return (user_id == this.auth.id ? true: false);
     }
+    isAssignable(member){
+      if(!this.assigned_user.includes(member.user_id)){
+        return true;
+      }
+      return false;
+    }
+    isTaggable(member){
+      if(!this.ticket.tag_users.includes(member.user_id)){
+        return true;
+      }
+      return false;
+    }
+    additionalTag(member){
+      let assigneeObj = {
+        ticket_id:this.ticket.id,
+        user_id:member.user_id,
+      };
+      // Call add assignee service
+      this.ticketService.addTagMember(assigneeObj).subscribe( (res:any)=>{
+        if(res){
+          this.ticket.tag_users.push(res);
+          this.tag_users.push(res.user_id);
+          console.log('new tags', this.ticket.tag_users);
+          this.snackBar.open('Tag Members has been updated', 'X', {
+            duration: 5000,
+            direction: "ltr",
+            verticalPosition: "top",
+            horizontalPosition: "right",
+            panelClass: "success-snack"
+          }
+          );
+        }
+      }, (err)=> {
+          //console.log('ERROR:',err);
+      });
 
-    additionalAssignee(assignee):void{
+      return false;
+    }
+
+    additionalAssignee(assignee){
       if(!this.assigned_user.includes(assignee.user_id)){
         let assigneeObj = [{
           ticket_id:this.ticket.id,
@@ -656,7 +699,9 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
         this.ticketService.addAssignees(assigneeObj).subscribe( (res)=>{
           if(res.length){
             this.assigned_user.push(assignee.user_id);
-            this.ticket.assignees.push(assignee);
+            console.log('assignees', res);
+            this.ticket.assignees.push(res[0]);
+            console.log('new assignees',  this.ticket.assignees);
             this.filterAssignableMember(this.members);
             this.snackBar.open('Assignee has been updated', 'X', {
               duration: 5000,
@@ -673,6 +718,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       } else {
         //console.log(assignee,'member already assigned');
       }
+      return false;
     }
 
     closeAssigneeSearchResults(){
@@ -1008,9 +1054,32 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       });
     }
 
+    removeAssignee(assignee:any){
+      console.log(this.assigned_user);
+      this.ticketService.removeAssignee(assignee.id).subscribe( res => {
+        this.ticket.assignees = this.ticket.assignees.filter(
+          (assgn) =>{ return assgn.user_id !== assignee.user_id });
+        });
+        this.assigned_user = this.assigned_user.filter(
+          (user )=> {
+            return user !== assignee.user_id
+          }
+        );
+        console.log(this.assigned_user);
+      return false;
+    }
+
     removeTagUser(tag_info:any){
       let tag_id = tag_info.id;
       this.ticketService.removeTag(tag_id).subscribe( res => {
+        this.snackBar.open('Member has been removed', 'X', {
+              duration: 5000,
+              direction: "ltr",
+              verticalPosition:"top",
+              horizontalPosition: "right",
+              panelClass: "success-snack"
+          }
+        );
         this.ticket.tag_users = this.ticket.tag_users.filter(
           tag => tag.id !== tag_info.id);
       });

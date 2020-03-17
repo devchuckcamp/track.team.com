@@ -188,7 +188,7 @@
         <h2>Member of:</h2>
     </div>
     <div *ngIf="auth_user.projects" class="row">
-        <div *ngFor="let project of auth_user.projects" class="col-lg-2 text-center bg-success mar-x-5 pad-y-5 font-white font-bold border-rad-5 clickable">
+        <div *ngFor="let project of auth_user.projects" class="col-lg-2 pad-y-15 text-center bg-success mar-x-5 pad-y-5 font-white font-bold mar-t-10 clickable">
             {{project.project.name | titlecase}}
         </div>
     </div>
