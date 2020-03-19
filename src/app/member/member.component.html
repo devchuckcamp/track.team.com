@@ -1,4 +1,4 @@
-<div class="col-lg-12 member-list-container-option">
+<div class="col-lg-12 member-list-container-option" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1">
   <div  class="col-lg-12 content-option text-right mar-10 pad-10">
       <!-- Add -->
       <a href="#" *ngIf="auth.role_id < 4 && !memberFormShow && !memberInviteFormShow" (click)="toggleMemberForm()" class="btn btn-success mar-r-20 q-width"><i class="fa fa-plus-square mar-r-5 q-width"> Add Member</i></a>
@@ -240,4 +240,9 @@
       </form>
     </div>
   </div>
+</div>
+<div class="col-md-12 member-list-container-option text-center" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">
+  <p class="mar-0-auto pad-20"><i class="material-icons">
+    desktop_access_disabled
+    </i>You don't have access for this module.</p>
 </div>

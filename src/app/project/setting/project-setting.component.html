@@ -26,7 +26,8 @@
                   Project Priority Options
               </mat-panel-description>
             </mat-expansion-panel-header>
-            <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
+            <p class="text-center" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1">This feature is under development <i class="fa fa-wrench"></i></p>
+            <p class="text-center" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">You don't have access for this module.</p>
           </mat-expansion-panel>
         </mat-accordion>
       </div>
@@ -46,7 +47,8 @@
                 Ticket Patch
               </mat-panel-description>
             </mat-expansion-panel-header>
-            <ticket-patch-setting></ticket-patch-setting>
+            <ticket-patch-setting *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1"></ticket-patch-setting>
+            <p class="text-center" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">You don't have access for this module.</p>
           </mat-expansion-panel>
   
           <mat-expansion-panel [expanded]="step == 3" (opened)="panelOpenState = true" (opened)="setStep(3)" (closed)="panelOpenState = false">
@@ -59,7 +61,8 @@
                 Status Options
               </mat-panel-description>
             </mat-expansion-panel-header>
-            <ticket-status-setting></ticket-status-setting>
+            <ticket-status-setting *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1"></ticket-status-setting>
+            <p class="text-center" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">You don't have access for this module.</p>
           </mat-expansion-panel>
   
           <mat-expansion-panel [expanded]="step == 4" (opened)="panelOpenState = true" (opened)="setStep(4)" (closed)="panelOpenState = false">
@@ -71,7 +74,8 @@
                 Category Options
               </mat-panel-description>
             </mat-expansion-panel-header>
-            <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p>
+            <p class="text-center" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1">This feature is under development <i class="fa fa-wrench"></i></p>
+            <p class="text-center" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">You don't have access for this module.</p>
           </mat-expansion-panel>
         </mat-accordion>
       </div>

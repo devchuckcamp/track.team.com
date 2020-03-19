@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { SettingService } from '../../service/setting.service';
+import { AuthService } from '../../service/auth.service';
 
+import { User} from '../../model/user';
 type TicketPriorityType = Array<{id: number, name: string }>;
 type TicketStatusType = Array<{id: number, name: string }>;
 type  TicketOptionSetting = {name: string, color: string };
@@ -19,6 +21,7 @@ const add = {
 export class ProjectSettingComponent implements OnInit {
   settings:any[] = [];
   step:number;
+  authenticatedUser:User;
   // Option Initiators
   ticketOptionLoaded: boolean;
   ticketPriorityList: TicketPriorityType = [];
@@ -26,12 +29,16 @@ export class ProjectSettingComponent implements OnInit {
   ticketSettingToAdd:TicketOptionSetting;
   constructor(
     private settingService:SettingService,
+    private authService:AuthService,
   ) {
     this.step = 0;
   }
 
   ngOnInit() {
-
+    this.authService.currentAuthenticatedUser();
+    this.authService.profile.subscribe((res:any) => {
+      this.authenticatedUser = res;
+    });
     this.ticketSettingToAdd = add;
     this.ticketOptionLoaded = false;
     this.settingService.settings.subscribe( (res:any) => {

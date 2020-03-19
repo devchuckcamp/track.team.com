@@ -49,7 +49,7 @@
               Ticket Priority Options
             </mat-panel-description>
           </mat-expansion-panel-header>
-            <div class="row">
+            <div class="row" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1">
               <!-- Existing Ticket Setting Options -->
               <div class="col-lg-6">
                 <div *ngFor="let setting of ticketPriorityList;index as i" class="pad-0 mar-0 row">
@@ -102,6 +102,7 @@
                 </div>
               </div>
             </div>
+            <p class="text-center" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">You don't have access for this module.</p>
         </mat-expansion-panel>
 
         <mat-expansion-panel [expanded]="step == 3" (opened)="panelOpenState = true" (opened)="setStep(3)" (closed)="panelOpenState = false">
@@ -115,7 +116,8 @@
             </mat-panel-description>
           </mat-expansion-panel-header>
           <!-- <p class="text-center">This feature is under development <i class="fa fa-wrench"></i></p> -->
-          <project-status-setting></project-status-setting>
+          <project-status-setting *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1"></project-status-setting>
+          <p class="text-center" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">You don't have access for this module.</p>
         </mat-expansion-panel>
 
         <mat-expansion-panel [expanded]="step == 4" (opened)="panelOpenState = true" (opened)="setStep(4)" (closed)="panelOpenState = false">
@@ -127,7 +129,8 @@
               Category Options
             </mat-panel-description>
           </mat-expansion-panel-header>
-          <project-category-setting></project-category-setting>
+          <project-category-setting *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1"></project-category-setting>
+          <p class="text-center" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">You don't have access for this module.</p>
         </mat-expansion-panel>
       </mat-accordion>
     </div>
