@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { ProjectSettingComponent } from './project-setting.component';
 import { TicketPatchSettingComponent } from './ticket/patch/ticket-patch-setting.component';
 import { TicketStatusSettingComponent } from './ticket/status/ticket-status-setting.component';
+import { TicketApprovalSettingComponent } from './ticket/approval/ticket-approval-setting.component';
 import { ProjectSecuritySettingComponent } from './project/security/project-security-setting.component';
 import { ProjectSettingRoutingModule } from './project-setting-routing.module';
 import { CommonModule } from '@angular/common';
@@ -51,6 +52,7 @@ import {
     ProjectSettingComponent,
     TicketPatchSettingComponent,
     TicketStatusSettingComponent,
+    TicketApprovalSettingComponent,
     ProjectSecuritySettingComponent,
   ],
   imports: [

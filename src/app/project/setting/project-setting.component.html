@@ -64,8 +64,22 @@
             <ticket-status-setting *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1"></ticket-status-setting>
             <p class="text-center" *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0">You don't have access for this module.</p>
           </mat-expansion-panel>
-  
+
+          <!-- Ticket Approval -->
           <mat-expansion-panel [expanded]="step == 4" (opened)="panelOpenState = true" (opened)="setStep(4)" (closed)="panelOpenState = false">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>category</mat-icon>
+              </mat-panel-title>
+              <mat-panel-description>
+                Ticket Approval
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <ticket-approval-setting *ngIf="this.authenticatedUser && this.authenticatedUser.role_id == 1"></ticket-approval-setting>
+            <p class="text-center" *ngIf="this.authenticatedUser && this.authenticatedUser.role_id !== 1">You don't have access for this module.</p>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel [expanded]="step == 5" (opened)="panelOpenState = true" (opened)="setStep(5)" (closed)="panelOpenState = false">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <mat-icon>category</mat-icon>

@@ -96,6 +96,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     ticket_logs:any =  [];
     // Form Group
     ticketDetailForm :FormGroup;
+    manualTimeBillForm:FormGroup;
     addTaskForm: FormGroup;
     project_name:string;
     loggedin_user:string;
@@ -123,6 +124,10 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     //Global
     processingRequest:boolean = false
     private socket$: WebSocketSubject<any>;
+    // Approval
+    showManualBillTimeForm:boolean = false;
+    approval:any;
+    approved = false;
 
     constructor(
         private ticketService: TicketService,
@@ -249,6 +254,8 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
             dHour =  this.hours;
           }
         }
+
+        console.log('this.manualTimeBillForm.value',this.manualTimeBillForm.value);
         this.daysCount = this.seconds_days(this.unixBillableTimeTotal);
         this.billableTimeTotal = (this.daysCount != '00' || this.daysCount > 0 ? this.daysCount == 1 ?   this.daysCount +' day ':  this.daysCount +' days ' : '') + this.hours + ' : ' + this.minutes + ' : ' + this.seconds;
     }
@@ -350,6 +357,11 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                       'eta': new FormControl('', []),
                       'status': new FormControl('', []),
       });
+      this.manualTimeBillForm = this.formBuilder.group({
+        'hours': new FormControl(this.hours, []),
+        'minutes': new FormControl(this.minutes, []),
+        'seconds': new FormControl(this.seconds, []),
+      });
       this.addTaskForm = this.formBuilder.group({
         'title': new FormControl('', [Validators.required,]),
         'description': new FormControl('', [Validators.required,]),
@@ -400,6 +412,15 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                 this.loading = true;
                 this.ticketService.getProjectTicket(params['project_name'],params['ticket_id']).subscribe( (res:any) => {
                   if(res){
+
+                    // Get Project Approval Status
+                    if(res.approval_settings){
+                      if(res.approval_settings.value && res.approval_settings.value.value==1){
+                        this.approved = true;
+                      } else {
+                        this.approved = false;
+                      }
+                    }
                       if(res.ticket_status_logs){
                         this.eta = res.eta;
                         this.ticketDetailForm.value.eta = res.eta;
@@ -592,6 +613,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
               }
           );
         }
+        
         this.unixBillableTimeTotal = res.time;
         this.ticket.billed_time_consumed = res;
         today.setSeconds(this.unixBillableTimeTotal);
@@ -599,13 +621,72 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
         today.setHours(this.seconds_hours(this.unixBillableTimeTotal));
         today.setDate(this.seconds_days(this.unixBillableTimeTotal));
         this.format_billed_time();
+        
       });
       return false;
     }
+    closeManualStopBillTimeForm(){
+      this.showManualBillTimeForm = false;
+
+      return false;
+    }
+    manualStopBillTime(id:number){
+      this.startedBillingTime = false;
+      this.ticketService.stopBilling(this.ticket, this.unixBillableTimeTotal).subscribe( (res:any)=>{
+        if(this.unixBillableTimeTotal !== res.time){
+          this.snackBar.open('Timer have been already stopped from another device/tab/browser', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "success-snack"
+              }
+          );
+        }
+        this.unixBillableTimeTotal = res.time;
+        this.ticket.billed_time_consumed = res;
+        today.setSeconds(this.unixBillableTimeTotal);
+        today.setMinutes(this.seconds_minutes(this.unixBillableTimeTotal));
+        today.setHours(this.seconds_hours(this.unixBillableTimeTotal));
+        today.setDate(this.seconds_days(this.unixBillableTimeTotal));
+        this.format_billed_time();
+        this.showManualBillTimeForm = true;
+        console.log(res.time);
+      });
+      return false;
+    }
+
+    sendManualTime(){
+      console.log(this.manualTimeBillForm);
+      let hoursTotal = Number(this.manualTimeBillForm.value.hours > 0 ? this.manualTimeBillForm.value.hours*3600 :0);
+      let minutesTotal = Number(this.manualTimeBillForm.value.minutes ? this.manualTimeBillForm.value.minutes*60:0);
+      let secondsTotal = Number(this.manualTimeBillForm.value.seconds ? this.manualTimeBillForm.value.seconds :0);
+      let totalSeconds = hoursTotal+minutesTotal+secondsTotal;
+      console.log(totalSeconds);
+      this.unixBillableTimeTotal = totalSeconds;
+      today.setSeconds(totalSeconds);
+      today.setMinutes(this.seconds_minutes(totalSeconds));
+      today.setHours(this.seconds_hours(totalSeconds));
+      today.setDate(this.seconds_days(totalSeconds));
+      this.ticket.billed_time_consumed.time = totalSeconds;
+      this.format_billed_time();
+      this.ticketService.stopBilling(this.ticket, this.unixBillableTimeTotal).subscribe( (res:any)=>{
+        this.closeManualStopBillTimeForm();
+        this.snackBar.open('Billed time has been updated', 'X', {
+          duration: 5000,
+          direction: "ltr",
+          verticalPosition:"top",
+          horizontalPosition: "right",
+          panelClass: "success-snack"
+      }
+  );
+      });
+      return false;
+    }
+
     getTicketBillReport(id:number){
       this.ticketService.getTicketBillReport(this.ticket.billed_time_consumed.id).subscribe( (res:any )=>{
-
-      } );
+      });
     }
 
     downloadReport(){

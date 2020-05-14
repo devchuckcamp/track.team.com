@@ -1,4 +1,9 @@
 <div *ngIf="ticket" class="col-lg-12">
+    <div class="row" *ngIf="auth.role_id==1 && approved && !ticket.is_approved">
+        <div class="col text-center pad-10">
+            <button href="#" mat-raised-button color="primary">Approve</button>
+        </div>
+    </div>
     <div class="row">
         <div class="thread-container col-lg-6">
             <h2>{{ticket.title}} - </h2>
@@ -6,9 +11,18 @@
                 <div class="col-lg-12 mat-0 pad-0">
                     <h2 *ngIf="total_time_consumed"><b>Progress time:</b> {{ total_time_consumed }} <label *ngIf="is_ongoing"> and running.</label></h2>
                 </div>
-                <div class="col-lg-12 mat-0 pad-0">
+                <div class="col-lg-12 mat-0 pad-0" *ngIf="auth.role_id==4 && !approved && !ticket.is_approved">
                     <button mat-raised-button color="primary" [disabled]="startedBillingTime" (click)="startBillTime(ticket.id)">Start</button>
                     <button mat-raised-button color="warn" [disabled]="!startedBillingTime" (click)="stopBillTime(ticket.id)">Stop</button>
+                    <a href="#" class="mar-l-10"  mat-button color="primary" (click)="manualStopBillTime(ticket.id)" *ngIf="!showManualBillTimeForm">Manual</a>
+                    <a href="#" class="mar-l-10"  mat-button color="warn" (click)="closeManualStopBillTimeForm()" *ngIf="showManualBillTimeForm">Close</a>
+                    <form *ngIf="showManualBillTimeForm && manualTimeBillForm" [formGroup]="manualTimeBillForm"   (submit)="sendManualTime()" class="mar-t-10">
+                        <mat-form-field><input matInput type="number" formControlName="hours" ([ngModel])="manualTimeBillForm.hours" min="0"  placeholder="Hour/s" ></mat-form-field>
+                        <mat-form-field><input matInput type="number" formControlName="minutes" ([ngModel])="manualTimeBillForm.minutes" min="0" max="60"  placeholder="Minute/s" ></mat-form-field>
+                        <mat-form-field><input matInput type="number" formControlName="seconds" ([ngModel])="manualTimeBillForm.seconds" min="0" max="60"  placeholder="Second/s" ></mat-form-field>
+                        <button mat-button color="primary">Update</button>
+                    </form>
+
                     <div *ngIf="billableTimeTotal" class="pad-5 pad-l-0"><b>Billed:</b> {{billableTimeTotal}}</div>
                 </div>
             </div>
@@ -25,12 +39,12 @@
                         </div>
                         <div class="form-group"  *ngIf="this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 0 || etaAccess && (!isAssignee() && ticket.created_by !== auth.username)">
                             <label class="mar-r-10" for="ticket-eta">ETA:</label>
-                            <span class="pad-x-10 pad-y-5">{{ ticket.eta }}</span>
+                            <span class="pad-x-10 pad-y-5">{{ ticket.eta }}</span>1
                         </div>
                         <!-- Status -->
                         <div class="form-group"  *ngIf="(isAssignee() || ticket.created_by == auth.username) && this.authenticatedUser  && this.authenticatedUser.user_crud_access.value && this.authenticatedUser.user_crud_access.value.value == 1">
                             <label class="mar-r-10" for="ticket-status">Status  </label>
-                            <select #ticketStatus (change)="updateTicketStatus(ticketStatus.value)">
+                            <select #ticketStatus (change)="updateTicketStatus(ticketStatus.value)" [disabled]="approved && !ticket.is_approved">
                                 <option  *ngFor="let stat of ticketStatusList" [value]="stat.id" [selected]="stat.id == ticket.status_id">{{stat.name}}</option>
                             </select>
                             <!-- <mat-form-field [formGroup]="ticketDetailForm">
