@@ -678,12 +678,30 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
           verticalPosition:"top",
           horizontalPosition: "right",
           panelClass: "success-snack"
-      }
-  );
+        });
       });
       return false;
     }
+    approveTicket(){
+      this.ticket.is_approved = 1;
+      this.ticket.approval_settings.value.value = 1;
+      let etaObj :any;
+      etaObj = { is_approved : 1 };
 
+      this.ticketService.update(this.ticket,'is_approved', etaObj).subscribe( res => {
+          this.ticket_logs = res.ticket_status_logs.reverse();
+          this.updating_eta = false;
+          this.getLastAction();
+          this.snackBar.open('ETA has been updated', 'X', {
+                  duration: 5000,
+                  direction: "ltr",
+                  verticalPosition:"top",
+                  horizontalPosition: "right",
+                  panelClass: "success-snack"
+              }
+          );
+      });
+    }
     getTicketBillReport(id:number){
       this.ticketService.getTicketBillReport(this.ticket.billed_time_consumed.id).subscribe( (res:any )=>{
       });

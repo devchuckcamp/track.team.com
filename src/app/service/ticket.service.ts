@@ -147,6 +147,11 @@ export class TicketService {
                 eta:customData.eta
             });
         }
+        if(type == 'is_approved'){
+            data = JSON.stringify({
+                is_approved:customData.is_approved
+            });
+        }
         return this.http.put(this.config.apiEndPoint()+'/api/v1/tickets/'+ticket.id, data, this.jt());
     }
 
