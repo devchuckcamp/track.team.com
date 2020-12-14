@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import { HttpClient, HttpInterceptor, HttpClientModule, HttpErrorResponse, HttpHeaders, HttpRequest, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
 import { Observable, throwError, Subject, BehaviorSubject } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators'
-import { map, take } from 'rxjs/operators';
+import { catchError, retry, map, take } from 'rxjs/operators'
 import { User } from '../model/user';
 import { GlobalRoutesService } from '../config/config';
 
@@ -142,6 +141,25 @@ export class UserService {
     verifyUniqueUsername(username:string){
         return this.http.get(this.config.apiEndPoint()+'/api/v1/validate/user/unique/username?username='+username );
     }
+
+    // Password Reset
+    requestPasswordReset(email){
+        let data = {email:email};
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/password/reset/email', email, this.unAuthHttp());
+    }
+
+    unAuthHttp() {
+        let headers = new HttpHeaders({
+            'Content-Type':  'application/json',
+            'Accept':'application/json',
+            'Access-Control-Allow-Origin':'*',
+            'Allow_Headers':' Allow, Access-Control-Allow-Origin, Content-type, Accept',
+            'Allow':'GET,POST,PUT,DELETE,OPTION'
+          });
+        let options = { headers: headers };
+        return options;
+    }
+
     private jt() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer '+this.Bearer,

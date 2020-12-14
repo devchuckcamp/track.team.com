@@ -266,7 +266,7 @@ export class NavbarComponent implements OnInit, OnDestroy  {
     this.ticketService.Bearer = '';
     this.memberService.Bearer = '';
     this.subscription.unsubscribe();
-
+    window.location.href = '/';
     return false;
   }
 
