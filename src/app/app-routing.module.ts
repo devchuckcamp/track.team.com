@@ -29,7 +29,14 @@ const routes:   Routes = [
         path: 'account/activation/token/:account_token', loadChildren:'./external-page/account/create-account.module#CreateAccountModule'
     },
     {
+        path: 'account/password/reset/:reset_token', loadChildren:'./external-page/password/reset-password.module#ResetPasswordModule'
+    },
+    {
         path: 'login', component: LoginComponent,
+        canActivate:[ClientGuard],
+    },
+    {
+        path: 'login/:password_reset', component: LoginComponent,
         canActivate:[ClientGuard],
     },
     {

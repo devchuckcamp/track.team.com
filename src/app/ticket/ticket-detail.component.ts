@@ -968,7 +968,9 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
           const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
           fileEntry.file((file: File) => {
             this.fileType = file.type;
-
+            // console.log(file);
+            // this.uploadImages.push(file);
+            // console.log(this.uploadImages);
             if (file) {
                 var reader = new FileReader();
                 reader.onload = this._handleReaderLoaded.bind(this);
