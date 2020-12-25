@@ -899,6 +899,22 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       }
       return false;
     }
+    myFiles:string [] = [];
+    myForm = new FormGroup({
+      name: new FormControl('', [Validators.required, Validators.minLength(1)]),
+      file: new FormControl('', [Validators.required])
+    });
+    get f(){
+      return this.myForm.controls;
+    }
+      
+    onFileChange(event) {
+   
+      for (var i = 0; i < event.target.files.length; i++) { 
+          this.myFiles.push(event.target.files[i]);
+      }
+      console.log(this.myFiles);
+    }
     submitReplyBox(){
         if(this.replyView){
             // Check replay
@@ -912,9 +928,37 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                   "files": this.uploadImages
               };
 
-              this.threadService.send(thread).subscribe( res => {
+              this.threadService.send(thread).subscribe( (res:any) => {
                 //console.log(res,'saved thread');
                 if(res){
+
+                  
+                  let requests = [];
+                  console.log(this.myFiles);
+                  
+                  for (var i = 0; i < this.myFiles.length; i++) { 
+                    let formData = new FormData();
+                    formData.append("file", this.myFiles[i]);
+                    formData.append("ticket_id", res.ticket_id);
+                    formData.append("thread_id", res.id);
+                    // requests.push(formData);
+                    this.http.post(this.apiEndpoint+'/api/v1/thread-file', formData, this.fileHeader())
+                    .subscribe(data => {
+                      console.log(data);
+                      // Sanitized logo returned from backend
+                      //console.log(data, 'data');
+                    });
+                  }
+
+                  
+                  
+                  
+
+                  // this.threadService.uploadImage(formData).subscribe((res)=>{
+                  //   console.log(res);
+                  // });
+
+
                   this.ticketService.mentionUser(mentionedMember, this.ticket.id).subscribe(res => {
                     mentionedMember.length = 0;
 
@@ -923,6 +967,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                   this.getLastAction();
                   this.ticket.thread.push(res);
                   this.uploadImages = [];
+                  this.myFiles = [];
                 }
               });
             }
@@ -958,34 +1003,39 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       //console.log(this.uploadImages,'uploadImages');
       return base64textString;
     }
-    public dropped(event: UploadEvent) {
-      this.files = event.files;
-      let formData = new FormData();
-      for (const droppedFile of event.files) {
+  
+    
+    public dropped(event) {
+    //   this.files = event.files;
+    //   for (var i = 0; i < event.target.files.length; i++) { 
+    //       this.myFiles.push(event.target.files[i]);
+    //   }
+    //  console.log(this.myFiles);
+      // for (const droppedFile of event.files) {
    
-        // Is it a file?
-        if (droppedFile.fileEntry.isFile) {
-          const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
-          fileEntry.file((file: File) => {
-            this.fileType = file.type;
-            // console.log(file);
-            // this.uploadImages.push(file);
-            // console.log(this.uploadImages);
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = this._handleReaderLoaded.bind(this);
-                let binary = this._handleReaderLoaded.bind(this);
+      //   // Is it a file?
+      //   if (droppedFile.fileEntry.isFile) {
+      //     const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+      //     fileEntry.file((file: File) => {
+      //       this.fileType = file.type;
+      //       
+            
+      //       if (file) {
+      //           var reader = new FileReader();
+      //           reader.onload = this._handleReaderLoaded.bind(this);
+      //           let binary = this._handleReaderLoaded.bind(this);
 
-                reader.readAsBinaryString(file);
-            }
+      //           reader.readAsBinaryString(file);
+      //       }
 
-          });
-        } else {
-          // It was a directory (empty directories are added, otherwise only files)
-          const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
-        }
-      }
+      //     });
+      //   } else {
+      //     // It was a directory (empty directories are added, otherwise only files)
+      //     const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
+      //   }
+      // }
     }
+
     getFiles(): FileLikeObject[] {
       return this.uploader.queue.map((fileItem) => {
 
@@ -1014,12 +1064,11 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     private fileHeader() {
       let token = this.authService.Bearer;
       let headers = new HttpHeaders({
-          'Authorization': 'Bearer'+token,
-          'Content-Type':  'multipart/form-data;',
-          'enctype': 'multipart/form-data',
+          'Authorization': 'Bearer '+token,
+          'Enctype': 'multipart/form-data',
           'Accept':'application/json',
           'Access-Control-Allow-Origin':'*',
-          'Allow_Headers':' Allow, Access-Control-Allow-Origin, Content-type, Accept',
+          'Allow_Headers':' Allow, Access-Control-Allow-Origin, Content-type, Accept, Enctype',
           'Allow':'GET,POST,PUT,DELETE,OPTION'
         });
       let options = { headers: headers };
