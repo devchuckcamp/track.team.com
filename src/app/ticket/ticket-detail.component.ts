@@ -265,6 +265,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     }
 
     openDialog(uploads:any): void {
+      
       const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
         width: '100%',
         height: '100%',
@@ -336,11 +337,25 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       //   }
       // });
     }
-    getSantizeUrl(url : string) { 
-      if(url.includes("application/pdf")){
-        url = this.pdfImages;
+    getSantizeUrl(upload : any) { 
+      
+      if(upload.url){
+        let url  = upload.url;
+        if(url.includes("application/pdf")){
+          url = this.pdfImages;
+        }
+        return this.sanitizer.bypassSecurityTrustUrl(url);
+      } else {
+        if(upload.path.toLowerCase().substr(upload.path.length - 3) == 'pdf'){
+          return "../../assets/default/default_pdf.svg";
+        } if(upload.path.toLowerCase().substr(upload.path.length - 3) == 'csv'){
+          return "../../assets/default/default_csv.png";
+        }else if(upload.path.toLowerCase().substr(upload.path.length - 4) == 'xlsx' || upload.path.toLowerCase().substr(upload.path.length - 3) == 'xls'){
+          return "../../assets/default/default_csv.png";
+        }
+        return this.globalRoutesService.apiEndPoint()+'/'+upload.path;
       }
-      return this.sanitizer.bypassSecurityTrustUrl(url);
+      
     }
 
     ngOnInit() {
@@ -909,11 +924,52 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     }
       
     onFileChange(event) {
-   
-      for (var i = 0; i < event.target.files.length; i++) { 
-          this.myFiles.push(event.target.files[i]);
+      event.preventDefault();
+      // for (var i = 0; i < event.dataTransfer.files.length; i++) { 
+      //     this.myFiles.push(event.dataTransfer.files[i]);
+      // }
+      // console.log(event);
+
+      for (var i = 0; i < event.dataTransfer.items.length; i++) {
+        // If dropped items aren't files, reject them
+        if (event.dataTransfer.items[i].kind === 'file') {
+          let file = event.dataTransfer.items[i].getAsFile();
+          let obj = {
+            fileName: file.name,
+            selectedFile: file,
+            fileId: `${file.name}-${file.lastModified}`,
+            uploadCompleted: false
+          }
+          if(file.name.toLowerCase().substr(file.name.length - 3) == 'pdf'){
+            this.uploadImages.push("../../assets/default/default_pdf.svg");
+          } else if(file.name.toLowerCase().substr(file.name.length - 3) == 'csv'){
+            this.uploadImages.push("../../assets/default/default_csv.png");
+          }else if(file.name.toLowerCase().substr(file.name.length - 4) == 'xlsx' || file.name.toLowerCase().substr(file.name.length - 3) == 'xls'){
+            this.uploadImages.push("../../assets/default/default_csv.png");
+          } else {
+           
+              if (file.length === 0)
+                return;
+           
+              var mimeType = file.type;
+              if (mimeType.match(/image\/*/) == null) {
+                // this.message = "Only images are supported.";
+                return;
+              }
+           
+              var reader = new FileReader();
+              // this.imagePath = files;
+              reader.readAsDataURL(file); 
+              reader.onload = (_event) => { 
+                this.uploadImages.push(reader.result);
+              }
+            
+          }
+
+          this.myFiles.push(file);
+          //console.log('... file[' + i + '].name = ' + file.name);
+        }
       }
-      console.log(this.myFiles);
     }
     submitReplyBox(){
         if(this.replyView){
@@ -931,22 +987,26 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
               this.threadService.send(thread).subscribe( (res:any) => {
                 //console.log(res,'saved thread');
                 if(res){
-
-                  
-                  let requests = [];
-                  console.log(this.myFiles);
-                  
+                  let addded_thread:any; 
+                  addded_thread = res;
+                  let formData = new FormData();
+                  formData.append("ticket_id", res.ticket_id);
+                  formData.append("thread_id", res.id);
+                  let upload_count = 0;
+                  addded_thread.uploads = [];
                   for (var i = 0; i < this.myFiles.length; i++) { 
-                    let formData = new FormData();
+                    
                     formData.append("file", this.myFiles[i]);
-                    formData.append("ticket_id", res.ticket_id);
-                    formData.append("thread_id", res.id);
+                    
                     // requests.push(formData);
                     this.http.post(this.apiEndpoint+'/api/v1/thread-file', formData, this.fileHeader())
                     .subscribe(data => {
                       console.log(data);
+                      addded_thread.uploads[upload_count] = data;
+                      upload_count++;
+                      formData.append("file", this.myFiles[i]);
                       // Sanitized logo returned from backend
-                      //console.log(data, 'data');
+                      console.log(addded_thread, 'addded_thread');
                     });
                   }
 
@@ -965,7 +1025,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                   });
                   this.loading = false;
                   this.getLastAction();
-                  this.ticket.thread.push(res);
+                  this.ticket.thread.push(addded_thread);
                   this.uploadImages = [];
                   this.myFiles = [];
                 }
@@ -1007,33 +1067,41 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     
     public dropped(event) {
     //   this.files = event.files;
-    //   for (var i = 0; i < event.target.files.length; i++) { 
-    //       this.myFiles.push(event.target.files[i]);
-    //   }
-    //  console.log(this.myFiles);
-      // for (const droppedFile of event.files) {
-   
-      //   // Is it a file?
-      //   if (droppedFile.fileEntry.isFile) {
-      //     const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
-      //     fileEntry.file((file: File) => {
-      //       this.fileType = file.type;
-      //       
-            
-      //       if (file) {
-      //           var reader = new FileReader();
-      //           reader.onload = this._handleReaderLoaded.bind(this);
-      //           let binary = this._handleReaderLoaded.bind(this);
-
-      //           reader.readAsBinaryString(file);
-      //       }
-
-      //     });
-      //   } else {
-      //     // It was a directory (empty directories are added, otherwise only files)
-      //     const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
-      //   }
+      // for (var i = 0; i < event.target.files.length; i++) { 
+        //this.myFiles.push(event.target.files[0]);
       // }
+      console.log(event);
+    //  console.log(this.myFiles);
+      for (const droppedFile of event.files) {
+   
+        // Is it a file?
+        if (droppedFile.fileEntry.isFile) {
+          const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+          fileEntry.file((file: File) => {
+            this.fileType = file.type;
+            console.log(fileEntry);
+            var file_name =file.name;
+            if(file_name.toLowerCase().substr(file_name.length - 3) == 'pdf'){
+              this.uploadImages.push("../../assets/default/default_pdf.svg");
+            } else if(file_name.toLowerCase().substr(file_name.length - 3) == 'csv'){
+              this.uploadImages.push("../../assets/default/default_csv.png");
+            }else if(file_name.toLowerCase().substr(file_name.length - 4) == 'xlsx' || file_name.toLowerCase().substr(file_name.length - 3) == 'xls'){
+              this.uploadImages.push("../../assets/default/default_csv.png");
+            } else {
+              if (file) {
+                  var reader = new FileReader();
+                  reader.onload = this._handleReaderLoaded.bind(this);
+                  let binary = this._handleReaderLoaded.bind(this);
+
+                  reader.readAsBinaryString(file);
+              }
+            }
+          });
+        } else {
+          // It was a directory (empty directories are added, otherwise only files)
+          const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
+        }
+      }
     }
 
     getFiles(): FileLikeObject[] {
@@ -1080,6 +1148,15 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     public fileLeave(event){
 
     }
+
+    dragOverHandler(ev) {
+      console.log('File(s) in drop zone');
+  
+      // Prevent default behavior (Prevent file from being opened)
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
+
     public updateTicketEta(eta:any = null){
       this.updating_eta = true;
       let etaObj :any;

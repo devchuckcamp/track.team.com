@@ -142,13 +142,13 @@
                                             <div *ngIf="assignableMembers && assignableMembersFiltered" class="search-result-container row pos-abs z-index-10 bg-lightgray">
                                                 <a href="#" (click)="closeAssigneeSearchResults()" *ngIf="assignableMembers.length" class="pos-abs z-index-15 close-search-result-btn bg-danger"><i class="fa fa-close"></i></a>
                                                 <div class="col-lg-12">
-                                                    <div *ngFor="let member of assignableMembers" class="clickable search-member-row-result-container row border-rad-5 text-center bg-success font-white pad-5 mar-10">
+                                                    <div *ngFor="let member of assignableMembers" class="search-member-row-result-container row border-rad-5 text-center bg-success font-white pad-5 mar-10">
                                                         <div class="col-6">
                                                             <strong>{{ member.user.user_details.first_name }} {{ member.user.user_details.last_name }} ({{ member.user.username }})</strong>
                                                         </div>
-                                                        <div class="col-3">
-                                                            <a href="#" class="font-white mar-r-5" *ngIf=isAssignable(member) (click)="additionalAssignee(member)">Assign</a>
-                                                            <a href="#" class="font-white" *ngIf=isTaggable(member) (click)="additionalTag(member)">Tag</a>
+                                                        <div class="col-3 pad-t-10">
+                                                            <a href="#" class="clickable assign-user-btn font-white mar-r-5" *ngIf=isAssignable(member) (click)="additionalAssignee(member)">Assign</a>
+                                                            <a href="#" class="clickable tag-user-btn font-white" *ngIf=isTaggable(member) (click)="additionalTag(member)">Tag</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -317,7 +317,7 @@
                         <div *ngIf="ticket.thread[i].uploads && ticket.thread[i].uploads.length" class="row thread-attachment-list-container">
                             <div *ngFor="let upload of thread.uploads; let ii = index" [attr.data-index]="ii" class="comment-attachment-container col">
                                 <!-- thread ID:{{thread.id}} -->
-                                <img (click)="openDialog(thread.uploads)"  class="mar-x-30 full-w full-h" [src]="getSantizeUrl(upload.url)">
+                                <img (click)="openDialog(thread.uploads)"  class="mar-x-30 full-w full-h" [src]="getSantizeUrl(upload)">
                             </div>
                         </div>
                         <div class="card-body row" id="thread-{{thread.id}}">
@@ -338,12 +338,14 @@
             <div *ngIf="ticket.thread" class="thread-list-reply-container row mar-0 text-center">
                 <div *ngIf="replyView && !loading" class="center full-w pad-y-10">
                     
-                    <file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)" (onFileOver)="fileOver($event)"
+                    <!-- <file-drop dropZoneLabel="Drop files here" (change)="dropped($event)" (onFileOver)="fileOver($event)"
                         (onFileLeave)="fileLeave($event)">
                         <span>File</span>
-                    </file-drop>
-                   
-                    <form [formGroup]="myForm">
+                    </file-drop> -->
+                    <div id="file-drop-zone" class="full-w" (drop)="onFileChange($event)"  (dragover)='dragOverHandler($event)'>
+                        <label (drop)="onFileChange($event)"  (dragover)='dragOverHandler($event)'>Drop Files Here</label>
+                    </div>
+                    <form [formGroup]="myForm" hidden>
   
                         <div class="form-group">
                             <label for="name">Name</label>
@@ -368,8 +370,8 @@
                               
                         <button class="btn btn-primary" type="submit">Submit</button>
                     </form>
-                    <button (click)="sendAtc()">Send Attachments</button>
-                    <div class="upload-table hidden">
+                    <!-- <button (click)="sendAtc()">Send Attachments</button> -->
+                    <div class="upload-table " hidden>
                         <table class="table">
                             <thead>
                                 <tr>

@@ -1,6 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
+import { GlobalRoutesService } from '../config/config';
+
 export interface DialogData {
     uploads: any;
   }
@@ -11,14 +13,16 @@ export interface DialogData {
   @Component({
     selector: 'dialog-overview-example-dialog',
     templateUrl: 'dialog-attachment-overview.html',
+    styleUrls: ['dialog-attachment-overview.scss']
   })
   export class DialogOverviewExampleDialog {
     pdfImages = '../../assets/pdf-file-preview.png';
     constructor(
       private sanitizer: DomSanitizer,
+      private config:GlobalRoutesService,
       public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
       @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-        console.log(data,'dialog data');
+        // console.log(data,'dialog data');
       }
 
     onNoClick(): void {
@@ -49,23 +53,46 @@ export interface DialogData {
         "dots":true,
         "infinite": false
       };
-      getSantizeUrl(url : string) {
-        if(url.includes("application/pdf")){
-          url = this.pdfImages;
+      getSantizeUrl(upload : any) {
+        // if(url.includes("application/pdf")){
+        //   url = this.pdfImages;
+        // }
+        // return this.sanitizer.bypassSecurityTrustUrl(url);
+        if(upload.url){
+          let url  = upload.url;
+          if(url.includes("application/pdf")){
+            url = this.pdfImages;
+          }
+          return this.sanitizer.bypassSecurityTrustUrl(url);
+        } else {
+          // If PDF or CSV file
+          if(upload.path.toLowerCase().substr(upload.path.length - 3) == 'pdf'){
+            return "../../assets/default/default_pdf.svg";
+          } if(upload.path.toLowerCase().substr(upload.path.length - 3) == 'csv'){
+            return "../../assets/default/default_csv.png";
+          }else if(upload.path.toLowerCase().substr(upload.path.length - 4) == 'xlsx' || upload.path.toLowerCase().substr(upload.path.length - 3) == 'xls'){
+            return  "../../assets/default/default_csv.png";
+          }
+          return this.config.apiEndPoint()+'/'+upload.path;
         }
-        return this.sanitizer.bypassSecurityTrustUrl(url);
       }
       addSlide() {
         this.slides.push({img: "http://placehold.it/350x150/777777"})
       }
 
       download(linkFile:any,file_name:any) {
-        const linkSource = linkFile;
+        let link = linkFile.url;
+        if(link == null){
+          link = this.config.apiEndPoint()+'/'+linkFile.path;
+        }
+        
+        const linkSource = link;
         const downloadLink = document.createElement("a");
         const fileName = file_name;
   
         downloadLink.href = linkSource;
         downloadLink.download = fileName;
+        downloadLink.target = '_blank';
         downloadLink.click();
     }
       removeSlide() {

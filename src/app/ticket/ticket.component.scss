@@ -9,7 +9,7 @@
     border: 1px solid #333;
     background: rgba(0,0,0,0.7);
 }
-
+#file-drop-zone,
 #dropZone {
     border: 2px dashed #bbb;
     -webkit-border-radius: 5px;
@@ -133,6 +133,22 @@ div.search-member-row-result-container:nth-child(1){
   .text-left-below-xl{
     text-align: left;
   }
+
+  .assign-user-btn,
+  .tag-user-btn{
+    padding: 5px;
+    margin-top:5px;
+    border-radius: 5px;
+    background: gray;
+    text-decoration: none;
+  }
+  .assign-user-btn:hover,
+  .tag-user-btn:hover{
+    text-decoration: none;
+    background: darkgray;
+    opacity: 1.0;
+  }
+
   @media (max-width: 1200px) {
     .text-left-below-xl{
       text-align: left;
@@ -151,6 +167,7 @@ div.search-member-row-result-container:nth-child(1){
       width: 50%;
     }
   }
+
   @media only screen and (max-width : 991px) {
     .q-width{
       width: 75%;
