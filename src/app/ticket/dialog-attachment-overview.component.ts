@@ -72,6 +72,8 @@ export interface DialogData {
             return "../../assets/default/default_csv.png";
           }else if(upload.path.toLowerCase().substr(upload.path.length - 4) == 'xlsx' || upload.path.toLowerCase().substr(upload.path.length - 3) == 'xls'){
             return  "../../assets/default/default_csv.png";
+          }else if(upload.path.toLowerCase().substr(upload.path.length - 4) == 'docx' || upload.path.toLowerCase().substr(upload.path.length - 4) == 'docm'  || upload.path.toLowerCase().substr(upload.path.length - 3) == 'doc'){
+            return  "../../assets/default/default_doc.svg";
           }
           return this.config.apiEndPoint()+'/'+upload.path;
         }

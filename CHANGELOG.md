@@ -5,8 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ##  [Unreleased]
--   Additional Suported file types: .doc, .docm, .docx
 
+##  [2.2.1] - 2020-12-31
+### Added
+-   Additional Suported file types: .doc, .docm, .docx
 
 ##  [2.2.0] - 2020-12-30
 ### Added

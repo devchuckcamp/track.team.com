@@ -352,6 +352,8 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
           return "../../assets/default/default_csv.png";
         }else if(upload.path.toLowerCase().substr(upload.path.length - 4) == 'xlsx' || upload.path.toLowerCase().substr(upload.path.length - 3) == 'xls'){
           return "../../assets/default/default_csv.png";
+        }else if(upload.path.toLowerCase().substr(upload.path.length - 4) == 'docx' || upload.path.toLowerCase().substr(upload.path.length - 4) == 'docm'  || upload.path.toLowerCase().substr(upload.path.length - 3) == 'doc'){
+          return "../../assets/default/default_doc.svg";
         }
         return this.globalRoutesService.apiEndPoint()+'/'+upload.path;
       }
@@ -946,6 +948,8 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
             this.uploadImages.push("../../assets/default/default_csv.png");
           }else if(file.name.toLowerCase().substr(file.name.length - 4) == 'xlsx' || file.name.toLowerCase().substr(file.name.length - 3) == 'xls'){
             this.uploadImages.push("../../assets/default/default_csv.png");
+          }else if(file.name.toLowerCase().substr(file.name.length - 4) == 'docx' || file.name.toLowerCase().substr(file.name.length - 4) == 'docm'  || file.name.toLowerCase().substr(file.name.length - 3) == 'doc'){
+            this.uploadImages.push("../../assets/default/default_doc.svg");
           } else {
            
               if (file.length === 0)
@@ -1087,6 +1091,8 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
               this.uploadImages.push("../../assets/default/default_csv.png");
             }else if(file_name.toLowerCase().substr(file_name.length - 4) == 'xlsx' || file_name.toLowerCase().substr(file_name.length - 3) == 'xls'){
               this.uploadImages.push("../../assets/default/default_csv.png");
+            }else if(file.name.toLowerCase().substr(file.name.length - 4) == 'docx' || file.name.toLowerCase().substr(file.name.length - 4) == 'docm'  || file.name.toLowerCase().substr(file.name.length - 3) == 'doc'){
+              this.uploadImages.push("../../assets/default/default_doc.svg");
             } else {
               if (file) {
                   var reader = new FileReader();
