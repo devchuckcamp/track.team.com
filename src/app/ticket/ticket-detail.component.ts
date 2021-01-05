@@ -255,7 +255,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
           }
         }
 
-        console.log('this.manualTimeBillForm.value',this.manualTimeBillForm.value);
+        // console.log('this.manualTimeBillForm.value',this.manualTimeBillForm.value);
         this.daysCount = this.seconds_days(this.unixBillableTimeTotal);
         this.billableTimeTotal = (this.daysCount != '00' || this.daysCount > 0 ? this.daysCount == 1 ?   this.daysCount +' day ':  this.daysCount +' days ' : '') + this.hours + ' : ' + this.minutes + ' : ' + this.seconds;
     }
@@ -365,6 +365,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       this.authService.profile.subscribe((res:any) => {
         this.authenticatedUser = res;
       });
+      
       this.assignableMembersFiltered = false;
       // Settings
       this.settingService.settings.subscribe( (res:any) => {
@@ -668,7 +669,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
         today.setDate(this.seconds_days(this.unixBillableTimeTotal));
         this.format_billed_time();
         this.showManualBillTimeForm = true;
-        console.log(res.time);
+        //console.log(res.time);
       });
       return false;
     }
@@ -679,7 +680,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       let minutesTotal = Number(this.manualTimeBillForm.value.minutes ? this.manualTimeBillForm.value.minutes*60:0);
       let secondsTotal = Number(this.manualTimeBillForm.value.seconds ? this.manualTimeBillForm.value.seconds :0);
       let totalSeconds = hoursTotal+minutesTotal+secondsTotal;
-      console.log(totalSeconds);
+      //console.log(totalSeconds);
       this.unixBillableTimeTotal = totalSeconds;
       today.setSeconds(totalSeconds);
       today.setMinutes(this.seconds_minutes(totalSeconds));
@@ -753,7 +754,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
 
     filterAssignableMember(members:any){
       this.members = members;
-      console.log(members);
+      //console.log(members);
       this.assignableMembers = members;
       // .filter((member:any) =>{
       //   return !this.assigned_user.includes(member.user_id)
@@ -786,8 +787,8 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
         if(res){
           this.ticket.tag_users.push(res);
           this.tag_users.push(res.user_id);
-          console.log(this.tag_users);
-          console.log('new tags', this.ticket.tag_users);
+          // console.log(this.tag_users);
+          // console.log('new tags', this.ticket.tag_users);
           this.snackBar.open('Tag Members has been updated', 'X', {
             duration: 5000,
             direction: "ltr",
@@ -816,9 +817,9 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
         this.ticketService.addAssignees(assigneeObj).subscribe( (res)=>{
           if(res.length){
             this.assigned_user.push(assignee.user_id);
-            console.log('assignees', res);
+            //console.log('assignees', res);
             this.ticket.assignees.push(res[0]);
-            console.log('new assignees',  this.ticket.assignees);
+            //console.log('new assignees',  this.ticket.assignees);
             this.filterAssignableMember(this.members);
             this.snackBar.open('Assignee has been updated', 'X', {
               duration: 5000,
@@ -1005,12 +1006,12 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                     // requests.push(formData);
                     this.http.post(this.apiEndpoint+'/api/v1/thread-file', formData, this.fileHeader())
                     .subscribe(data => {
-                      console.log(data);
+                      //console.log(data);
                       addded_thread.uploads[upload_count] = data;
                       upload_count++;
                       formData.append("file", this.myFiles[i]);
                       // Sanitized logo returned from backend
-                      console.log(addded_thread, 'addded_thread');
+                      //console.log(addded_thread, 'addded_thread');
                     });
                   }
 
@@ -1070,12 +1071,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
   
     
     public dropped(event) {
-    //   this.files = event.files;
-      // for (var i = 0; i < event.target.files.length; i++) { 
-        //this.myFiles.push(event.target.files[0]);
-      // }
-      console.log(event);
-    //  console.log(this.myFiles);
       for (const droppedFile of event.files) {
    
         // Is it a file?
@@ -1083,7 +1078,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
           const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
           fileEntry.file((file: File) => {
             this.fileType = file.type;
-            console.log(fileEntry);
+            
             var file_name =file.name;
             if(file_name.toLowerCase().substr(file_name.length - 3) == 'pdf'){
               this.uploadImages.push("../../assets/default/default_pdf.svg");
@@ -1098,7 +1093,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                   var reader = new FileReader();
                   reader.onload = this._handleReaderLoaded.bind(this);
                   let binary = this._handleReaderLoaded.bind(this);
-
                   reader.readAsBinaryString(file);
               }
             }
@@ -1156,8 +1150,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     }
 
     dragOverHandler(ev) {
-      console.log('File(s) in drop zone');
-  
       // Prevent default behavior (Prevent file from being opened)
       ev.preventDefault();
       ev.stopPropagation();
@@ -1289,7 +1281,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     }
 
     removeAssignee(assignee:any){
-      console.log(this.assigned_user);
       this.ticketService.removeAssignee(assignee.id).subscribe( res => {
         this.ticket.assignees = this.ticket.assignees.filter(
           (assgn) =>{ return assgn.user_id !== assignee.user_id });
@@ -1299,7 +1290,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
             return user !== assignee.user_id
           }
         );
-        console.log(this.assigned_user);
       return false;
     }
 

@@ -1,10 +1,15 @@
+.login-form-container{
+    margin: 0 auto 15px;
+    border: 2px solid gray;
+    border-radius: 10px;   
+}
 .client-field{
     height: 50px;
-    width: 260px;
+    width: 100%;
     margin: 0 auto;
     font-size: 30px;
 }
 .clien-form-submit-btn{
-    width: 260px;
+    width: 100%;
     margin: 0 auto;
 }
