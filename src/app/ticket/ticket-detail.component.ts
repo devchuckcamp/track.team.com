@@ -880,7 +880,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
             this.thread_pager.current_page = res.current_page;
             // this.thread_pager.total = res.current_page* this.thread_pager.per_page >= this.thread_pager.total ? this.thread_pager.total : res.current_page* this.thread_pager.per_page;
             this.ticket.thread_pager.current_page = res.current_page;
-            let newThreads = res.data.reverse();
+            let newThreads = res.data;
             newThreads.forEach(thrd => {
               this.ticket.thread.unshift(thrd);
             });

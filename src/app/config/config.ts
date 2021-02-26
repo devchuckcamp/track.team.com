@@ -16,10 +16,10 @@ export class GlobalRoutesService {
     private err:any;
     private userID = '';
     public apiPort='';
-    //public host='192.168.10.10'; //for staging
-    public host='api-tickets-support.ecomia.com'; //for production
-    //public protocol='http://'; //for development
-    public protocol='https://'; //production
+    public host='api.ticket.com'; //for staging
+    //public host='api-tickets-support.ecomia.com'; //for production
+    public protocol='http://'; //for development
+    //public protocol='https://'; //production
     public googleLogin=this.protocol+this.host+':'+this.apiPort+'/glogin';
 
     constructor(
