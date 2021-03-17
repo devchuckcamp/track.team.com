@@ -5,8 +5,14 @@
         <h2 *ngIf="valid_client && client">{{ client.name }} Track your project</h2>
       </div>
     </div>
+    <div class="row text-center">
+      <div class="col-md-12 pad-20">
+        <p>Stay up to date by tracking your progress. </p>
+        <p>New version is on the way.</p>
+      </div>
+    </div>
     <div class="row">
-      <div *ngIf="!valid_client" class="col-lg-12 text-center pad-20">
+      <div *ngIf="!valid_client" class="login-form-container col-lg-3 mar-0-auto text-center pad-20 pad-y-30">
           <form [formGroup]="clientForm"  (ngSubmit)="validate_client('sos')" novalidate>
             <div class="form-group">
               <input  type="text" class="form-control client-field" placeholder="Organization" formControlName="client"  required />
@@ -20,6 +26,17 @@
       <div *ngIf="valid_client" class="col-lg-12 text-center pad-20">
         <a  *ngIf="!authenticated" [routerLink]="['/login']" href="#" mat-raised-button mat-primary>Login</a>
         <a  *ngIf="authenticated" [routerLink]="['sos/admin']" href="#" mat-raised-button mat-primary>Dashboard</a>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-md-12">
+        <h3>Coming Soon.</h3>
+      </div>
+      <div class="col-md-12">
+        <a href="#"><img width="265px" class="mar-0-auto" src="../../assets/apple-store-img.png"></a>
+      </div>
+      <div class="col-md-12">
+        <a href="#"><img width="265px" class="mar-0-auto" src="../../assets/google-play-img.png"></a>
       </div>
     </div>
   </div>

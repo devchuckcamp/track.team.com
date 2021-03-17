@@ -319,6 +319,13 @@ export class TicketService {
         return this.http.post(this.config.apiEndPoint()+'/api/v1/ticket-download-token', data,this.jt());
     }
 
+    postFile(fileToUpload: File) {
+        const endpoint = this.config.apiEndPoint()+'/api/v1/ticket-attachments';
+        const formData: FormData = new FormData();
+        formData.append('http', fileToUpload, fileToUpload.name);
+        return this.http.post(endpoint, formData, this.fileHeader() );
+    }
+
     private fileHeader() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer ' + this.Bearer,

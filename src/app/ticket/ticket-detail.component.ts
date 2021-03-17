@@ -255,7 +255,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
           }
         }
 
-        console.log('this.manualTimeBillForm.value',this.manualTimeBillForm.value);
+        // console.log('this.manualTimeBillForm.value',this.manualTimeBillForm.value);
         this.daysCount = this.seconds_days(this.unixBillableTimeTotal);
         this.billableTimeTotal = (this.daysCount != '00' || this.daysCount > 0 ? this.daysCount == 1 ?   this.daysCount +' day ':  this.daysCount +' days ' : '') + this.hours + ' : ' + this.minutes + ' : ' + this.seconds;
     }
@@ -265,6 +265,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     }
 
     openDialog(uploads:any): void {
+      
       const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
         width: '100%',
         height: '100%',
@@ -336,11 +337,27 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       //   }
       // });
     }
-    getSantizeUrl(url : string) { 
-      if(url.includes("application/pdf")){
-        url = this.pdfImages;
+    getSantizeUrl(upload : any) { 
+      
+      if(upload.url){
+        let url  = upload.url;
+        if(url.includes("application/pdf")){
+          url = this.pdfImages;
+        }
+        return this.sanitizer.bypassSecurityTrustUrl(url);
+      } else {
+        if(upload.path.toLowerCase().substr(upload.path.length - 3) == 'pdf'){
+          return "../../assets/default/default_pdf.svg";
+        } if(upload.path.toLowerCase().substr(upload.path.length - 3) == 'csv'){
+          return "../../assets/default/default_csv.png";
+        }else if(upload.path.toLowerCase().substr(upload.path.length - 4) == 'xlsx' || upload.path.toLowerCase().substr(upload.path.length - 3) == 'xls'){
+          return "../../assets/default/default_csv.png";
+        }else if(upload.path.toLowerCase().substr(upload.path.length - 4) == 'docx' || upload.path.toLowerCase().substr(upload.path.length - 4) == 'docm'  || upload.path.toLowerCase().substr(upload.path.length - 3) == 'doc'){
+          return "../../assets/default/default_doc.svg";
+        }
+        return this.globalRoutesService.apiEndPoint()+'/'+upload.path;
       }
-      return this.sanitizer.bypassSecurityTrustUrl(url);
+      
     }
 
     ngOnInit() {
@@ -348,6 +365,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       this.authService.profile.subscribe((res:any) => {
         this.authenticatedUser = res;
       });
+      
       this.assignableMembersFiltered = false;
       // Settings
       this.settingService.settings.subscribe( (res:any) => {
@@ -651,7 +669,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
         today.setDate(this.seconds_days(this.unixBillableTimeTotal));
         this.format_billed_time();
         this.showManualBillTimeForm = true;
-        console.log(res.time);
+        //console.log(res.time);
       });
       return false;
     }
@@ -662,7 +680,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       let minutesTotal = Number(this.manualTimeBillForm.value.minutes ? this.manualTimeBillForm.value.minutes*60:0);
       let secondsTotal = Number(this.manualTimeBillForm.value.seconds ? this.manualTimeBillForm.value.seconds :0);
       let totalSeconds = hoursTotal+minutesTotal+secondsTotal;
-      console.log(totalSeconds);
+      //console.log(totalSeconds);
       this.unixBillableTimeTotal = totalSeconds;
       today.setSeconds(totalSeconds);
       today.setMinutes(this.seconds_minutes(totalSeconds));
@@ -736,7 +754,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
 
     filterAssignableMember(members:any){
       this.members = members;
-      console.log(members);
+      //console.log(members);
       this.assignableMembers = members;
       // .filter((member:any) =>{
       //   return !this.assigned_user.includes(member.user_id)
@@ -769,8 +787,8 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
         if(res){
           this.ticket.tag_users.push(res);
           this.tag_users.push(res.user_id);
-          console.log(this.tag_users);
-          console.log('new tags', this.ticket.tag_users);
+          // console.log(this.tag_users);
+          // console.log('new tags', this.ticket.tag_users);
           this.snackBar.open('Tag Members has been updated', 'X', {
             duration: 5000,
             direction: "ltr",
@@ -799,9 +817,9 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
         this.ticketService.addAssignees(assigneeObj).subscribe( (res)=>{
           if(res.length){
             this.assigned_user.push(assignee.user_id);
-            console.log('assignees', res);
+            //console.log('assignees', res);
             this.ticket.assignees.push(res[0]);
-            console.log('new assignees',  this.ticket.assignees);
+            //console.log('new assignees',  this.ticket.assignees);
             this.filterAssignableMember(this.members);
             this.snackBar.open('Assignee has been updated', 'X', {
               duration: 5000,
@@ -862,7 +880,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
             this.thread_pager.current_page = res.current_page;
             // this.thread_pager.total = res.current_page* this.thread_pager.per_page >= this.thread_pager.total ? this.thread_pager.total : res.current_page* this.thread_pager.per_page;
             this.ticket.thread_pager.current_page = res.current_page;
-            let newThreads = res.data.reverse();
+            let newThreads = res.data;
             newThreads.forEach(thrd => {
               this.ticket.thread.unshift(thrd);
             });
@@ -899,6 +917,65 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       }
       return false;
     }
+    myFiles:string [] = [];
+    myForm = new FormGroup({
+      name: new FormControl('', [Validators.required, Validators.minLength(1)]),
+      file: new FormControl('', [Validators.required])
+    });
+    get f(){
+      return this.myForm.controls;
+    }
+      
+    onFileChange(event) {
+      event.preventDefault();
+      // for (var i = 0; i < event.dataTransfer.files.length; i++) { 
+      //     this.myFiles.push(event.dataTransfer.files[i]);
+      // }
+      // console.log(event);
+
+      for (var i = 0; i < event.dataTransfer.items.length; i++) {
+        // If dropped items aren't files, reject them
+        if (event.dataTransfer.items[i].kind === 'file') {
+          let file = event.dataTransfer.items[i].getAsFile();
+          let obj = {
+            fileName: file.name,
+            selectedFile: file,
+            fileId: `${file.name}-${file.lastModified}`,
+            uploadCompleted: false
+          }
+          if(file.name.toLowerCase().substr(file.name.length - 3) == 'pdf'){
+            this.uploadImages.push("../../assets/default/default_pdf.svg");
+          } else if(file.name.toLowerCase().substr(file.name.length - 3) == 'csv'){
+            this.uploadImages.push("../../assets/default/default_csv.png");
+          }else if(file.name.toLowerCase().substr(file.name.length - 4) == 'xlsx' || file.name.toLowerCase().substr(file.name.length - 3) == 'xls'){
+            this.uploadImages.push("../../assets/default/default_csv.png");
+          }else if(file.name.toLowerCase().substr(file.name.length - 4) == 'docx' || file.name.toLowerCase().substr(file.name.length - 4) == 'docm'  || file.name.toLowerCase().substr(file.name.length - 3) == 'doc'){
+            this.uploadImages.push("../../assets/default/default_doc.svg");
+          } else {
+           
+              if (file.length === 0)
+                return;
+           
+              var mimeType = file.type;
+              if (mimeType.match(/image\/*/) == null) {
+                // this.message = "Only images are supported.";
+                return;
+              }
+           
+              var reader = new FileReader();
+              // this.imagePath = files;
+              reader.readAsDataURL(file); 
+              reader.onload = (_event) => { 
+                this.uploadImages.push(reader.result);
+              }
+            
+          }
+
+          this.myFiles.push(file);
+          //console.log('... file[' + i + '].name = ' + file.name);
+        }
+      }
+    }
     submitReplyBox(){
         if(this.replyView){
             // Check replay
@@ -912,17 +989,50 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                   "files": this.uploadImages
               };
 
-              this.threadService.send(thread).subscribe( res => {
+              this.threadService.send(thread).subscribe( (res:any) => {
                 //console.log(res,'saved thread');
                 if(res){
+                  let addded_thread:any; 
+                  addded_thread = res;
+                  let formData = new FormData();
+                  formData.append("ticket_id", res.ticket_id);
+                  formData.append("thread_id", res.id);
+                  let upload_count = 0;
+                  addded_thread.uploads = [];
+                  for (var i = 0; i < this.myFiles.length; i++) { 
+                    
+                    formData.append("file", this.myFiles[i]);
+                    
+                    // requests.push(formData);
+                    this.http.post(this.apiEndpoint+'/api/v1/thread-file', formData, this.fileHeader())
+                    .subscribe(data => {
+                      //console.log(data);
+                      addded_thread.uploads[upload_count] = data;
+                      upload_count++;
+                      formData.append("file", this.myFiles[i]);
+                      // Sanitized logo returned from backend
+                      //console.log(addded_thread, 'addded_thread');
+                    });
+                  }
+
+                  
+                  
+                  
+
+                  // this.threadService.uploadImage(formData).subscribe((res)=>{
+                  //   console.log(res);
+                  // });
+
+
                   this.ticketService.mentionUser(mentionedMember, this.ticket.id).subscribe(res => {
                     mentionedMember.length = 0;
 
                   });
                   this.loading = false;
                   this.getLastAction();
-                  this.ticket.thread.push(res);
+                  this.ticket.thread.push(addded_thread);
                   this.uploadImages = [];
+                  this.myFiles = [];
                 }
               });
             }
@@ -958,9 +1068,9 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       //console.log(this.uploadImages,'uploadImages');
       return base64textString;
     }
-    public dropped(event: UploadEvent) {
-      this.files = event.files;
-      let formData = new FormData();
+  
+    
+    public dropped(event) {
       for (const droppedFile of event.files) {
    
         // Is it a file?
@@ -968,15 +1078,24 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
           const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
           fileEntry.file((file: File) => {
             this.fileType = file.type;
-
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = this._handleReaderLoaded.bind(this);
-                let binary = this._handleReaderLoaded.bind(this);
-
-                reader.readAsBinaryString(file);
+            
+            var file_name =file.name;
+            if(file_name.toLowerCase().substr(file_name.length - 3) == 'pdf'){
+              this.uploadImages.push("../../assets/default/default_pdf.svg");
+            } else if(file_name.toLowerCase().substr(file_name.length - 3) == 'csv'){
+              this.uploadImages.push("../../assets/default/default_csv.png");
+            }else if(file_name.toLowerCase().substr(file_name.length - 4) == 'xlsx' || file_name.toLowerCase().substr(file_name.length - 3) == 'xls'){
+              this.uploadImages.push("../../assets/default/default_csv.png");
+            }else if(file.name.toLowerCase().substr(file.name.length - 4) == 'docx' || file.name.toLowerCase().substr(file.name.length - 4) == 'docm'  || file.name.toLowerCase().substr(file.name.length - 3) == 'doc'){
+              this.uploadImages.push("../../assets/default/default_doc.svg");
+            } else {
+              if (file) {
+                  var reader = new FileReader();
+                  reader.onload = this._handleReaderLoaded.bind(this);
+                  let binary = this._handleReaderLoaded.bind(this);
+                  reader.readAsBinaryString(file);
+              }
             }
-
           });
         } else {
           // It was a directory (empty directories are added, otherwise only files)
@@ -984,6 +1103,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
         }
       }
     }
+
     getFiles(): FileLikeObject[] {
       return this.uploader.queue.map((fileItem) => {
 
@@ -1012,12 +1132,11 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     private fileHeader() {
       let token = this.authService.Bearer;
       let headers = new HttpHeaders({
-          'Authorization': 'Bearer'+token,
-          'Content-Type':  'multipart/form-data;',
-          'enctype': 'multipart/form-data',
+          'Authorization': 'Bearer '+token,
+          'Enctype': 'multipart/form-data',
           'Accept':'application/json',
           'Access-Control-Allow-Origin':'*',
-          'Allow_Headers':' Allow, Access-Control-Allow-Origin, Content-type, Accept',
+          'Allow_Headers':' Allow, Access-Control-Allow-Origin, Content-type, Accept, Enctype',
           'Allow':'GET,POST,PUT,DELETE,OPTION'
         });
       let options = { headers: headers };
@@ -1029,6 +1148,13 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     public fileLeave(event){
 
     }
+
+    dragOverHandler(ev) {
+      // Prevent default behavior (Prevent file from being opened)
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
+
     public updateTicketEta(eta:any = null){
       this.updating_eta = true;
       let etaObj :any;
@@ -1155,7 +1281,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
     }
 
     removeAssignee(assignee:any){
-      console.log(this.assigned_user);
       this.ticketService.removeAssignee(assignee.id).subscribe( res => {
         this.ticket.assignees = this.ticket.assignees.filter(
           (assgn) =>{ return assgn.user_id !== assignee.user_id });
@@ -1165,7 +1290,6 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
             return user !== assignee.user_id
           }
         );
-        console.log(this.assigned_user);
       return false;
     }
 

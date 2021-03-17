@@ -49,7 +49,7 @@ export class ThreadService {
         return this.http.get(this.config.apiEndPoint()+'/api/v1/thread?ticket='+ticket_id+'&per_page='+per_page+'&page='+page, this.jt()).pipe(map( (res:any) => res));
     }
     send(thread: any) {
-        return this.http.post(this.config.apiEndPoint()+'/api/v1/thread', thread, this.jt());
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/thread', thread, this.fileHeader());
     }
 
     update(ticket: Thread) {
@@ -61,6 +61,10 @@ export class ThreadService {
     }
     getImage(thread_id:number){
         return this.http.get('https://homestead.test/uploads/thread/admin.PNG');
+    }
+
+    uploadImage(file:any) {
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/thread-file', file, this.fileHeader());
     }
     private jt() {
         let headers = new HttpHeaders({
@@ -77,8 +81,7 @@ export class ThreadService {
     private fileHeader() {
         let headers = new HttpHeaders({
             'Authorization': 'Bearer '+this.Bearer,
-            'Content-Type':  'null',
-            'Accept':'application/json',
+            'Enctype': 'multipart/form-data',
             'Access-Control-Allow-Origin':'*',
             'Allow_Headers':' Allow, Access-Control-Allow-Origin, Content-type, Accept',
             'Allow':'GET,POST,PUT,DELETE,OPTION'

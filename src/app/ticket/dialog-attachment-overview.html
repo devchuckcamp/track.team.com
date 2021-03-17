@@ -6,6 +6,6 @@
     (afterChange)="afterChange($event)"
     (beforeChange)="beforeChange($event)" >
     <div ngxSlickItem *ngFor="let upload of data.uploads" class="slide clickable-only">
-        <img (click)="download(upload.url,upload.name)" [src]="getSantizeUrl(upload.url)" alt="" width="100%">
+        <img (click)="download(upload,upload.name)" [src]="getSantizeUrl(upload)" alt="" width="100%">
     </div>
 </ngx-slick-carousel>

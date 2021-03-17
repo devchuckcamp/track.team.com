@@ -3,14 +3,6 @@ import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders, HttpReques
 
 import { Observable, throwError, Subject } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators'
-import { map, take } from 'rxjs/operators';
-
-// import 'rxjs/add/operator/catch';
-// import 'rxjs/add/operator/map';
-// import 'rxjs/add/observable/throw';
-// import 'rxjs/add/operator/toPromise';
-// import * as xml2js from 'xml2js';
-import { User } from '../model/user';
 
 //GLobal
 import { ClientGlobalRoutesService } from '../config/client';
@@ -24,7 +16,7 @@ export class GlobalRoutesService {
     private err:any;
     private userID = '';
     public apiPort='';
-    public host='192.168.10.10'; //for staging
+    public host='api.ticket.com'; //for staging
     //public host='api-tickets-support.ecomia.com'; //for production
     public protocol='http://'; //for development
     //public protocol='https://'; //production

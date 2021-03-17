@@ -6,19 +6,53 @@ import { Observable, Subscription  } from 'rxjs';
 import { AuthService } from '../service/auth.service';
 import { UserService } from '../service/user.service';
 import { ClientService } from '../service/client.service';
+import { trigger, style, animate, transition } from '@angular/animations';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
+  animations: [
+    trigger(
+      'loginAnimation', [
+        transition(':enter', [
+          style({transform: 'translateX(100%)', opacity: 0}),
+          animate('200ms', style({transform: 'translateX(0)', opacity: 1}))
+        ]),
+        transition(':leave', [
+          style({transform: 'translateX(-100%)', opacity: 0}),
+          animate('100ms', style({transform: 'translateX(100%)', opacity: 0}))
+        ])
+      ]
+    ),
+    trigger(
+        'passwordAnimation', [
+          transition(':enter', [
+            style({transform: 'translateX(100%)', opacity: 0}),
+            animate('200ms', style({transform: 'translateX(0)', opacity: 1}))
+          ]),
+          transition(':leave', [
+            style({transform: 'translateX(200%)', opacity: 0}),
+            animate('100ms', style({transform: 'translateX(100%)', opacity: 0}))
+          ])
+        ]
+      )
+  ],
 })
+
+
 export class LoginComponent implements OnInit {
     loginForm: FormGroup;
+    passwordResetForm: FormGroup;
     loading = false;
     submitted = false;
     returnUrl: any;
     auth_client:any;
     subscription:Subscription;
     client:any;
+    form_shown:any;
+    show_password_reset_form:boolean;
+    passwordRequestSent:boolean;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -54,10 +88,24 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.form_shown = 'Login';
         this.returnUrl = JSON.parse(localStorage.getItem('returnUrl'));
         this.loginForm = this.formBuilder.group({
             username: ['', Validators.required],
             password: ['', Validators.required]
+        });
+        this.passwordResetForm= this.formBuilder.group({
+            email: ['', Validators.required]
+        });
+        
+        this.passwordRequestSent = false;
+
+        this.route.params.subscribe(params => {
+            if (params['password_reset'] !== undefined && params['password_reset'] == 'password_reset') {
+                this.showPasswordResetForm();
+            } else {
+                this.show_password_reset_form = false;
+            }
         });
     }
 
@@ -111,6 +159,28 @@ export class LoginComponent implements OnInit {
                     // this.alertService.error(error);
                     this.loading = false;
                 });
+        return false;
+    }
+    showPasswordResetForm(){
+        this.form_shown = this.form_shown == 'Login'? 'Account':'Login';
+        this.passwordRequestSent = false;
+        this.show_password_reset_form = this.show_password_reset_form ? false : true;
+        return false;
+    }
+
+    
+    get ps() { return this.passwordResetForm.controls; }
+    submitPasswordResetForm(){
+        console.log('Request Password Reset');
+        let email = this.ps.email.value;
+        let data = JSON.stringify({email:email});
+        this.userService.requestPasswordReset(data).subscribe( (res:any) => {
+            
+            if(res.reset_token){
+                this.passwordRequestSent = true;
+                console.log(res.reset_token);
+            }
+        });
         return false;
     }
 }

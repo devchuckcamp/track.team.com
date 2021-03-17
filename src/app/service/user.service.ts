@@ -147,7 +147,14 @@ export class UserService {
         let data = {email:email};
         return this.http.post(this.config.apiEndPoint()+'/api/v1/password/reset/email', email, this.unAuthHttp());
     }
-
+    //  Password Reset Token
+    validatePasswordResetToken(token){
+        return this.http.get(this.config.apiEndPoint()+'/api/v1/password/reset/token?token='+token, this.unAuthHttp());
+    }
+    //  Password Reset Token
+    resetUserPassword(data:any){
+        return this.http.post(this.config.apiEndPoint()+'/api/v1/password/reset', data, this.unAuthHttp());
+    }
     unAuthHttp() {
         let headers = new HttpHeaders({
             'Content-Type':  'application/json',

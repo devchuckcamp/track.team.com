@@ -6,6 +6,15 @@ The format is based on and adheres to [Semantic Versioning](https://semver.org/s
 
 ##  [Unreleased]
 
+##  [2.2.1] - 2020-12-31
+### Added
+-   Additional Suported file types: .doc, .docm, .docx
+
+##  [2.2.0] - 2020-12-30
+### Added
+-   Multiple file types allowed for upload on comment section
+-   Suported file types: .png, .jpg, .xlsx, .xls, .pdf
+
 ##  [2.1.2] - 2020-05-15
 ### Added
 -   Ticket Approval Feature
