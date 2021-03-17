@@ -104,6 +104,10 @@
                             <label class="mar-r-10" for="ticket-patch">Created</label>
                             <label  for="ticket_last_action" ><label *ngIf="ticket.created_at">{{ ticket.created_at | customdate: "MMM DD, YYYY hh:mm::ss a"}}</label></label>
                         </div>
+                        <div class="form-group" *ngIf="ticket">
+                            <label class="mar-r-10" for="ticket-author">Author</label>
+                            <label  for="ticket_author" ><label *ngIf="ticket.created_by">{{ ticket.created_by }}</label></label>
+                        </div>
                         <!-- Last Update -->
                         <div class="form-group" *ngIf="ticket.last_action">
                             <label class="mar-r-10" for="ticket-patch">Last Update</label>
