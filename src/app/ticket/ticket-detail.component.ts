@@ -1176,6 +1176,7 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
       return false;
     }
     public updateTicketStatus(status:number){
+      let onload_status = this.ticket.status_id;
       this.ticket.status_id = status;
       let data = {
         status_id:status
@@ -1196,8 +1197,16 @@ export class TicketDetailComponent implements OnInit, OnDestroy, Pipe {
                   panelClass: "success-snack"
               }
           );
-        } else {
-
+        } else if(res.status == "warning"){
+          this.ticket.status_id = onload_status;
+          this.updating_status = false;
+          this.snackBar.open('Ticket is subject for approval', 'X', {
+            duration: 5000,
+            direction: "ltr",
+            verticalPosition:"top",
+            horizontalPosition: "right",
+            panelClass: "warning-snack"
+          });
         }
 
       });
