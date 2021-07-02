@@ -18,14 +18,14 @@ export class ClientGlobalRoutesService {
 
         
         //Development Client ID
-            this.clientID = 6;
+            //this.clientID = 6;
         //Production Production
-            //this.clientID = 2;
+            this.clientID = 2;
         
         //Development Key 
-           this.clientSecret = "cxRsFvBb9NSocKZsan6fjDPTs6NRyTe7t9YUGxHE";
+           //this.clientSecret = "cxRsFvBb9NSocKZsan6fjDPTs6NRyTe7t9YUGxHE";
         //Production Key
-            //this.clientSecret = "qQw77McftRqbYgFdFPaohqcBtEGi5Hf0F53kD1HZ";
+            this.clientSecret = "qQw77McftRqbYgFdFPaohqcBtEGi5Hf0F53kD1HZ";
 
         //2nd Key 
             //this.clientSecret   =   "cYoSGSGh9CVwemD0uwKeFztSNB9e75v5VbdIRh2f";
