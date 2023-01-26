@@ -1,6 +1,16 @@
 # Project Management Tool
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.2.2.
+Features:
+JIRA API Integration
+Sprint Organizer/Patch
+Custom Billing (Time/Fixed)
+Collaboration
+Real-time notification from tag, mentions, ticket assignment etc.
+Activity Log
+Organizaion-Project-Category-Ticket-Task-Subtask default structure
+Organizaion-Project-Custom structure option
+
 
 ## Development server
 
